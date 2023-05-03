@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:turkce_film_tv/firebase_options.dart';
 import 'package:turkce_film_tv/provider/movie_provider.dart';
 import 'package:turkce_film_tv/screens/homepage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:turkce_film_tv/screens/loginscreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +30,16 @@ void main() async {
                 bodyMedium: TextStyle(color: Colors.white),
               )),
           debugShowCheckedModeBanner: false,
-          home: HomePage(),
+          home: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+              if (snapshot.hasData) {
+                return HomePage();
+              } else {
+                return LoginPage();
+              }
+            },
+          ),
         ),
       ),
     );

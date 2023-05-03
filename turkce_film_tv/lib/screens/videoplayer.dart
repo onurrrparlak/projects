@@ -162,6 +162,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                       ),
                                     ),
                                     Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
@@ -170,9 +172,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                               left: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.020),
+                                                  0.025),
                                           child: Align(
-                                            alignment: Alignment.bottomLeft,
+                                            alignment: Alignment.topLeft,
                                             child: StreamBuilder(
                                               stream: _tickStream(),
                                               builder: (context, snapshot) {
@@ -188,29 +190,28 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                         ),
                                         Visibility(
                                           visible: _isVisible,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              IconButton(
-                                                icon: Icon(
-                                                  _controller.value.isPlaying
-                                                      ? Icons.pause
-                                                      : Icons.play_arrow,
-                                                  color: Colors.white,
-                                                ),
-                                                onPressed: () async {
-                                                  if (_controller
-                                                      .value.isPlaying) {
-                                                    await _controller.pause();
-                                                  } else {
-                                                    // If the video is paused, play it.
-                                                    await _controller.play();
-                                                  }
-                                                  setState(() {});
-                                                },
-                                              ),
-                                            ],
+                                          child: IconButton(
+                                            icon: Icon(
+                                              size: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.040,
+                                              _controller.value.isPlaying
+                                                  ? Icons
+                                                      .pause_circle_outline_outlined
+                                                  : Icons
+                                                      .play_circle_fill_outlined,
+                                              color: Colors.white,
+                                            ),
+                                            onPressed: () async {
+                                              if (_controller.value.isPlaying) {
+                                                await _controller.pause();
+                                              } else {
+                                                // If the video is paused, play it.
+                                                await _controller.play();
+                                              }
+                                              setState(() {});
+                                            },
                                           ),
                                         ),
                                         Padding(
@@ -220,7 +221,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                                       .width *
                                                   0.025),
                                           child: Align(
-                                            alignment: Alignment.bottomRight,
+                                            alignment: Alignment.topRight,
                                             child: StreamBuilder(
                                               stream: _tickStream(),
                                               builder: (context, snapshot) {
@@ -248,7 +249,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                 ),
               );
             } else {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.grey[200],
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                  strokeWidth: 5,
+                ),
+              );
             }
           },
         ),
