@@ -5,6 +5,7 @@ class Movie {
   final String backgroundImageUrl;
   final String categories;
   final String imdbRating;
+  final String duration;
   final String url;
 
   Movie({
@@ -14,6 +15,7 @@ class Movie {
     required this.backgroundImageUrl,
     required this.categories,
     required this.imdbRating,
+    required this.duration,
     required this.url,
   });
 
@@ -25,6 +27,7 @@ class Movie {
       backgroundImageUrl: json['backgroundImageUrl'] as String,
       categories: (json['categories'] as String),
       imdbRating: (json['imdbRating'] as String),
+      duration: (json['duration'] as String),
       url: json['url'] as String,
     );
   }
@@ -37,6 +40,7 @@ class Movie {
       'backgroundImageUrl': backgroundImageUrl,
       'categories': categories,
       'imdbRating': imdbRating,
+      'duration': duration,
       'url': url,
     };
   }

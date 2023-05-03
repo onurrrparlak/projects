@@ -7,6 +7,7 @@ environment:
   sdk: '>=2.19.6 <3.0.0'
 
 dependencies:
+  cached_network_image: ^3.2.3
   cloud_firestore: ^4.5.3
   firebase_auth: ^4.4.2
   firebase_core: ^2.10.0
@@ -14,6 +15,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.5
+  video_player: ^2.6.1
 
 dev_dependencies:
   flutter_test:
@@ -22,3 +24,35 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Carossoft
+      fonts:
+        - asset: assets\fonts\caros\CarosSoft-Italic.ttf
+        - asset: assets\fonts\caros\CarosSoft.ttf
+        - weight: 300
+        - asset: assets\fonts\caros\CarosSoftBlack-Italic.ttf
+        - asset: assets\fonts\caros\CarosSoftBlack.ttf
+        - asset: assets\fonts\caros\CarosSoftBold-Italic.ttf
+        - asset: assets\fonts\caros\CarosSoftBold.ttf
+        - weight: 500
+        - asset: assets\fonts\caros\CarosSoftExtraBold-Italic.ttf
+        - asset: assets\fonts\caros\CarosSoftExtraBold.ttf
+        - weight: 700
+        - asset: assets\fonts\caros\CarosSoftExtraLight-Italic.ttf
+        - asset: assets\fonts\caros\CarosSoftExtraLight.ttf
+        - asset: assets\fonts\caros\CarosSoftHeavy-Italic.ttf
+        - asset: assets\fonts\caros\CarosSoftHeavy.ttf
+        - asset: assets\fonts\caros\CarosSoftLight-Italic.ttf
+        - asset: assets\fonts\caros\CarosSoftLight.ttf
+        - asset: assets\fonts\caros\CarosSoftMedium-Italic.ttf
+        - asset: assets\fonts\caros\CarosSoftMedium.ttf
+        - asset: assets\fonts\caros\CarosSoftThin.ttf
+        
+    - family: Bebas
+      fonts:
+        - asset: assets/fonts/BebasNeue-Regular.ttf
+          weight: 700
+  assets:
+      - assets/images/
+
+

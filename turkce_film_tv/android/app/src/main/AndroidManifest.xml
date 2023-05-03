@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.turkce_film_tv">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="turkce_film_tv"
         android:name="${applicationName}"

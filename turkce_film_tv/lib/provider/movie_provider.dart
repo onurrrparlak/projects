@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class MovieProvider with ChangeNotifier {
   List<Movie> _movies = [];
   int _selectedMovieIndex = 0;
+  late AnimationController _animationController;
 
   List<Movie> get movies => _movies;
   int get selectedMovieIndex => _selectedMovieIndex;
@@ -19,5 +20,21 @@ class MovieProvider with ChangeNotifier {
   void selectMovie(int index) {
     _selectedMovieIndex = index;
     notifyListeners();
+  }
+
+  void moveRight() {
+    if (_selectedMovieIndex < _movies.length - 1) {
+      _selectedMovieIndex++;
+
+      notifyListeners();
+    }
+  }
+
+  void moveLeft() {
+    if (_selectedMovieIndex > 0) {
+      _selectedMovieIndex--;
+
+      notifyListeners();
+    }
   }
 }

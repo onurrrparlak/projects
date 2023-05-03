@@ -22,6 +22,11 @@ void main() async {
       ChangeNotifierProvider.value(
         value: movieProvider,
         child: MaterialApp(
+          theme: ThemeData(
+              fontFamily: 'Carossoft',
+              textTheme: TextTheme(
+                bodyMedium: TextStyle(color: Colors.white),
+              )),
           debugShowCheckedModeBanner: false,
           home: HomePage(),
         ),
