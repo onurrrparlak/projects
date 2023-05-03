@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "351397556708",
+    "project_id": "turkcefilmtv-ec48c",
+    "storage_bucket": "turkcefilmtv-ec48c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:351397556708:android:bf78f02312847426a357f1",
+        "android_client_info": {
+          "package_name": "com.example.turkce_film_tv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "351397556708-01bq528d550v2hcgpbm0e7png9jfhj1f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZ4JzUJreyWHB8hENUQ71zGGF1f68Cp0U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "351397556708-01bq528d550v2hcgpbm0e7png9jfhj1f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "351397556708-g3iovj0jl3ej17lga88fg2b02p0kt0ib.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.turkceTvFilm"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

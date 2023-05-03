@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>351397556708-olou8m6oj33jgfjjkrtmgm03n4qlthfr.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.351397556708-olou8m6oj33jgfjjkrtmgm03n4qlthfr</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB_5YAyp20mhGfcqyDxj-eGiZGZkdZfe4I</string>
+	<key>GCM_SENDER_ID</key>
+	<string>351397556708</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.turkceFilmTv</string>
+	<key>PROJECT_ID</key>
+	<string>turkcefilmtv-ec48c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>turkcefilmtv-ec48c.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:351397556708:ios:36c7027809518100a357f1</string>
+</dict>
+</plist>
