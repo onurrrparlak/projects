@@ -8,6 +8,7 @@ import 'package:turkce_film_tv/models/movie_models.dart';
 import 'package:turkce_film_tv/provider/movie_provider.dart';
 import 'package:turkce_film_tv/screens/profilepage.dart';
 import 'package:turkce_film_tv/screens/videoplayer.dart';
+import 'package:turkce_film_tv/screens/watchlist.dart';
 
 import '../services/user_service.dart';
 
@@ -30,9 +31,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final userService = UserService();
+  late final DocumentReference currentUserRef;
 
   bool _isOnline = true;
-  int selectedMovieIndex = 0;
+
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPageIndex = 0;
 
@@ -88,6 +90,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _checkInternetConnectivity();
+    currentUserRef = userService.firestore
+        .collection('users')
+        .doc(userService.getCurrentUserId()!);
   }
 
   _changeFocus(BuildContext context, FocusNode node) {
@@ -227,12 +232,14 @@ class _HomePageState extends State<HomePage> {
                                         focusNode: _homePageNode,
                                         child: Container(
                                           child: TextButton(
-                                            onPressed: () {
+                                            onPressed: () async {
                                               int index = 0;
                                               _pageController.jumpToPage(index);
                                               setState(() {
                                                 _currentPageIndex = index;
                                               });
+                                              await _changeFocus(
+                                                  context, _homePageNode!);
                                             },
                                             child: Container(
                                               child: Text(
@@ -305,12 +312,14 @@ class _HomePageState extends State<HomePage> {
                                         focusNode: _watchlistNode,
                                         child: Container(
                                           child: TextButton(
-                                            onPressed: () {
+                                            onPressed: () async {
                                               int index = 1;
                                               _pageController.jumpToPage(index);
                                               setState(() {
                                                 _currentPageIndex = index;
                                               });
+                                              await _changeFocus(
+                                                  context, _watchlistNode!);
                                             },
                                             child: Text(
                                               'Listem',
@@ -381,12 +390,14 @@ class _HomePageState extends State<HomePage> {
                                         focusNode: _categoriesNode,
                                         child: Container(
                                           child: TextButton(
-                                            onPressed: () {
+                                            onPressed: () async {
                                               int index = 2;
                                               _pageController.jumpToPage(index);
                                               setState(() {
                                                 _currentPageIndex = index;
                                               });
+                                              await _changeFocus(
+                                                  context, _categoriesNode!);
                                             },
                                             child: Container(
                                               child: Text(
@@ -424,10 +435,7 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                                 StreamBuilder<DocumentSnapshot>(
-                                  stream: userService.firestore
-                                      .collection('users')
-                                      .doc(userService.getCurrentUserId()!)
-                                      .snapshots(),
+                                  stream: currentUserRef.snapshots(),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
@@ -648,15 +656,12 @@ class _HomePageState extends State<HomePage> {
                                                       MaterialPageRoute(
                                                         builder: (context) =>
                                                             VideoPlayerScreen(
-                                                          videoUrl:
-                                                              selectedMovie.url,
-                                                          subtitle: selectedMovie
-                                                                  .subtitle!
-                                                                  .isNotEmpty
-                                                              ? selectedMovie
-                                                                  .subtitle
-                                                              : null,
-                                                        ),
+                                                                videoUrl:
+                                                                    selectedMovie
+                                                                        .url,
+                                                                subtitle:
+                                                                    selectedMovie
+                                                                        .subtitle),
                                                       ),
                                                     );
                                                   },
@@ -775,65 +780,105 @@ class _HomePageState extends State<HomePage> {
                                                             .width *
                                                         0.02, // 5% of the screen width as left padding
                                                   ),
-                                                  child: Container(
-                                                    child: SizedBox(
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.07,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.15,
-                                                      child: ElevatedButton(
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                          foregroundColor:
-                                                              !(_addMyWishlistNode
-                                                                          ?.hasFocus ??
-                                                                      false)
-                                                                  ? Colors.white
-                                                                  : Colors
-                                                                      .black,
-                                                          backgroundColor:
-                                                              !(_addMyWishlistNode
-                                                                          ?.hasFocus ??
-                                                                      false)
-                                                                  ? Colors
-                                                                      .transparent
-                                                                  : Colors
-                                                                      .white,
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5), // set the desired border radius here
-                                                            side: BorderSide(
-                                                              color:
-                                                                  Colors.white,
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.0020,
-                                                            ), // set the desired border color and width here
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          // add your button onPressed code here
-                                                        },
-                                                        child: Text(
-                                                          'Listeye ekle',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600),
-                                                        ),
-                                                      ),
-                                                    ),
+                                                  child: FutureBuilder(
+                                                    future:
+                                                        currentUserRef.get(),
+                                                    builder:
+                                                        (context, snapshot) {
+                                                      if (snapshot.hasData) {
+                                                        final watchlist =
+                                                            snapshot
+                                                                .data!.reference
+                                                                .collection(
+                                                                    'watchlist');
+                                                        return FutureBuilder<
+                                                            DocumentSnapshot>(
+                                                          future: watchlist
+                                                              .doc(selectedMovieIndex
+                                                                  .toString())
+                                                              .get(),
+                                                          builder: (context,
+                                                              snapshot) {
+                                                            final isOnWatchlist =
+                                                                snapshot.hasData &&
+                                                                    snapshot
+                                                                        .data!
+                                                                        .exists;
+                                                            return Container(
+                                                              child: SizedBox(
+                                                                height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .height *
+                                                                    0.07,
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.15,
+                                                                child:
+                                                                    ElevatedButton(
+                                                                  style: ElevatedButton
+                                                                      .styleFrom(
+                                                                    foregroundColor: !(_addMyWishlistNode?.hasFocus ??
+                                                                            false)
+                                                                        ? Colors
+                                                                            .white
+                                                                        : Colors
+                                                                            .black,
+                                                                    backgroundColor: !(_addMyWishlistNode?.hasFocus ??
+                                                                            false)
+                                                                        ? Colors
+                                                                            .transparent
+                                                                        : Colors
+                                                                            .white,
+                                                                    shape:
+                                                                        RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5), // set the desired border radius here
+                                                                      side:
+                                                                          BorderSide(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            0.0020,
+                                                                      ), // set the desired border color and width here
+                                                                    ),
+                                                                  ),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    if (isOnWatchlist) {
+                                                                      await watchlist
+                                                                          .doc(selectedMovieIndex
+                                                                              .toString())
+                                                                          .delete();
+                                                                    } else {
+                                                                      await watchlist
+                                                                          .doc(selectedMovieIndex
+                                                                              .toString())
+                                                                          .set({
+                                                                        'movieId':
+                                                                            selectedMovieIndex,
+                                                                        'timestamp':
+                                                                            FieldValue.serverTimestamp(),
+                                                                      });
+                                                                    }
+                                                                    setState(
+                                                                        () {});
+                                                                  },
+                                                                  child: Text(isOnWatchlist
+                                                                      ? 'Listeden Sil'
+                                                                      : 'Listeye ekle'),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+                                                      } else {
+                                                        return CircularProgressIndicator();
+                                                      }
+                                                    },
                                                   ),
                                                 ),
                                               ),
@@ -971,10 +1016,14 @@ class _HomePageState extends State<HomePage> {
                                                   itemBuilder:
                                                       (context, index) {
                                                     final movie = movieProvider
-                                                        .movies[index];
+                                                        .movies.reversed
+                                                        .toList()[index];
                                                     final isSelected = movieProvider
                                                             .selectedMovieIndex ==
-                                                        index;
+                                                        movieProvider
+                                                                .movies.length -
+                                                            index -
+                                                            1;
                                                     final scale =
                                                         isSelected ? 1.15 : 1.0;
                                                     final hasListFocus =
@@ -1011,9 +1060,12 @@ class _HomePageState extends State<HomePage> {
                                                         scale: scale,
                                                         child: GestureDetector(
                                                           onTap: () {
-                                                            movieProvider
-                                                                .selectMovie(
-                                                                    index);
+                                                            movieProvider.selectMovie(
+                                                                movieProvider
+                                                                        .movies
+                                                                        .length -
+                                                                    index -
+                                                                    1);
                                                           },
                                                           child: AspectRatio(
                                                             key: ValueKey(
@@ -1080,7 +1132,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ],
                                 ),
-                                Text('Page2'),
+                                UserWatchlistPage(),
                                 Text('Page 3'),
                                 ProfilePage(),
                               ],
@@ -1096,110 +1148,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-/*
-class HomePage extends StatefulWidget {
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  FocusNode? _homePageNode;
-  FocusNode? _watchlistNode;
-  FocusNode? _categoriesNode;
-  FocusNode? _playNode;
-  FocusNode? _addMyWishlistNode;
-  FocusNode? _listNode;
-
-  _setFirstFocus(BuildContext context) {
-    if (_homePageNode == null) {
-      _watchlistNode = FocusNode();
-      _categoriesNode = FocusNode();
-      _playNode = FocusNode();
-      _addMyWishlistNode = FocusNode();
-      _listNode = FocusNode();
-      FocusScope.of(context).requestFocus(_homePageNode);
-    }
-    _changeFocus(BuildContext context, FocusNode node) {
-      FocusScope.of(context).requestFocus(node);
-    }
-
-    void dispose() {
-      super.dispose();
-      _homePageNode?.dispose();
-      _watchlistNode?.dispose();
-      _categoriesNode?.dispose();
-      _playNode?.dispose();
-      _addMyWishlistNode?.dispose();
-      _listNode?.dispose();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_homePageNode == null) {
-      _setFirstFocus(context);
-    }
-    int selectedMovieIndex = 0;
-
-    final movieProvider = Provider.of<MovieProvider>(context);
-    final selectedMovie = movieProvider.movies[selectedMovieIndex];
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(selectedMovie.backgroundImageUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Movies',
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            child: Consumer<MovieProvider>(
-              builder: (context, movieProvider, child) {
-                return ListView.separated(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: movieProvider.movies.length,
-                  separatorBuilder: (context, index) => SizedBox(width: 10),
-                  itemBuilder: (context, index) {
-                    final movie = movieProvider.movies[index];
-                    return Text('SA');
-                    /*return GestureDetector(
-                        onTap: () {
-                          movieProvider.selectMovie(index);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 3.5,
-                            ),
-                          ),
-                          child: AspectRatio(
-                            aspectRatio: 6 / 3,
-                            child: Image.network(
-                              movie.posterImageUrl,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      );*/
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-*/

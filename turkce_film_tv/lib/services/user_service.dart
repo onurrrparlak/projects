@@ -30,6 +30,20 @@ class UserService {
         email: email, password: password);
   }
 
+  Future<void> addToWatchlist(String userId, String movieId) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('watchlist')
+          .doc(movieId)
+          .set({'addedAt': DateTime.now()});
+    } catch (e) {
+      print('Error adding movie to watchlist: $e');
+      rethrow;
+    }
+  }
+
   Future<void> logoutUser() async {
     await _auth.signOut();
   }
