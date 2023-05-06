@@ -25,10 +25,11 @@ void main() async {
         value: movieProvider,
         child: MaterialApp(
           theme: ThemeData(
-              fontFamily: 'Carossoft',
-              textTheme: TextTheme(
-                bodyMedium: TextStyle(color: Colors.white),
-              )),
+            fontFamily: 'Carossoft',
+            textTheme: TextTheme(
+              bodyMedium: TextStyle(color: Colors.white),
+            ),
+          ),
           debugShowCheckedModeBanner: false,
           home: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),

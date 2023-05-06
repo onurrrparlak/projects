@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,8 @@ import 'package:turkce_film_tv/models/movie_models.dart';
 import 'package:turkce_film_tv/provider/movie_provider.dart';
 import 'package:turkce_film_tv/screens/profilepage.dart';
 import 'package:turkce_film_tv/screens/videoplayer.dart';
+
+import '../services/user_service.dart';
 
 class LeftButtonIntent extends Intent {}
 
@@ -26,6 +29,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final userService = UserService();
+
   bool _isOnline = true;
   int selectedMovieIndex = 0;
   final PageController _pageController = PageController(initialPage: 0);
@@ -317,7 +322,7 @@ class _HomePageState extends State<HomePage> {
                                             bottom: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                0.005,
+                                                0.002,
                                           ),
                                           decoration: BoxDecoration(
                                             border: !(_watchlistNode
@@ -418,38 +423,59 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ],
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    right: MediaQuery.of(context).size.width *
-                                        0.050,
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      int index = 3;
-                                      _pageController.jumpToPage(index);
-                                      setState(() {
-                                        _currentPageIndex = index;
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: !(_userAvatarNode?.hasFocus ??
-                                                  false)
-                                              ? Colors.transparent
-                                              : Colors.white,
-                                          width: MediaQuery.of(context)
+                                StreamBuilder<DocumentSnapshot>(
+                                  stream: userService.firestore
+                                      .collection('users')
+                                      .doc(userService.getCurrentUserId()!)
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return CircularProgressIndicator();
+                                    } else if (!snapshot.hasData) {
+                                      return Text('No user data found');
+                                    } else {
+                                      final avatar = snapshot.data!['avatar'];
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                          right: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.0035,
+                                              0.050,
                                         ),
-                                      ),
-                                      width: MediaQuery.of(context).size.width *
-                                          0.050,
-                                      child: Image.asset(
-                                          'assets/images/defaultavatar.png'),
-                                    ),
-                                  ),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            int index = 3;
+                                            _pageController.jumpToPage(index);
+                                            setState(() {
+                                              _currentPageIndex = index;
+                                            });
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: !(_userAvatarNode
+                                                            ?.hasFocus ??
+                                                        false)
+                                                    ? Colors.transparent
+                                                    : Colors.white,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.0035,
+                                              ),
+                                            ),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.050,
+                                            child: Image.asset(
+                                                'assets/images/avatars/$avatar.jpg'),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
                                 ),
                               ],
                             ),
@@ -476,7 +502,7 @@ class _HomePageState extends State<HomePage> {
                                             MediaQuery.of(context).size.width *
                                                 0.05, // 5% of the screen width as right padding
                                             MediaQuery.of(context).size.height *
-                                                0.04,
+                                                0.02,
                                           ),
                                           child: Align(
                                             alignment: Alignment.centerLeft,
@@ -484,32 +510,26 @@ class _HomePageState extends State<HomePage> {
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height *
-                                                  0.17,
-                                              child: Expanded(
-                                                child: Text(
-                                                  selectedMovie.title
-                                                      .toUpperCase(),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      fontFamily: 'Bebas',
-                                                      fontSize: selectedMovie
-                                                                  .title
-                                                                  .length >
-                                                              30
-                                                          ? MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.06
-                                                          : MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.08,
-                                                      color: Colors.white),
-                                                ),
+                                                  0.19,
+                                              child: Text(
+                                                selectedMovie.title
+                                                    .toUpperCase(),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    fontFamily: 'Bebas',
+                                                    fontSize: selectedMovie
+                                                                .title.length >
+                                                            30
+                                                        ? MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.06
+                                                        : MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.08,
+                                                    color: Colors.white),
                                               ),
                                             ),
                                           ),
@@ -628,9 +648,15 @@ class _HomePageState extends State<HomePage> {
                                                       MaterialPageRoute(
                                                         builder: (context) =>
                                                             VideoPlayerScreen(
-                                                                videoUrl:
-                                                                    selectedMovie
-                                                                        .url),
+                                                          videoUrl:
+                                                              selectedMovie.url,
+                                                          subtitle: selectedMovie
+                                                                  .subtitle!
+                                                                  .isNotEmpty
+                                                              ? selectedMovie
+                                                                  .subtitle
+                                                              : null,
+                                                        ),
                                                       ),
                                                     );
                                                   },
@@ -687,15 +713,18 @@ class _HomePageState extends State<HomePage> {
                                                           ), // set the desired border color and width here
                                                         ),
                                                       ),
-                                                      onPressed: () {
-                                                        Navigator.push(
+                                                      onPressed: () async {
+                                                        await Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (context) =>
                                                                 VideoPlayerScreen(
                                                                     videoUrl:
                                                                         selectedMovie
-                                                                            .url),
+                                                                            .url,
+                                                                    subtitle:
+                                                                        selectedMovie
+                                                                            .subtitle),
                                                           ),
                                                         );
                                                       },

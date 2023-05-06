@@ -50,6 +50,7 @@ class DefaultFirebaseOptions {
     projectId: 'turkcefilmtv-ec48c',
     authDomain: 'turkcefilmtv-ec48c.firebaseapp.com',
     storageBucket: 'turkcefilmtv-ec48c.appspot.com',
+    measurementId: 'G-66R1TQ4R8L',
   );
 
   static const FirebaseOptions android = FirebaseOptions(

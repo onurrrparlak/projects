@@ -5,6 +5,9 @@ class UserService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  FirebaseAuth get auth => _auth;
+  FirebaseFirestore get firestore => _firestore;
+
   Future<UserCredential> registerUser(
       String email, String password, String username) async {
     UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -15,6 +18,11 @@ class UserService {
       'avatar': 1,
     });
     return userCredential;
+  }
+
+  String? getCurrentUserId() {
+    final currentUser = _auth.currentUser;
+    return currentUser?.uid;
   }
 
   Future<UserCredential> loginUser(String email, String password) async {
@@ -28,5 +36,15 @@ class UserService {
 
   Future<DocumentSnapshot> getUserData(String uid) async {
     return await _firestore.collection('users').doc(uid).get();
+  }
+
+  Future<void> updateUserData(
+      String userId, Map<String, dynamic> updatedData) async {
+    try {
+      await firestore.collection('users').doc(userId).update(updatedData);
+    } catch (e) {
+      print('Error updating user data: $e');
+      rethrow;
+    }
   }
 }

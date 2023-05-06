@@ -15,6 +15,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.5
+  subtitle_wrapper_package: ^2.1.1
   video_player: ^2.6.1
 
 dev_dependencies:
@@ -50,9 +51,19 @@ flutter:
         
     - family: Bebas
       fonts:
-        - asset: assets/fonts/BebasNeue-Regular.ttf
+        - asset: assets/fonts/bebas/BebasNeue-Regular.ttf
           weight: 700
+    - family: Arial
+      fonts:
+        - asset: assets/fonts/arial\ARIAL.TTF
+        - asset: assets/fonts/arial\ARIALBD.TTF
+        - asset: assets/fonts/arial\ARIALBI.TTF
+        - asset: assets/fonts/arial\ARIALBLACKITALIC.TTF
+        - asset: assets/fonts/arial\ArialCEBoldItalic.ttf
+        - asset: assets/fonts/arial\ArialCEItalic.ttf
+        
   assets:
       - assets/images/
+      - assets/images/avatars/
 
 

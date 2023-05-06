@@ -42,15 +42,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void dispose() {
-    super.dispose();
-    _emailInputNode?.dispose();
-    _passwordInputNode?.dispose();
-    _loginButtonNode?.dispose();
-    _forgotPasswordNode?.dispose();
-    _registerButtonNode?.dispose();
-  }
-
   _changeFocus(BuildContext context, FocusNode node) {
     FocusScope.of(context).requestFocus(node);
     setState(() {});
@@ -58,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_emailController == null) {
+    if (_emailInputNode == null) {
       _setFirstFocus(context);
     }
     return Shortcuts(
@@ -70,171 +61,100 @@ class _LoginPageState extends State<LoginPage> {
         LogicalKeySet(LogicalKeyboardKey.select): EnterButtonIntent(),
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('Login')),
         body: Padding(
           padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Actions(
-                actions: <Type, Action<Intent>>{
-                  DownButtonIntent: CallbackAction<DownButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _passwordInputNode!);
-                    },
+          child: Align(
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
                   ),
-                },
-                child: Focus(
-                  focusNode: _emailInputNode,
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(labelText: 'Email'),
-                  ),
+                  textInputAction: TextInputAction.next,
+                  onEditingComplete: () {
+                    FocusScope.of(context).requestFocus(_passwordInputNode);
+                  },
                 ),
-              ),
-              Actions(
-                actions: <Type, Action<Intent>>{
-                  UpButtonIntent: CallbackAction<UpButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _emailInputNode!);
-                    },
-                  ),
-                  DownButtonIntent: CallbackAction<DownButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _loginButtonNode!);
-                    },
-                  ),
-                },
-                child: Focus(
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                TextField(
+                  controller: _passwordController,
                   focusNode: _passwordInputNode,
-                  child: TextField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(labelText: 'Şifre'),
+                  decoration: InputDecoration(
+                    labelText: 'Password',
                   ),
-                ),
-              ),
-              Actions(
-                actions: <Type, Action<Intent>>{
-                  UpButtonIntent: CallbackAction<UpButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _passwordInputNode!);
-                    },
-                  ),
-                  DownButtonIntent: CallbackAction<DownButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _forgotPasswordNode!);
-                    },
-                  ),
-                  EnterButtonIntent: CallbackAction<EnterButtonIntent>(
-                    onInvoke: (intent) async {
-                      try {
-                        await _userService.loginUser(
-                          _emailController.text,
-                          _passwordController.text,
-                        );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomePage(),
-                          ),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
-                        );
-                      }
-                    },
-                  ),
-                },
-                child: Focus(
-                  focusNode: _loginButtonNode,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        await _userService.loginUser(
-                          _emailController.text,
-                          _passwordController.text,
-                        );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomePage(),
-                          ),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
-                        );
-                      }
-                    },
-                    child: Text('Giriş yap'),
-                  ),
-                ),
-              ),
-              Actions(
-                actions: <Type, Action<Intent>>{
-                  UpButtonIntent: CallbackAction<UpButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _loginButtonNode!);
-                    },
-                  ),
-                  EnterButtonIntent: CallbackAction<EnterButtonIntent>(
-                    onInvoke: (intent) {
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+                  onEditingComplete: () async {
+                    try {
+                      await _userService.loginUser(
+                        _emailController.text,
+                        _passwordController.text,
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RegisterPage(),
+                          builder: (context) => HomePage(),
                         ),
                       );
-                    },
-                  ),
-                  DownButtonIntent: CallbackAction<DownButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _registerButtonNode!);
-                    },
-                  ),
-                },
-                child: Focus(
-                  focusNode: _forgotPasswordNode,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text('Şifremi unuttum'),
-                  ),
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  },
                 ),
-              ),
-              Actions(
-                actions: <Type, Action<Intent>>{
-                  UpButtonIntent: CallbackAction<UpButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _forgotPasswordNode!);
-                    },
-                  ),
-                  EnterButtonIntent: CallbackAction<EnterButtonIntent>(
-                    onInvoke: (intent) {
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    try {
+                      await _userService.loginUser(
+                        _emailController.text,
+                        _passwordController.text,
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RegisterPage(),
+                          builder: (context) => HomePage(),
                         ),
                       );
-                    },
-                  ),
-                },
-                child: Focus(
-                  focusNode: _forgotPasswordNode,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RegisterPage(),
-                        ),
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
                       );
-                    },
-                    child: Text('Hemen kayıt ol'),
-                  ),
+                    }
+                  },
+                  child: Text('Giriş Yap'),
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text('Şifreni mi unuttun?'),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RegisterPage(),
+                      ),
+                    );
+                  },
+                  child: Text('Kayıt ol'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

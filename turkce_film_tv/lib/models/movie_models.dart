@@ -6,6 +6,7 @@ class Movie {
   final String categories;
   final String imdbRating;
   final String duration;
+  final String? subtitle;
   final String url;
 
   Movie({
@@ -16,6 +17,7 @@ class Movie {
     required this.categories,
     required this.imdbRating,
     required this.duration,
+    this.subtitle,
     required this.url,
   });
 
@@ -27,6 +29,8 @@ class Movie {
       backgroundImageUrl: json['backgroundImageUrl'] as String,
       categories: (json['categories'] as String),
       imdbRating: (json['imdbRating'] as String),
+      subtitle:
+          json.containsKey('subtitle') ? (json['subtitle'] as String) : null,
       duration: (json['duration'] as String),
       url: json['url'] as String,
     );
@@ -41,6 +45,7 @@ class Movie {
       'categories': categories,
       'imdbRating': imdbRating,
       'duration': duration,
+      'subtitle': subtitle,
       'url': url,
     };
   }
