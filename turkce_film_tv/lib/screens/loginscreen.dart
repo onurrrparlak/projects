@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:turkce_film_tv/screens/register.dart';
 import '../services/user_service.dart';
+import 'homepage.dart';
 
 class LeftButtonIntent extends Intent {}
 
@@ -107,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                   focusNode: _passwordInputNode,
                   child: TextField(
                     controller: _passwordController,
-                    decoration: InputDecoration(labelText: 'Email'),
+                    decoration: InputDecoration(labelText: 'Şifre'),
                   ),
                 ),
               ),
@@ -130,9 +131,16 @@ class _LoginPageState extends State<LoginPage> {
                           _emailController.text,
                           _passwordController.text,
                         );
-                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(),
+                          ),
+                        );
                       } catch (e) {
-                        print(e);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
                       }
                     },
                   ),
@@ -146,12 +154,19 @@ class _LoginPageState extends State<LoginPage> {
                           _emailController.text,
                           _passwordController.text,
                         );
-                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(),
+                          ),
+                        );
                       } catch (e) {
-                        print(e);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
                       }
                     },
-                    child: Text('Login'),
+                    child: Text('Giriş yap'),
                   ),
                 ),
               ),

@@ -18,10 +18,10 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _selectedAvatar;
 
   final List<String> _avatars = [
-    'assets/images/defaultavatar.png',
-    'assets/images/defaultavatar.png',
-    'assets/images/defaultavatar.png',
-    'assets/images/defaultavatar.png',
+    'assets/images/1.png',
+    'assets/images/1.png',
+    'assets/images/1.png',
+    'assets/images/1.png',
   ];
 
   final _formKey = GlobalKey<FormState>();
@@ -70,12 +70,18 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         child: SizedBox(
                           width: 200,
-                          child: TextFormField(
-                            initialValue: _username,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            enabled: false,
+                            child: TextFormField(
+                              initialValue: _username,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                              ),
+                              enabled: false,
+                            ),
                           ),
                         ),
                       ),
@@ -151,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _submit,
-                child: const Text('Submit'),
+                child: const Text('Güncelle'),
               ),
               ElevatedButton(
                 onPressed: () async {

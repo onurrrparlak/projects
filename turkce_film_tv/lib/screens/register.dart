@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/user_service.dart';
+import 'homepage.dart';
 
 class LeftButtonIntent extends Intent {}
 
@@ -201,7 +202,12 @@ class _RegisterPageState extends State<RegisterPage> {
                             _passwordController.text,
                             _usernameController.text,
                           );
-                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomePage(),
+                            ),
+                          );
                         } catch (e) {
                           print(e);
                         }

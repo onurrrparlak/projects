@@ -12,7 +12,7 @@ class UserService {
     await _firestore.collection('users').doc(userCredential.user!.uid).set({
       'username': username,
       'email': email,
-      // Add other fields as needed, e.g., 'avatar': 'default_avatar_url'
+      'avatar': 1,
     });
     return userCredential;
   }
