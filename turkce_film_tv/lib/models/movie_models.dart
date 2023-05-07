@@ -3,7 +3,7 @@ class Movie {
   final String posterImageUrl;
   final String releaseYear;
   final String backgroundImageUrl;
-  final String categories;
+  final List<String> categories;
   final String imdbRating;
   final String duration;
   final String? subtitle;
@@ -27,7 +27,9 @@ class Movie {
       posterImageUrl: json['posterImageUrl'] as String,
       releaseYear: json['releaseYear'] as String,
       backgroundImageUrl: json['backgroundImageUrl'] as String,
-      categories: (json['categories'] as String),
+      categories: json['categories'] is String
+          ? [json['categories'] as String]
+          : List<String>.from(json['categories'] ?? []),
       imdbRating: (json['imdbRating'] as String),
       subtitle:
           json.containsKey('subtitle') ? (json['subtitle'] as String) : null,

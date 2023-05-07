@@ -11,6 +11,7 @@ import 'package:turkce_film_tv/screens/videoplayer.dart';
 import 'package:turkce_film_tv/screens/watchlist.dart';
 
 import '../services/user_service.dart';
+import 'categories.dart';
 
 class LeftButtonIntent extends Intent {}
 
@@ -460,26 +461,28 @@ class _HomePageState extends State<HomePage> {
                                             });
                                           },
                                           child: Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: !(_userAvatarNode
-                                                            ?.hasFocus ??
-                                                        false)
-                                                    ? Colors.transparent
-                                                    : Colors.white,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.0035,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: !(_userAvatarNode
+                                                              ?.hasFocus ??
+                                                          false)
+                                                      ? Colors.transparent
+                                                      : Colors.white,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.0035,
+                                                ),
                                               ),
-                                            ),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.050,
-                                            child: Image.asset(
-                                                'assets/images/avatars/$avatar.jpg'),
-                                          ),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.070,
+                                              child: CircleAvatar(
+                                                radius: 20,
+                                                backgroundImage: AssetImage(
+                                                    'assets/images/avatars/$avatar.jpg'),
+                                              )),
                                         ),
                                       );
                                     }
@@ -505,12 +508,11 @@ class _HomePageState extends State<HomePage> {
                                           padding: EdgeInsets.fromLTRB(
                                             MediaQuery.of(context).size.width *
                                                 0.05, // 5% of the screen width as left padding
-                                            MediaQuery.of(context).size.height *
-                                                0.02, // 2% of the screen height as top padding
+                                            0, // 2% of the screen height as top padding
                                             MediaQuery.of(context).size.width *
                                                 0.05, // 5% of the screen width as right padding
                                             MediaQuery.of(context).size.height *
-                                                0.02,
+                                                0.0,
                                           ),
                                           child: Align(
                                             alignment: Alignment.centerLeft,
@@ -733,12 +735,14 @@ class _HomePageState extends State<HomePage> {
                                                           ),
                                                         );
                                                       },
-                                                      child: Text(
-                                                        'Oynat',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
+                                                      child: FittedBox(
+                                                        child: Text(
+                                                          'Oynat',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -867,9 +871,12 @@ class _HomePageState extends State<HomePage> {
                                                                     setState(
                                                                         () {});
                                                                   },
-                                                                  child: Text(isOnWatchlist
-                                                                      ? 'Listeden Sil'
-                                                                      : 'Listeye ekle'),
+                                                                  child:
+                                                                      FittedBox(
+                                                                    child: Text(isOnWatchlist
+                                                                        ? 'Listeden Sil'
+                                                                        : 'Listeye ekle'),
+                                                                  ),
                                                                 ),
                                                               ),
                                                             );
@@ -1133,7 +1140,7 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                                 UserWatchlistPage(),
-                                Text('Page 3'),
+                                CategoriesScreen(),
                                 ProfilePage(),
                               ],
                             ),
