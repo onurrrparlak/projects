@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:turkce_film_tv/screens/videoplayer.dart';
 
 class CategoriesScreen extends StatefulWidget {
   @override
@@ -7,50 +8,152 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  List<DocumentSnapshot> _actionMovies = [];
+  List<DocumentSnapshot> _movies = [];
+  late String _selectedCategory;
 
   @override
   void initState() {
     super.initState();
-    _getActionMovies();
+    _selectedCategory = 'Aile';
+    _getMovies();
   }
 
-  Future<void> _getActionMovies() async {
-    var actionCategory = await FirebaseFirestore.instance
-        .collection('categories')
-        .where('name', isEqualTo: 'Action')
-        .get();
+  Future<void> _getMovies() async {
+    Query query = FirebaseFirestore.instance.collection('movies');
 
-    print('Action category: $actionCategory');
+    if (_selectedCategory != null) {
+      query = query.where('categories', arrayContains: _selectedCategory);
+    }
 
-    var actionCategoryId = actionCategory.docs.first.id;
+    var querySnapshot = await query.get();
 
-    print('Action category ID: $actionCategoryId');
-
-    var querySnapshot = await FirebaseFirestore.instance
-        .collection('movies')
-        .where('categories', arrayContains: 'category1')
-        .get();
-    print('Query snapshot: ${querySnapshot.docs}');
     setState(() {
-      _actionMovies = querySnapshot.docs;
+      _movies = querySnapshot.docs;
     });
-    print('Aksiyon filmleri $_actionMovies');
+  }
+
+  void _onCategorySelected(String category) {
+    setState(() {
+      _selectedCategory = category;
+    });
+
+    _getMovies();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: _actionMovies.length,
-        itemBuilder: (context, index) {
-          var movie = _actionMovies[index].data() as Map<String, dynamic>;
+      backgroundColor: Colors.transparent,
+      body: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              categoryButton('Aile', _selectedCategory == 'Aile'),
+              categoryButton('Aksiyon', _selectedCategory == 'Aksiyon'),
+              categoryButton('Bilim Kurgu', _selectedCategory == 'Bilim Kurgu'),
+              categoryButton('Biyografi', _selectedCategory == 'Biyografi'),
+              categoryButton('Çocuk', _selectedCategory == 'Çocuk'),
+              categoryButton('Dram', _selectedCategory == 'Dram'),
+              categoryButton('Fantastik', _selectedCategory == 'Fantastik'),
+              categoryButton('Gerilim', _selectedCategory == 'Gerilim'),
+              categoryButton('Gizem', _selectedCategory == 'Gizem'),
+              categoryButton('Komedi', _selectedCategory == 'Komedi'),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              categoryButton('Korku', _selectedCategory == 'Korku'),
+              categoryButton('Macera', _selectedCategory == 'Macera'),
+              categoryButton('Müzikal', _selectedCategory == 'Müzikal'),
+              categoryButton('Polisiye', _selectedCategory == 'Polisiye'),
+              categoryButton('Psikoloji', _selectedCategory == 'Psikoloji'),
+              categoryButton('Romantik', _selectedCategory == 'Romantik'),
+              categoryButton('Savaş', _selectedCategory == 'Savaş'),
+              categoryButton('Spor', _selectedCategory == 'Spor'),
+              categoryButton('Suç', _selectedCategory == 'Suç'),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              MediaQuery.of(context).size.width * 0.06,
+              MediaQuery.of(context).size.width * 0.02,
+              MediaQuery.of(context).size.width * 0.06,
+              MediaQuery.of(context).size.width * 0.02,
+            ),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: GridView.builder(
+                itemCount: _movies.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  childAspectRatio: 5 / 3,
+                ),
+                itemBuilder: (context, index) {
+                  final Map<String, dynamic> movieData =
+                      (_movies[index] as DocumentSnapshot<Map<String, dynamic>>)
+                          .data()!;
+                  final String? subtitle = movieData.containsKey('subtitle')
+                      ? movieData['subtitle'].toString()
+                      : null;
 
-          return ListTile(
-            title: Text(movie['title'] ?? ''),
-            subtitle: Text(movie['year'].toString()),
-          );
-        },
+                  return GestureDetector(
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VideoPlayerScreen(
+                            videoUrl: movieData['url'],
+                            subtitle: subtitle,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      child: AspectRatio(
+                        aspectRatio: 5 / 3,
+                        child: Container(
+                          padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * 0.0045,
+                          ),
+                          child: Image.network(
+                            _movies[index]['posterImageUrl'],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ElevatedButton categoryButton(String categoryName, bool isSelected) {
+    Color buttonColor = isSelected ? Colors.black : Colors.grey[900]!;
+    return ElevatedButton(
+      onPressed: () {
+        _onCategorySelected(categoryName);
+      },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(buttonColor),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        side: MaterialStateProperty.all<BorderSide>(
+          BorderSide(color: Colors.white, width: 1.0),
+        ),
+      ),
+      child: Text(
+        categoryName,
+        style: TextStyle(color: Colors.white),
       ),
     );
   }

@@ -141,6 +141,12 @@ class _HomePageState extends State<HomePage> {
                     ? 10.0 // Use default position if selectedMovieIndex is not in the last indexes
                     : leftPositions[selectedLastIndex];
 
+                List<String> categoryNames = selectedMovie.categories
+                    .map((category) => category.split(',')[0])
+                    .toList();
+                String categoriesString = categoryNames.join(', ');
+                print(categoriesString);
+
                 return Stack(
                   children: [
                     Row(
@@ -477,9 +483,9 @@ class _HomePageState extends State<HomePage> {
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.070,
+                                                  0.075,
                                               child: CircleAvatar(
-                                                radius: 20,
+                                                radius: 30,
                                                 backgroundImage: AssetImage(
                                                     'assets/images/avatars/$avatar.jpg'),
                                               )),
@@ -593,7 +599,7 @@ class _HomePageState extends State<HomePage> {
                                                                 .width *
                                                             0.02),
                                               ),
-                                              Text('Action, Comedy'),
+                                              Text(categoriesString),
                                               Text(
                                                 '•',
                                                 style: TextStyle(
@@ -864,8 +870,8 @@ class _HomePageState extends State<HomePage> {
                                                                           .set({
                                                                         'movieId':
                                                                             selectedMovieIndex,
-                                                                        'timestamp':
-                                                                            FieldValue.serverTimestamp(),
+                                                                        'isWatched':
+                                                                            false,
                                                                       });
                                                                     }
                                                                     setState(
@@ -942,7 +948,7 @@ class _HomePageState extends State<HomePage> {
 
                                               double prevMovieOffset =
                                                   itemWidth *
-                                                          (selectedMovieIndex -
+                                                          (selectedMovieIndex +
                                                               1) -
                                                       _scrollController
                                                           .position.pixels;
@@ -975,7 +981,7 @@ class _HomePageState extends State<HomePage> {
 
                                               double nextMovieOffset =
                                                   itemWidth *
-                                                          (selectedMovieIndex +
+                                                          (selectedMovieIndex -
                                                               1) -
                                                       _scrollController
                                                           .position.pixels;
