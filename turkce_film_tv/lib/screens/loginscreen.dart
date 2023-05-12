@@ -15,6 +15,8 @@ class DownButtonIntent extends Intent {}
 class EnterButtonIntent extends Intent {}
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -62,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       child: Scaffold(
         body: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Align(
             alignment: Alignment.center,
             child: Column(
@@ -70,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 TextField(
                   controller: _emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Email',
                   ),
                   textInputAction: TextInputAction.next,
@@ -84,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextField(
                   controller: _passwordController,
                   focusNode: _passwordInputNode,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Password',
                   ),
                   obscureText: true,
@@ -98,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomePage(),
+                          builder: (context) => const HomePage(),
                         ),
                       );
                     } catch (e) {
@@ -121,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomePage(),
+                          builder: (context) => const HomePage(),
                         ),
                       );
                     } catch (e) {
@@ -130,14 +132,14 @@ class _LoginPageState extends State<LoginPage> {
                       );
                     }
                   },
-                  child: Text('Giriş Yap'),
+                  child: const Text('Giriş Yap'),
                 ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.02,
                 ),
                 TextButton(
                   onPressed: () {},
-                  child: Text('Şifreni mi unuttun?'),
+                  child: const Text('Şifreni mi unuttun?'),
                 ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.02,
@@ -147,11 +149,11 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => RegisterPage(),
+                        builder: (context) => const RegisterPage(),
                       ),
                     );
                   },
-                  child: Text('Kayıt ol'),
+                  child: const Text('Kayıt ol'),
                 ),
               ],
             ),

@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:turkce_film_tv/screens/videoplayer.dart';
 
 class UserWatchlistPage extends StatefulWidget {
+  const UserWatchlistPage({super.key});
+
   @override
   _UserWatchlistPageState createState() => _UserWatchlistPageState();
 }
@@ -36,65 +38,268 @@ class _UserWatchlistPageState extends State<UserWatchlistPage> {
         child: StreamBuilder<QuerySnapshot>(
           stream: _watchlistRef.snapshots(),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final movies = snapshot.data!.docs.map((doc) => doc.id).toList();
-              return GridView.builder(
-                itemCount: movies.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  childAspectRatio: 5 / 3,
-                ),
-                itemBuilder: (context, index) {
-                  return FutureBuilder<DocumentSnapshot>(
-                    future: FirebaseFirestore.instance
-                        .collection('movies')
-                        .doc(movies[index].toString())
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        final movie = snapshot.data!;
-                        final movieData = movie.data() as Map<String, dynamic>;
-                        return GestureDetector(
-                          onTap: () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => VideoPlayerScreen(
-                                  videoUrl: movie.get('url'),
-                                  subtitle: movieData.containsKey('subtitle')
-                                      ? movieData['subtitle']
-                                      : null,
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final movies = snapshot.data!.docs;
+
+            final watchedMovies = movies
+                .where(
+                    (doc) => (doc.data() as Map<String, dynamic>)['isWatched'])
+                .toList();
+
+            final notWatchedMovies = movies
+                .where(
+                    (doc) => !(doc.data() as Map<String, dynamic>)['isWatched'])
+                .toList();
+
+            return movies.isEmpty
+                ? const Text('Listenize henüz film eklememişsiniz')
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                            'İzleyeceklerim (${notWatchedMovies.length})',
+                            style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.02,
+                                fontWeight: FontWeight.w400)),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.25,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemCount: notWatchedMovies.length,
+                          itemBuilder: (context, index) {
+                            final movieId = (notWatchedMovies[index].data()
+                                as Map<String, dynamic>)['movieId'];
+
+                            return Row(
+                              children: [
+                                Column(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        final movieRef = FirebaseFirestore
+                                            .instance
+                                            .collection('users')
+                                            .doc(_currentUser.uid)
+                                            .collection('watchlist')
+                                            .doc(movieId.toString());
+                                        final movie = await movieRef.get();
+                                        if (movie.exists) {
+                                          await movieRef.delete();
+                                        }
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        final movieRef = FirebaseFirestore
+                                            .instance
+                                            .collection('users')
+                                            .doc(_currentUser.uid)
+                                            .collection('watchlist')
+                                            .doc(movieId.toString());
+                                        final movie = await movieRef.get();
+                                        if (movie.exists) {
+                                          final isWatched =
+                                              movie.data()!['isWatched'];
+                                          await movieRef.update(
+                                              {'isWatched': !isWatched});
+                                        } else {
+                                          await movieRef.set({
+                                            'movieId': movieId,
+                                            'isWatched': false,
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              ),
+                                FutureBuilder<
+                                    QuerySnapshot<Map<String, dynamic>>>(
+                                  future: FirebaseFirestore.instance
+                                      .collection('movies')
+                                      .where('movieId', isEqualTo: movieId)
+                                      .limit(1)
+                                      .get(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
+
+                                    var movieData =
+                                        snapshot.data!.docs.first.data();
+                                    final movieTitle = movieData['title'];
+                                    final movieUrl = movieData['url'];
+
+                                    final movieImage =
+                                        movieData['posterImageUrl'];
+
+                                    return GestureDetector(
+                                      onTap: () async {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                VideoPlayerScreen(
+                                              videoUrl: movieUrl,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: AspectRatio(
+                                        aspectRatio: 5 / 3,
+                                        child: Container(
+                                          padding: EdgeInsets.all(
+                                            MediaQuery.of(context).size.width *
+                                                0.0045,
+                                          ),
+                                          child: Image.network(
+                                            movieImage,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             );
                           },
-                          child: Container(
-                            child: AspectRatio(
-                              aspectRatio: 5 / 3,
-                              child: Container(
-                                padding: EdgeInsets.all(
-                                  MediaQuery.of(context).size.width * 0.0045,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('İzlediklerim (${watchedMovies.length})',
+                            style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.02,
+                                fontWeight: FontWeight.w400)),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.25,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemCount: watchedMovies.length,
+                          itemBuilder: (context, index) {
+                            final movieId = (watchedMovies[index].data()
+                                as Map<String, dynamic>)['movieId'];
+
+                            return Row(
+                              children: [
+                                Column(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        final movieRef = FirebaseFirestore
+                                            .instance
+                                            .collection('users')
+                                            .doc(_currentUser.uid)
+                                            .collection('watchlist')
+                                            .doc(movieId.toString());
+                                        final movie = await movieRef.get();
+                                        if (movie.exists) {
+                                          await movieRef.delete();
+                                        }
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        final movieRef = FirebaseFirestore
+                                            .instance
+                                            .collection('users')
+                                            .doc(_currentUser.uid)
+                                            .collection('watchlist')
+                                            .doc(movieId.toString());
+                                        final movie = await movieRef.get();
+                                        if (movie.exists) {
+                                          final isWatched =
+                                              movie.data()!['isWatched'];
+                                          await movieRef.update(
+                                              {'isWatched': !isWatched});
+                                        } else {
+                                          await movieRef.set({
+                                            'movieId': movieId,
+                                            'isWatched': false,
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ],
                                 ),
-                                child: Image.network(
-                                  movie.get('posterImageUrl'),
-                                  fit: BoxFit.cover,
+                                FutureBuilder<
+                                    QuerySnapshot<Map<String, dynamic>>>(
+                                  future: FirebaseFirestore.instance
+                                      .collection('movies')
+                                      .where('movieId', isEqualTo: movieId)
+                                      .limit(1)
+                                      .get(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    var movieData =
+                                        snapshot.data!.docs.first.data();
+                                    final movieTitle = movieData['title'];
+                                    final movieUrl = movieData['url'];
+
+                                    final movieImage =
+                                        movieData['posterImageUrl'];
+                                    String? subtitle =
+                                        movieData.containsKey('subtitle')
+                                            ? movieData['subtitle']
+                                            : null;
+
+                                    return GestureDetector(
+                                      onTap: () async {},
+                                      child: AspectRatio(
+                                        aspectRatio: 5 / 3,
+                                        child: Container(
+                                          padding: EdgeInsets.all(
+                                            MediaQuery.of(context).size.width *
+                                                0.0045,
+                                          ),
+                                          child: Image.network(
+                                            movieImage,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Container();
-                      }
-                    },
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   );
-                },
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
           },
         ),
       ),

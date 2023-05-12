@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Movie {
   final String title;
   final String posterImageUrl;
@@ -8,6 +10,7 @@ class Movie {
   final String duration;
   final String? subtitle;
   final String url;
+  final DateTime timestamp;
 
   Movie({
     required this.title,
@@ -19,6 +22,7 @@ class Movie {
     required this.duration,
     this.subtitle,
     required this.url,
+    required this.timestamp,
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
@@ -35,6 +39,7 @@ class Movie {
           json.containsKey('subtitle') ? (json['subtitle'] as String) : null,
       duration: (json['duration'] as String),
       url: json['url'] as String,
+      timestamp: (json['timestamp'] as Timestamp).toDate(),
     );
   }
 
@@ -49,6 +54,7 @@ class Movie {
       'duration': duration,
       'subtitle': subtitle,
       'url': url,
+      'timestamp': timestamp.toIso8601String(),
     };
   }
 }

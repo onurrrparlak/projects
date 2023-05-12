@@ -14,8 +14,10 @@ dependencies:
   firebase_storage: ^11.1.1
   flutter:
     sdk: flutter
+  flutter_torrentz_stream: ^0.0.1
   provider: ^6.0.5
   subtitle_wrapper_package: ^2.1.1
+  torrent_streamer: ^0.0.2
   video_player: ^2.6.1
 
 dev_dependencies:

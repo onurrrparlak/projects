@@ -26,7 +26,7 @@ void main() async {
         child: MaterialApp(
           theme: ThemeData(
             fontFamily: 'Carossoft',
-            textTheme: TextTheme(
+            textTheme: const TextTheme(
               bodyMedium: TextStyle(color: Colors.white),
             ),
           ),
@@ -35,9 +35,9 @@ void main() async {
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
               if (snapshot.hasData) {
-                return HomePage();
+                return const HomePage();
               } else {
-                return LoginPage();
+                return const LoginPage();
               }
             },
           ),

@@ -94,13 +94,13 @@ class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
 
   _changePassword(String currentPassword, String newPassword) async {
-    final user = await FirebaseAuth.instance.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
     final cred = EmailAuthProvider.credential(
         email: user!.email!, password: currentPassword);
 
-    if (newPassword == null || newPassword.length < 6) {
+    if (newPassword.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
             content: Text('Yeni şifreniz 6 haneli veya daha fazla olmalıdır')),
       );
     }
@@ -110,13 +110,13 @@ class _ProfilePageState extends State<ProfilePage> {
         await _userService.logoutUser();
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
+          MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       }).catchError((error) {});
     }).catchError((err) {
       if (err.code == 'wrong-password') {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
               content:
                   Text('Girdiğiniz şifre hesabınızın şifresiyle aynı değil')),
         );
@@ -140,7 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
           future: getCurrentUser(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else {
               final userData = snapshot.data!;
               return Padding(
@@ -159,8 +159,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               width: 500,
                               child: Row(
                                 children: [
-                                  Text('Kullacını adı:'),
-                                  SizedBox(
+                                  const Text('Kullacını adı:'),
+                                  const SizedBox(
                                     width: 50,
                                   ),
                                   Container(
@@ -171,8 +171,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                     child: Theme(
                                       data: ThemeData(
                                         primaryColor: Colors.white,
-                                        textTheme: TextTheme(
-                                          subtitle1:
+                                        textTheme: const TextTheme(
+                                          titleMedium:
                                               TextStyle(color: Colors.white),
                                         ),
                                       ),
@@ -188,11 +188,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                           child: TextFormField(
                                             initialValue: userData['username'],
                                             enabled: false,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: Colors
                                                   .white, // set the initial value color
                                             ),
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                               border: OutlineInputBorder(),
                                             ),
                                           ),
@@ -206,8 +206,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             const SizedBox(height: 16.0),
                             Row(
                               children: [
-                                Text('Güncel şifrenizi giriniz:'),
-                                SizedBox(
+                                const Text('Güncel şifrenizi giriniz:'),
+                                const SizedBox(
                                   width: 50,
                                 ),
                                 SizedBox(
@@ -218,7 +218,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: TextFormField(
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors
                                             .white, // set the initial value color
                                       ),
@@ -233,8 +233,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             const SizedBox(height: 16.0),
                             Row(
                               children: [
-                                Text('Yeni şifrenizi giriniz:'),
-                                SizedBox(
+                                const Text('Yeni şifrenizi giriniz:'),
+                                const SizedBox(
                                   width: 50,
                                 ),
                                 SizedBox(
@@ -267,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => LoginPage()),
+                                      builder: (context) => const LoginPage()),
                                 );
                               },
                               child: const Text('Çıkış yap'),
@@ -291,7 +291,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: GridView.builder(
                                     itemCount: _avatars.length,
                                     gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 6,
                                       childAspectRatio: 1.0,
                                       mainAxisSpacing: 10.0,
@@ -321,7 +321,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           ),
                                           child:
                                               _selectedAvatar == _avatars[index]
-                                                  ? Icon(Icons.check_circle,
+                                                  ? const Icon(Icons.check_circle,
                                                       color: Colors.white,
                                                       size: 50.0)
                                                   : Container(),

@@ -14,6 +14,8 @@ class DownButtonIntent extends Intent {}
 class EnterButtonIntent extends Intent {}
 
 class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
@@ -46,6 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  @override
   void dispose() {
     super.dispose();
     _emailInputNode?.dispose();
@@ -76,7 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
       },
       child: Scaffold(
         body: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
               Actions(
@@ -84,6 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   DownButtonIntent: CallbackAction<DownButtonIntent>(
                     onInvoke: (intent) async {
                       await _changeFocus(context, _emailInputNode!);
+                      return null;
                     },
                   ),
                 },
@@ -91,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   focusNode: _usernameInputNode,
                   child: TextField(
                     controller: _usernameController,
-                    decoration: InputDecoration(labelText: 'Kullanıcı adı'),
+                    decoration: const InputDecoration(labelText: 'Kullanıcı adı'),
                   ),
                 ),
               ),
@@ -100,11 +104,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   UpButtonIntent: CallbackAction<UpButtonIntent>(
                     onInvoke: (intent) async {
                       await _changeFocus(context, _usernameInputNode!);
+                      return null;
                     },
                   ),
                   DownButtonIntent: CallbackAction<DownButtonIntent>(
                     onInvoke: (intent) async {
                       await _changeFocus(context, _passwordInputNode!);
+                      return null;
                     },
                   ),
                 },
@@ -112,7 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   focusNode: _emailInputNode,
                   child: TextField(
                     controller: _emailController,
-                    decoration: InputDecoration(labelText: 'E-posta'),
+                    decoration: const InputDecoration(labelText: 'E-posta'),
                   ),
                 ),
               ),
@@ -121,11 +127,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   UpButtonIntent: CallbackAction<UpButtonIntent>(
                     onInvoke: (intent) async {
                       await _changeFocus(context, _emailInputNode!);
+                      return null;
                     },
                   ),
                   DownButtonIntent: CallbackAction<DownButtonIntent>(
                     onInvoke: (intent) async {
                       await _changeFocus(context, _passwordAgainNode!);
+                      return null;
                     },
                   ),
                 },
@@ -133,7 +141,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   focusNode: _passwordInputNode,
                   child: TextField(
                     controller: _passwordController,
-                    decoration: InputDecoration(labelText: 'Şifre'),
+                    decoration: const InputDecoration(labelText: 'Şifre'),
                     obscureText: false,
                   ),
                 ),
@@ -143,11 +151,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   UpButtonIntent: CallbackAction<UpButtonIntent>(
                     onInvoke: (intent) async {
                       await _changeFocus(context, _passwordInputNode!);
+                      return null;
                     },
                   ),
                   DownButtonIntent: CallbackAction<DownButtonIntent>(
                     onInvoke: (intent) async {
                       await _changeFocus(context, _registerNode!);
+                      return null;
                     },
                   ),
                 },
@@ -155,7 +165,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   focusNode: _passwordAgainNode,
                   child: TextField(
                     controller: _passwordAgainController,
-                    decoration: InputDecoration(labelText: 'Şifre Tekrar'),
+                    decoration: const InputDecoration(labelText: 'Şifre Tekrar'),
                     obscureText: false,
                   ),
                 ),
@@ -165,6 +175,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   UpButtonIntent: CallbackAction<UpButtonIntent>(
                     onInvoke: (intent) async {
                       await _changeFocus(context, _passwordAgainNode!);
+                      return null;
                     },
                   ),
                   EnterButtonIntent: CallbackAction<EnterButtonIntent>(
@@ -183,10 +194,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                               content: Text('Girdiğiniz şifreler aynı değil')),
                         );
                       }
+                      return null;
                     },
                   ),
                 },
@@ -205,7 +217,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HomePage(),
+                              builder: (context) => const HomePage(),
                             ),
                           );
                         } catch (e) {
@@ -213,16 +225,16 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                               content: Text('Girdiğiniz şifreler aynı değil')),
                         );
                       }
                     },
-                    child: Text('Kayıt ol'),
+                    child: const Text('Kayıt ol'),
                   ),
                 ),
               ),
-              ElevatedButton(onPressed: () {}, child: Text('Geri Dön'))
+              ElevatedButton(onPressed: () {}, child: const Text('Geri Dön'))
             ],
           ),
         ),

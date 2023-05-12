@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:turkce_film_tv/models/movie_models.dart';
 import 'package:turkce_film_tv/provider/movie_provider.dart';
 import 'package:turkce_film_tv/screens/profilepage.dart';
 import 'package:turkce_film_tv/screens/videoplayer.dart';
@@ -13,6 +12,7 @@ import 'package:turkce_film_tv/screens/watchlist.dart';
 import '../services/user_service.dart';
 import 'categories.dart';
 
+//flutter build apk -t lib/main.dart
 class LeftButtonIntent extends Intent {}
 
 class RightButtonIntent extends Intent {}
@@ -76,6 +76,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  @override
   void dispose() {
     super.dispose();
     _homePageNode?.dispose();
@@ -112,7 +113,7 @@ class _HomePageState extends State<HomePage> {
       body: !_isOnline
           ? Center(
               child: Container(
-                  color: Colors.black, child: Text('İnternet bağlantınız yok')),
+                  color: Colors.black, child: const Text('İnternet bağlantınız yok')),
             )
           : Consumer<MovieProvider>(
               builder: (context, movieProvider, child) {
@@ -161,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                           flex: 7,
                           child: ShaderMask(
                             shaderCallback: (rect) {
-                              return LinearGradient(
+                              return const LinearGradient(
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                                 colors: [Colors.black, Colors.transparent],
@@ -203,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                           Padding(
                             padding: EdgeInsets.fromLTRB(
                               MediaQuery.of(context).size.width * 0.05,
-                              MediaQuery.of(context).size.height * 0.01,
+                              0,
                               0,
                               0,
                             ),
@@ -225,6 +226,7 @@ class _HomePageState extends State<HomePage> {
                                             setState(() {
                                               _currentPageIndex = index;
                                             });
+                                            return null;
                                           },
                                         ),
                                         DownButtonIntent:
@@ -232,6 +234,7 @@ class _HomePageState extends State<HomePage> {
                                           onInvoke: (intent) async {
                                             await _changeFocus(
                                                 context, _playNode!);
+                                            return null;
                                           },
                                         ),
                                       },
@@ -240,20 +243,19 @@ class _HomePageState extends State<HomePage> {
                                         child: Container(
                                           child: TextButton(
                                             onPressed: () async {
-                                              int index = 0;
-                                              _pageController.jumpToPage(index);
-                                              setState(() {
-                                                _currentPageIndex = index;
-                                              });
-                                              await _changeFocus(
-                                                  context, _homePageNode!);
+                                              if (_currentPageIndex == 0) {
+                                              } else {
+                                                int index = 0;
+                                                _pageController
+                                                    .jumpToPage(index);
+                                                setState(() {
+                                                  _currentPageIndex = index;
+                                                });
+                                                await _changeFocus(
+                                                    context, _homePageNode!);
+                                              }
                                             },
                                             child: Container(
-                                              child: Text(
-                                                'Anasayfa',
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
                                               padding: EdgeInsets.only(
                                                 bottom: MediaQuery.of(context)
                                                         .size
@@ -276,6 +278,11 @@ class _HomePageState extends State<HomePage> {
                                                         ),
                                                       ),
                                               ),
+                                              child: const Text(
+                                                'Anasayfa',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -293,6 +300,7 @@ class _HomePageState extends State<HomePage> {
                                             setState(() {
                                               _currentPageIndex = index;
                                             });
+                                            return null;
                                           },
                                         ),
                                         RightButtonIntent:
@@ -305,6 +313,7 @@ class _HomePageState extends State<HomePage> {
                                             setState(() {
                                               _currentPageIndex = index;
                                             });
+                                            return null;
                                           },
                                         ),
                                         DownButtonIntent:
@@ -312,28 +321,13 @@ class _HomePageState extends State<HomePage> {
                                           onInvoke: (intent) async {
                                             await _changeFocus(
                                                 context, _playNode!);
+                                            return null;
                                           },
                                         ),
                                       },
                                       child: Focus(
                                         focusNode: _watchlistNode,
                                         child: Container(
-                                          child: TextButton(
-                                            onPressed: () async {
-                                              int index = 1;
-                                              _pageController.jumpToPage(index);
-                                              setState(() {
-                                                _currentPageIndex = index;
-                                              });
-                                              await _changeFocus(
-                                                  context, _watchlistNode!);
-                                            },
-                                            child: Text(
-                                              'Listem',
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                          ),
                                           padding: EdgeInsets.only(
                                             bottom: MediaQuery.of(context)
                                                     .size
@@ -356,6 +350,26 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                   ),
                                           ),
+                                          child: TextButton(
+                                            onPressed: () async {
+                                              if (_currentPageIndex == 1) {
+                                              } else {
+                                                int index = 1;
+                                                _pageController
+                                                    .jumpToPage(index);
+                                                setState(() {
+                                                  _currentPageIndex = index;
+                                                });
+                                                await _changeFocus(
+                                                    context, _watchlistNode!);
+                                              }
+                                            },
+                                            child: const Text(
+                                              'Listem',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -371,6 +385,7 @@ class _HomePageState extends State<HomePage> {
                                             setState(() {
                                               _currentPageIndex = index;
                                             });
+                                            return null;
                                           },
                                         ),
                                         RightButtonIntent:
@@ -383,6 +398,7 @@ class _HomePageState extends State<HomePage> {
                                             setState(() {
                                               _currentPageIndex = index;
                                             });
+                                            return null;
                                           },
                                         ),
                                         DownButtonIntent:
@@ -390,6 +406,7 @@ class _HomePageState extends State<HomePage> {
                                           onInvoke: (intent) async {
                                             await _changeFocus(
                                                 context, _playNode!);
+                                            return null;
                                           },
                                         ),
                                       },
@@ -398,20 +415,19 @@ class _HomePageState extends State<HomePage> {
                                         child: Container(
                                           child: TextButton(
                                             onPressed: () async {
-                                              int index = 2;
-                                              _pageController.jumpToPage(index);
-                                              setState(() {
-                                                _currentPageIndex = index;
-                                              });
-                                              await _changeFocus(
-                                                  context, _categoriesNode!);
+                                              if (_currentPageIndex == 2) {
+                                              } else {
+                                                int index = 2;
+                                                _pageController
+                                                    .jumpToPage(index);
+                                                setState(() {
+                                                  _currentPageIndex = index;
+                                                });
+                                                await _changeFocus(
+                                                    context, _categoriesNode!);
+                                              }
                                             },
                                             child: Container(
-                                              child: Text(
-                                                'Kategoriler',
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
                                               padding: EdgeInsets.only(
                                                 bottom: MediaQuery.of(context)
                                                         .size
@@ -434,6 +450,11 @@ class _HomePageState extends State<HomePage> {
                                                         ),
                                                       ),
                                               ),
+                                              child: const Text(
+                                                'Kategoriler',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -446,9 +467,9 @@ class _HomePageState extends State<HomePage> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return CircularProgressIndicator();
+                                      return const CircularProgressIndicator();
                                     } else if (!snapshot.hasData) {
-                                      return Text('No user data found');
+                                      return const Text('No user data found');
                                     } else {
                                       final avatar = snapshot.data!['avatar'];
                                       return Padding(
@@ -459,36 +480,44 @@ class _HomePageState extends State<HomePage> {
                                               0.050,
                                         ),
                                         child: GestureDetector(
-                                          onTap: () {
-                                            int index = 3;
-                                            _pageController.jumpToPage(index);
-                                            setState(() {
-                                              _currentPageIndex = index;
-                                            });
+                                          onTap: () async {
+                                            if (_currentPageIndex == 3) {
+                                            } else {
+                                              int index = 3;
+                                              _pageController.jumpToPage(index);
+                                              setState(() {
+                                                _currentPageIndex = index;
+                                              });
+                                              await _changeFocus(
+                                                  context, _userAvatarNode!);
+                                            }
                                           },
                                           child: Container(
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: !(_userAvatarNode
-                                                              ?.hasFocus ??
-                                                          false)
-                                                      ? Colors.transparent
-                                                      : Colors.white,
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.0035,
-                                                ),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: !(_userAvatarNode
+                                                            ?.hasFocus ??
+                                                        false)
+                                                    ? Colors.transparent
+                                                    : Colors.white,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.0035,
                                               ),
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.075,
-                                              child: CircleAvatar(
-                                                radius: 30,
-                                                backgroundImage: AssetImage(
-                                                    'assets/images/avatars/$avatar.jpg'),
-                                              )),
+                                            ),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.075,
+                                            child: ClipOval(
+                                              child: Image.asset(
+                                                'assets/images/avatars/$avatar.jpg',
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       );
                                     }
@@ -517,12 +546,11 @@ class _HomePageState extends State<HomePage> {
                                             0, // 2% of the screen height as top padding
                                             MediaQuery.of(context).size.width *
                                                 0.05, // 5% of the screen width as right padding
-                                            MediaQuery.of(context).size.height *
-                                                0.0,
+                                            0,
                                           ),
                                           child: Align(
                                             alignment: Alignment.centerLeft,
-                                            child: Container(
+                                            child: SizedBox(
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height *
@@ -564,7 +592,7 @@ class _HomePageState extends State<HomePage> {
                                               0),
                                           child: Row(
                                             children: [
-                                              Container(
+                                              SizedBox(
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width *
@@ -609,8 +637,7 @@ class _HomePageState extends State<HomePage> {
                                                                 .width *
                                                             0.02),
                                               ),
-                                              Text(selectedMovie.duration +
-                                                  ' dk'),
+                                              Text('${selectedMovie.duration} dk'),
                                             ],
                                           ),
                                         )
@@ -646,6 +673,7 @@ class _HomePageState extends State<HomePage> {
                                                   onInvoke: (intent) async {
                                                     await _changeFocus(context,
                                                         _addMyWishlistNode!);
+                                                    return null;
                                                   },
                                                 ),
                                                 UpButtonIntent: CallbackAction<
@@ -653,6 +681,7 @@ class _HomePageState extends State<HomePage> {
                                                   onInvoke: (intent) async {
                                                     await _changeFocus(context,
                                                         _homePageNode!);
+                                                    return null;
                                                   },
                                                 ),
                                                 EnterButtonIntent:
@@ -672,6 +701,7 @@ class _HomePageState extends State<HomePage> {
                                                                         .subtitle),
                                                       ),
                                                     );
+                                                    return null;
                                                   },
                                                 ),
                                                 DownButtonIntent:
@@ -680,6 +710,7 @@ class _HomePageState extends State<HomePage> {
                                                   onInvoke: (intent) async {
                                                     await _changeFocus(
                                                         context, _listNode!);
+                                                    return null;
                                                   },
                                                 ),
                                               },
@@ -741,7 +772,7 @@ class _HomePageState extends State<HomePage> {
                                                           ),
                                                         );
                                                       },
-                                                      child: FittedBox(
+                                                      child: const FittedBox(
                                                         child: Text(
                                                           'Oynat',
                                                           style: TextStyle(
@@ -763,6 +794,7 @@ class _HomePageState extends State<HomePage> {
                                                   onInvoke: (intent) async {
                                                     await _changeFocus(
                                                         context, _playNode!);
+                                                    return null;
                                                   },
                                                 ),
                                                 UpButtonIntent: CallbackAction<
@@ -770,6 +802,7 @@ class _HomePageState extends State<HomePage> {
                                                   onInvoke: (intent) async {
                                                     await _changeFocus(context,
                                                         _homePageNode!);
+                                                    return null;
                                                   },
                                                 ),
                                                 DownButtonIntent:
@@ -778,6 +811,7 @@ class _HomePageState extends State<HomePage> {
                                                   onInvoke: (intent) async {
                                                     await _changeFocus(
                                                         context, _listNode!);
+                                                    return null;
                                                   },
                                                 ),
                                               },
@@ -889,7 +923,7 @@ class _HomePageState extends State<HomePage> {
                                                           },
                                                         );
                                                       } else {
-                                                        return CircularProgressIndicator();
+                                                        return const CircularProgressIndicator();
                                                       }
                                                     },
                                                   ),
@@ -931,6 +965,7 @@ class _HomePageState extends State<HomePage> {
                                           onInvoke: (intent) async {
                                             await _changeFocus(
                                                 context, _playNode!);
+                                            return null;
                                           },
                                         ),
                                         LeftButtonIntent:
@@ -958,10 +993,11 @@ class _HomePageState extends State<HomePage> {
                                                         .position.pixels +
                                                     prevMovieOffset,
                                                 duration:
-                                                    Duration(milliseconds: 300),
+                                                    const Duration(milliseconds: 300),
                                                 curve: Curves.easeInOut,
                                               );
                                             }
+                                            return null;
                                           },
                                         ),
                                         RightButtonIntent:
@@ -991,10 +1027,11 @@ class _HomePageState extends State<HomePage> {
                                                         .position.pixels +
                                                     nextMovieOffset,
                                                 duration:
-                                                    Duration(milliseconds: 300),
+                                                    const Duration(milliseconds: 300),
                                                 curve: Curves.easeInOut,
                                               );
                                             }
+                                            return null;
                                           },
                                         ),
                                       },
@@ -1013,7 +1050,7 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                           child: Stack(
                                             children: [
-                                              Container(
+                                              SizedBox(
                                                 height: MediaQuery.of(context)
                                                         .size
                                                         .height *
@@ -1029,14 +1066,12 @@ class _HomePageState extends State<HomePage> {
                                                   itemBuilder:
                                                       (context, index) {
                                                     final movie = movieProvider
-                                                        .movies.reversed
+                                                        .movies
                                                         .toList()[index];
-                                                    final isSelected = movieProvider
-                                                            .selectedMovieIndex ==
+                                                    final isSelected = index ==
                                                         movieProvider
-                                                                .movies.length -
-                                                            index -
-                                                            1;
+                                                            .selectedMovieIndex;
+
                                                     final scale =
                                                         isSelected ? 1.15 : 1.0;
                                                     final hasListFocus =
@@ -1073,12 +1108,25 @@ class _HomePageState extends State<HomePage> {
                                                         scale: scale,
                                                         child: GestureDetector(
                                                           onTap: () {
-                                                            movieProvider.selectMovie(
+                                                            if (movieProvider
+                                                                    .selectedMovieIndex !=
+                                                                index) {
+                                                              movieProvider
+                                                                  .selectMovie(
+                                                                      index);
+                                                            } else if (movieProvider
+                                                                    .selectedMovieIndex ==
+                                                                0) {
+                                                            } else if (index <
                                                                 movieProvider
                                                                         .movies
                                                                         .length -
-                                                                    index -
-                                                                    1);
+                                                                    1) {
+                                                              movieProvider
+                                                                  .selectMovie(
+                                                                      index +
+                                                                          1);
+                                                            }
                                                           },
                                                           child: AspectRatio(
                                                             key: ValueKey(
@@ -1113,7 +1161,7 @@ class _HomePageState extends State<HomePage> {
                                               Visibility(
                                                 visible: _listNode!.hasFocus,
                                                 child: AnimatedPositioned(
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 300),
                                                   curve: Curves.easeInOut,
                                                   top: 0,
@@ -1145,9 +1193,9 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ],
                                 ),
-                                UserWatchlistPage(),
-                                CategoriesScreen(),
-                                ProfilePage(),
+                                const UserWatchlistPage(),
+                                const CategoriesScreen(),
+                                const ProfilePage(),
                               ],
                             ),
                           ),

@@ -10,15 +10,14 @@ class MovieProvider with ChangeNotifier {
   List<Movie> get movies => _movies;
   int get selectedMovieIndex => _selectedMovieIndex;
 
-  MovieProvider() {
-    _selectedMovieIndex = _movies.length - 1;
-  }
-
   Future<void> fetchMovies() async {
-    final snapshot =
-        await FirebaseFirestore.instance.collection('movies').get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('movies')
+        .orderBy('timestamp', descending: true)
+        .get();
     _movies = snapshot.docs.map((doc) => Movie.fromJson(doc.data())).toList();
-    _selectedMovieIndex = _movies.length - 1;
+    _selectedMovieIndex =
+        0; // set the selected movie index to the first movie in the list
     notifyListeners();
   }
 

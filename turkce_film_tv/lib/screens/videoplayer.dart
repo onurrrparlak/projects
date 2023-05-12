@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:subtitle_wrapper_package/subtitle_wrapper_package.dart';
 import 'package:video_player/video_player.dart';
-import '../services/videoplayerservice.dart';
 
 class EnterButtonIntent extends Intent {}
 
@@ -12,7 +11,7 @@ class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
   final String? subtitle;
 
-  VideoPlayerScreen({
+  const VideoPlayerScreen({super.key, 
     required this.videoUrl,
     this.subtitle,
   });
@@ -24,7 +23,7 @@ class VideoPlayerScreen extends StatefulWidget {
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   late VideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
-  bool _isPlaying = true;
+  final bool _isPlaying = true;
   int _currentIndex = 0;
   SubtitleController? subtitleController;
   Timer? _hideTimer;
@@ -49,21 +48,28 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     _controller = VideoPlayerController.network(widget.videoUrl);
 
     _initializeVideoPlayerFuture = _controller.initialize();
-    _hideTimer = Timer(Duration(seconds: 500), () {
+    _hideTimer = Timer(const Duration(seconds: 500), () {
       setState(() {
         _isVisible = false;
       });
     });
-    if (_controller != null) {
-      _controller.play();
-      setState(() {});
-    }
+    _controller.play();
+    setState(() {});
 
-    _controller.setLooping(true);
+    _controller.addListener(() {
+      if (_controller.value.hasError) {
+        final error = _controller.value.errorDescription;
+        if (error!.contains('Network connection lost')) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Bağlantınız koptu'),
+          ));
+        }
+      }
+    });
   }
 
   Stream<int> _tickStream() {
-    return Stream.periodic(Duration(seconds: 1), (i) => i);
+    return Stream.periodic(const Duration(seconds: 1), (i) => i);
   }
 
   // Dispose of the timer when the screen is disposed
@@ -89,8 +95,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       return Theme(
         data: ThemeData(
           fontFamily: 'Arial',
-          textTheme: TextTheme(
-            bodyText1: TextStyle(color: Colors.red),
+          textTheme: const TextTheme(
+            bodyLarge: TextStyle(color: Colors.red),
           ),
         ),
         child: Scaffold(
@@ -113,6 +119,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                             // If the video is paused, play it.
                             await _controller.play();
                           }
+                          return null;
                         },
                       ),
                     },
@@ -124,7 +131,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                           });
                           // Cancel and restart the timer when the user interact with screen
                           _hideTimer?.cancel();
-                          _hideTimer = Timer(Duration(seconds: 500), () {
+                          _hideTimer = Timer(const Duration(seconds: 500), () {
                             setState(() {
                               _isVisible = false;
                             });
@@ -134,11 +141,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                           aspectRatio: _controller.value.aspectRatio,
                           child: Stack(
                             children: [
-                              widget.subtitle != null
+                              widget.subtitle != null && widget.subtitle == ""
                                   ? SubtitleWrapper(
                                       subtitleStyle: SubtitleStyle(
                                         hasBorder: true,
-                                        borderStyle: SubtitleBorderStyle(
+                                        borderStyle: const SubtitleBorderStyle(
                                             color: Colors.black),
                                         fontSize: fontSizes[_currentIndex],
                                         textColor: Colors.white,
@@ -150,16 +157,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                   : VideoPlayer(_controller),
                               AnimatedOpacity(
                                 opacity: _isVisible ? 1.0 : 0.0,
-                                duration: Duration(milliseconds: 500),
+                                duration: const Duration(milliseconds: 500),
                                 child: Align(
                                   alignment: Alignment.bottomCenter,
                                   child: AnimatedContainer(
-                                    duration: Duration(milliseconds: 500),
+                                    duration: const Duration(milliseconds: 500),
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                         begin: Alignment.bottomCenter,
                                         end: Alignment.topCenter,
-                                        stops: [0.0, 0.05, 0.1, 0.15, 0.2, 1.0],
+                                        stops: const [0.0, 0.05, 0.1, 0.15, 0.2, 1.0],
                                         tileMode: TileMode.clamp,
                                         colors: [
                                           Colors.black.withOpacity(0.6),
@@ -178,7 +185,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                         Visibility(
                                           visible: _isVisible,
                                           child: SliderTheme(
-                                            data: SliderThemeData(
+                                            data: const SliderThemeData(
                                               thumbColor: Colors
                                                   .transparent, // Make the thumb (blue dot) invisible
                                               thumbShape: RoundSliderThumbShape(
@@ -227,8 +234,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                                     builder:
                                                         (context, snapshot) {
                                                       return Text(
-                                                        '${Duration(seconds: (_controller.value.position.inSeconds).toInt()).toString().split('.')[0]}',
-                                                        style: TextStyle(
+                                                        Duration(seconds: (_controller.value.position.inSeconds).toInt()).toString().split('.')[0],
+                                                        style: const TextStyle(
                                                           color: Colors.grey,
                                                         ),
                                                       );
@@ -303,7 +310,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                                                         .length;
                                                           });
                                                         },
-                                                        icon: Icon(
+                                                        icon: const Icon(
                                                           Icons.text_increase,
                                                           color: Colors.white,
                                                         ),
@@ -315,7 +322,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                                           (context, snapshot) {
                                                         return Text(
                                                           '-${Duration(seconds: (_controller.value.duration.inSeconds - _controller.value.position.inSeconds).toInt()).toString().split('.')[0]}',
-                                                          style: TextStyle(
+                                                          style: const TextStyle(
                                                             color: Colors.grey,
                                                           ),
                                                         );
@@ -342,7 +349,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                   return Center(
                     child: CircularProgressIndicator(
                       backgroundColor: Colors.grey[200],
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.grey),
                       strokeWidth: 5,
                     ),
                   );
