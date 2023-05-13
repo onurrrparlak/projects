@@ -13,7 +13,7 @@ class MovieProvider with ChangeNotifier {
   Future<void> fetchMovies() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('movies')
-        .orderBy('timestamp', descending: true)
+        .orderBy('movieId', descending: true)
         .get();
     _movies = snapshot.docs.map((doc) => Movie.fromJson(doc.data())).toList();
     _selectedMovieIndex =

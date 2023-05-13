@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Movie {
+  final int movieId;
   final String title;
   final String posterImageUrl;
   final String releaseYear;
@@ -13,6 +14,7 @@ class Movie {
   final DateTime timestamp;
 
   Movie({
+    required this.movieId,
     required this.title,
     required this.posterImageUrl,
     required this.releaseYear,
@@ -27,6 +29,7 @@ class Movie {
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
+      movieId: int.parse(json['movieId'].toString()),
       title: json['title'] as String,
       posterImageUrl: json['posterImageUrl'] as String,
       releaseYear: json['releaseYear'] as String,
@@ -45,6 +48,7 @@ class Movie {
 
   Map<String, dynamic> toJson() {
     return {
+      'movieId': movieId,
       'title': title,
       'posterImageUrl': posterImageUrl,
       'releaseYear': releaseYear,

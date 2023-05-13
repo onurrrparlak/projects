@@ -89,15 +89,24 @@ class _UserWatchlistPageState extends State<UserWatchlistPage> {
                                         color: Colors.white,
                                       ),
                                       onPressed: () async {
-                                        final movieRef = FirebaseFirestore
-                                            .instance
-                                            .collection('users')
-                                            .doc(_currentUser.uid)
-                                            .collection('watchlist')
-                                            .doc(movieId.toString());
-                                        final movie = await movieRef.get();
-                                        if (movie.exists) {
-                                          await movieRef.delete();
+                                        try {
+                                          await FirebaseFirestore.instance
+                                              .collection('users')
+                                              .doc(_currentUser.uid)
+                                              .collection('watchlist')
+                                              .where('movieId',
+                                                  isEqualTo: movieId)
+                                              .get()
+                                              .then((snapshot) async {
+                                            if (snapshot.docs.isNotEmpty) {
+                                              final movieRef =
+                                                  snapshot.docs.first.reference;
+                                              await movieRef.delete();
+                                            }
+                                          });
+                                        } catch (e) {
+                                          print(
+                                              'Error deleting movie from watchlist: $e');
                                         }
                                       },
                                     ),
@@ -107,23 +116,37 @@ class _UserWatchlistPageState extends State<UserWatchlistPage> {
                                         color: Colors.white,
                                       ),
                                       onPressed: () async {
-                                        final movieRef = FirebaseFirestore
-                                            .instance
-                                            .collection('users')
-                                            .doc(_currentUser.uid)
-                                            .collection('watchlist')
-                                            .doc(movieId.toString());
-                                        final movie = await movieRef.get();
-                                        if (movie.exists) {
-                                          final isWatched =
-                                              movie.data()!['isWatched'];
-                                          await movieRef.update(
-                                              {'isWatched': !isWatched});
-                                        } else {
-                                          await movieRef.set({
-                                            'movieId': movieId,
-                                            'isWatched': false,
+                                        try {
+                                          await FirebaseFirestore.instance
+                                              .collection('users')
+                                              .doc(_currentUser.uid)
+                                              .collection('watchlist')
+                                              .where('movieId',
+                                                  isEqualTo: movieId)
+                                              .get()
+                                              .then((snapshot) async {
+                                            if (snapshot.docs.isNotEmpty) {
+                                              final movieRef =
+                                                  snapshot.docs.first.reference;
+                                              final isWatched = snapshot
+                                                  .docs.first
+                                                  .data()['isWatched'];
+                                              await movieRef.update(
+                                                  {'isWatched': !isWatched});
+                                            } else {
+                                              await FirebaseFirestore.instance
+                                                  .collection('users')
+                                                  .doc(_currentUser.uid)
+                                                  .collection('watchlist')
+                                                  .add({
+                                                'movieId': movieId,
+                                                'isWatched': false,
+                                              });
+                                            }
                                           });
+                                        } catch (e) {
+                                          print(
+                                              'Error updating movie watched status: $e');
                                         }
                                       },
                                     ),
@@ -211,15 +234,24 @@ class _UserWatchlistPageState extends State<UserWatchlistPage> {
                                         color: Colors.white,
                                       ),
                                       onPressed: () async {
-                                        final movieRef = FirebaseFirestore
-                                            .instance
-                                            .collection('users')
-                                            .doc(_currentUser.uid)
-                                            .collection('watchlist')
-                                            .doc(movieId.toString());
-                                        final movie = await movieRef.get();
-                                        if (movie.exists) {
-                                          await movieRef.delete();
+                                        try {
+                                          await FirebaseFirestore.instance
+                                              .collection('users')
+                                              .doc(_currentUser.uid)
+                                              .collection('watchlist')
+                                              .where('movieId',
+                                                  isEqualTo: movieId)
+                                              .get()
+                                              .then((snapshot) async {
+                                            if (snapshot.docs.isNotEmpty) {
+                                              final movieRef =
+                                                  snapshot.docs.first.reference;
+                                              await movieRef.delete();
+                                            }
+                                          });
+                                        } catch (e) {
+                                          print(
+                                              'Error deleting movie from watchlist: $e');
                                         }
                                       },
                                     ),
@@ -229,23 +261,37 @@ class _UserWatchlistPageState extends State<UserWatchlistPage> {
                                         color: Colors.white,
                                       ),
                                       onPressed: () async {
-                                        final movieRef = FirebaseFirestore
-                                            .instance
-                                            .collection('users')
-                                            .doc(_currentUser.uid)
-                                            .collection('watchlist')
-                                            .doc(movieId.toString());
-                                        final movie = await movieRef.get();
-                                        if (movie.exists) {
-                                          final isWatched =
-                                              movie.data()!['isWatched'];
-                                          await movieRef.update(
-                                              {'isWatched': !isWatched});
-                                        } else {
-                                          await movieRef.set({
-                                            'movieId': movieId,
-                                            'isWatched': false,
+                                        try {
+                                          await FirebaseFirestore.instance
+                                              .collection('users')
+                                              .doc(_currentUser.uid)
+                                              .collection('watchlist')
+                                              .where('movieId',
+                                                  isEqualTo: movieId)
+                                              .get()
+                                              .then((snapshot) async {
+                                            if (snapshot.docs.isNotEmpty) {
+                                              final movieRef =
+                                                  snapshot.docs.first.reference;
+                                              final isWatched = snapshot
+                                                  .docs.first
+                                                  .data()['isWatched'];
+                                              await movieRef.update(
+                                                  {'isWatched': !isWatched});
+                                            } else {
+                                              await FirebaseFirestore.instance
+                                                  .collection('users')
+                                                  .doc(_currentUser.uid)
+                                                  .collection('watchlist')
+                                                  .add({
+                                                'movieId': movieId,
+                                                'isWatched': false,
+                                              });
+                                            }
                                           });
+                                        } catch (e) {
+                                          print(
+                                              'Error updating movie watched status: $e');
                                         }
                                       },
                                     ),

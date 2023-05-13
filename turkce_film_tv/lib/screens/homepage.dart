@@ -9,6 +9,8 @@ import 'package:turkce_film_tv/screens/profilepage.dart';
 import 'package:turkce_film_tv/screens/videoplayer.dart';
 import 'package:turkce_film_tv/screens/watchlist.dart';
 
+import '../models/movie_models.dart';
+import '../services/searchservice.dart';
 import '../services/user_service.dart';
 import 'categories.dart';
 
@@ -33,7 +35,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final userService = UserService();
   late final DocumentReference currentUserRef;
-
+  String _searchQuery = '';
   bool _isOnline = true;
 
   final PageController _pageController = PageController(initialPage: 0);
@@ -113,7 +115,8 @@ class _HomePageState extends State<HomePage> {
       body: !_isOnline
           ? Center(
               child: Container(
-                  color: Colors.black, child: const Text('İnternet bağlantınız yok')),
+                  color: Colors.black,
+                  child: const Text('İnternet bağlantınız yok')),
             )
           : Consumer<MovieProvider>(
               builder: (context, movieProvider, child) {
@@ -462,6 +465,19 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ],
                                 ),
+                                SizedBox(
+                                  width: 200,
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'Film ara...',
+                                    ),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _searchQuery = value;
+                                      });
+                                    },
+                                  ),
+                                ),
                                 StreamBuilder<DocumentSnapshot>(
                                   stream: currentUserRef.snapshots(),
                                   builder: (context, snapshot) {
@@ -535,621 +551,70 @@ class _HomePageState extends State<HomePage> {
                                 });
                               },
                               children: [
-                                Column(
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                            MediaQuery.of(context).size.width *
-                                                0.05, // 5% of the screen width as left padding
-                                            0, // 2% of the screen height as top padding
-                                            MediaQuery.of(context).size.width *
-                                                0.05, // 5% of the screen width as right padding
-                                            0,
-                                          ),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.19,
+                                _searchQuery != "" || _searchQuery.isNotEmpty
+                                    ? FutureBuilder<List<Movie>>(
+                                        future: SearchService.searchMovies(
+                                            _searchQuery),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Center(
                                               child: Text(
-                                                selectedMovie.title
-                                                    .toUpperCase(),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontFamily: 'Bebas',
-                                                    fontSize: selectedMovie
-                                                                .title.length >
-                                                            30
-                                                        ? MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.06
-                                                        : MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.08,
-                                                    color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.05,
-                                              0,
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.05,
-                                              0),
-                                          child: Row(
-                                            children: [
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.03,
-                                                  child: Image.asset(
-                                                      'assets/images/imdblogo.png')),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
+                                                  'Error: ${snapshot.error}'),
+                                            );
+                                          } else {
+                                            final movies = snapshot.data!;
+                                            return Padding(
+                                              padding: EdgeInsets.fromLTRB(
+                                                MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.01,
-                                              ),
-                                              Text(
-                                                selectedMovie.imdbRating,
-                                              ),
-                                              Text(
-                                                '•',
-                                                style: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.02),
-                                              ),
-                                              Text(selectedMovie.releaseYear),
-                                              Text(
-                                                '•',
-                                                style: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.02),
-                                              ),
-                                              Text(categoriesString),
-                                              Text(
-                                                '•',
-                                                style: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.02),
-                                              ),
-                                              Text('${selectedMovie.duration} dk'),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.030),
-                                    // Buttons
-                                    Padding(
-                                      padding: EdgeInsets.fromLTRB(
-                                        MediaQuery.of(context).size.width *
-                                            0.05, // 5% of the screen width as left padding
-                                        MediaQuery.of(context).size.height *
-                                            0.02, // 2% of the screen height as top padding
-                                        MediaQuery.of(context).size.width *
-                                            0.05, // 5% of the screen width as right padding
-                                        MediaQuery.of(context).size.height *
-                                            0.04,
-                                      ),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Actions(
-                                              actions: <Type, Action<Intent>>{
-                                                RightButtonIntent:
-                                                    CallbackAction<
-                                                        RightButtonIntent>(
-                                                  onInvoke: (intent) async {
-                                                    await _changeFocus(context,
-                                                        _addMyWishlistNode!);
-                                                    return null;
-                                                  },
-                                                ),
-                                                UpButtonIntent: CallbackAction<
-                                                    UpButtonIntent>(
-                                                  onInvoke: (intent) async {
-                                                    await _changeFocus(context,
-                                                        _homePageNode!);
-                                                    return null;
-                                                  },
-                                                ),
-                                                EnterButtonIntent:
-                                                    CallbackAction<
-                                                        EnterButtonIntent>(
-                                                  onInvoke: (intent) async {
-                                                    await Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            VideoPlayerScreen(
-                                                                videoUrl:
-                                                                    selectedMovie
-                                                                        .url,
-                                                                subtitle:
-                                                                    selectedMovie
-                                                                        .subtitle),
-                                                      ),
-                                                    );
-                                                    return null;
-                                                  },
-                                                ),
-                                                DownButtonIntent:
-                                                    CallbackAction<
-                                                        DownButtonIntent>(
-                                                  onInvoke: (intent) async {
-                                                    await _changeFocus(
-                                                        context, _listNode!);
-                                                    return null;
-                                                  },
-                                                ),
-                                              },
-                                              child: Focus(
-                                                focusNode: _playNode,
-                                                child: Container(
-                                                  child: SizedBox(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.07,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.15,
-                                                    child: ElevatedButton(
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        foregroundColor:
-                                                            !(_playNode?.hasFocus ??
-                                                                    false)
-                                                                ? Colors.white
-                                                                : Colors.black,
-                                                        backgroundColor:
-                                                            !(_playNode?.hasFocus ??
-                                                                    false)
-                                                                ? Colors
-                                                                    .transparent
-                                                                : Colors.white,
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  5), // set the desired border radius here
-                                                          side: BorderSide(
-                                                            color: Colors.white,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.0020,
-                                                          ), // set the desired border color and width here
-                                                        ),
-                                                      ),
-                                                      onPressed: () async {
-                                                        await Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                VideoPlayerScreen(
-                                                                    videoUrl:
-                                                                        selectedMovie
-                                                                            .url,
-                                                                    subtitle:
-                                                                        selectedMovie
-                                                                            .subtitle),
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: const FittedBox(
-                                                        child: Text(
-                                                          'Oynat',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Actions(
-                                              actions: <Type, Action<Intent>>{
-                                                LeftButtonIntent:
-                                                    CallbackAction<
-                                                        LeftButtonIntent>(
-                                                  onInvoke: (intent) async {
-                                                    await _changeFocus(
-                                                        context, _playNode!);
-                                                    return null;
-                                                  },
-                                                ),
-                                                UpButtonIntent: CallbackAction<
-                                                    UpButtonIntent>(
-                                                  onInvoke: (intent) async {
-                                                    await _changeFocus(context,
-                                                        _homePageNode!);
-                                                    return null;
-                                                  },
-                                                ),
-                                                DownButtonIntent:
-                                                    CallbackAction<
-                                                        DownButtonIntent>(
-                                                  onInvoke: (intent) async {
-                                                    await _changeFocus(
-                                                        context, _listNode!);
-                                                    return null;
-                                                  },
-                                                ),
-                                              },
-                                              child: Focus(
-                                                focusNode: _addMyWishlistNode,
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                    left: MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.02, // 5% of the screen width as left padding
-                                                  ),
-                                                  child: FutureBuilder(
-                                                    future:
-                                                        currentUserRef.get(),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      if (snapshot.hasData) {
-                                                        final watchlist =
-                                                            snapshot
-                                                                .data!.reference
-                                                                .collection(
-                                                                    'watchlist');
-                                                        return FutureBuilder<
-                                                            DocumentSnapshot>(
-                                                          future: watchlist
-                                                              .doc(selectedMovieIndex
-                                                                  .toString())
-                                                              .get(),
-                                                          builder: (context,
-                                                              snapshot) {
-                                                            final isOnWatchlist =
-                                                                snapshot.hasData &&
-                                                                    snapshot
-                                                                        .data!
-                                                                        .exists;
-                                                            return Container(
-                                                              child: SizedBox(
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height *
-                                                                    0.07,
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.15,
-                                                                child:
-                                                                    ElevatedButton(
-                                                                  style: ElevatedButton
-                                                                      .styleFrom(
-                                                                    foregroundColor: !(_addMyWishlistNode?.hasFocus ??
-                                                                            false)
-                                                                        ? Colors
-                                                                            .white
-                                                                        : Colors
-                                                                            .black,
-                                                                    backgroundColor: !(_addMyWishlistNode?.hasFocus ??
-                                                                            false)
-                                                                        ? Colors
-                                                                            .transparent
-                                                                        : Colors
-                                                                            .white,
-                                                                    shape:
-                                                                        RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              5), // set the desired border radius here
-                                                                      side:
-                                                                          BorderSide(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.0020,
-                                                                      ), // set the desired border color and width here
-                                                                    ),
-                                                                  ),
-                                                                  onPressed:
-                                                                      () async {
-                                                                    if (isOnWatchlist) {
-                                                                      await watchlist
-                                                                          .doc(selectedMovieIndex
-                                                                              .toString())
-                                                                          .delete();
-                                                                    } else {
-                                                                      await watchlist
-                                                                          .doc(selectedMovieIndex
-                                                                              .toString())
-                                                                          .set({
-                                                                        'movieId':
-                                                                            selectedMovieIndex,
-                                                                        'isWatched':
-                                                                            false,
-                                                                      });
-                                                                    }
-                                                                    setState(
-                                                                        () {});
-                                                                  },
-                                                                  child:
-                                                                      FittedBox(
-                                                                    child: Text(isOnWatchlist
-                                                                        ? 'Listeden Sil'
-                                                                        : 'Listeye ekle'),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
-                                                        );
-                                                      } else {
-                                                        return const CircularProgressIndicator();
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                            0.05, // 5% of the screen width as left padding
-                                      ),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text('Son Eklenen Filmler',
-                                            style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
+                                                    0.09, // 5% of the screen width as left padding
+                                                0, // 2% of the screen height as top padding
+                                                MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.02,
-                                                fontWeight: FontWeight.w400)),
-                                      ),
-                                    ),
-
-                                    Actions(
-                                      actions: <Type, Action<Intent>>{
-                                        UpButtonIntent:
-                                            CallbackAction<UpButtonIntent>(
-                                          onInvoke: (intent) async {
-                                            await _changeFocus(
-                                                context, _playNode!);
-                                            return null;
-                                          },
-                                        ),
-                                        LeftButtonIntent:
-                                            CallbackAction<LeftButtonIntent>(
-                                          onInvoke: (intent) async {
-                                            final screenWidth =
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width;
-                                            final itemWidth =
-                                                screenWidth * 0.25;
-
-                                            if (selectedMovieIndex > 0) {
-                                              movieProvider.moveLeft();
-
-                                              double prevMovieOffset =
-                                                  itemWidth *
-                                                          (selectedMovieIndex +
-                                                              1) -
-                                                      _scrollController
-                                                          .position.pixels;
-
-                                              _scrollController.animateTo(
-                                                _scrollController
-                                                        .position.pixels +
-                                                    prevMovieOffset,
-                                                duration:
-                                                    const Duration(milliseconds: 300),
-                                                curve: Curves.easeInOut,
-                                              );
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        RightButtonIntent:
-                                            CallbackAction<RightButtonIntent>(
-                                          onInvoke: (intent) async {
-                                            final screenWidth =
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width;
-                                            final itemWidth =
-                                                screenWidth * 0.25;
-
-                                            if (selectedMovieIndex <
-                                                movieProvider.movies.length -
-                                                    1) {
-                                              movieProvider.moveRight();
-
-                                              double nextMovieOffset =
-                                                  itemWidth *
-                                                          (selectedMovieIndex -
-                                                              1) -
-                                                      _scrollController
-                                                          .position.pixels;
-
-                                              _scrollController.animateTo(
-                                                _scrollController
-                                                        .position.pixels +
-                                                    nextMovieOffset,
-                                                duration:
-                                                    const Duration(milliseconds: 300),
-                                                curve: Curves.easeInOut,
-                                              );
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      },
-                                      child: Focus(
-                                        focusNode: _listNode,
-                                        child: Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                            MediaQuery.of(context).size.width *
-                                                0.05, // 5% of the screen width as left padding
-                                            MediaQuery.of(context).size.height *
-                                                0.02, // 2% of the screen height as top padding
-                                            MediaQuery.of(context).size.width *
-                                                0.05, // 5% of the screen width as right padding
-                                            MediaQuery.of(context).size.height *
-                                                0.04,
-                                          ),
-                                          child: Stack(
-                                            children: [
-                                              SizedBox(
+                                                    0.09, // 5% of the screen width as right padding
+                                                0,
+                                              ),
+                                              child: SizedBox(
                                                 height: MediaQuery.of(context)
                                                         .size
                                                         .height *
-                                                    0.32,
-                                                width: double.infinity,
-                                                child: ListView.builder(
-                                                  controller: _scrollController,
-                                                  shrinkWrap: false,
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  itemCount: movieProvider
-                                                      .movies.length,
+                                                    0.6,
+                                                child: GridView.builder(
+                                                  itemCount: movies.length,
+                                                  gridDelegate:
+                                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 4,
+                                                    childAspectRatio: 5 / 3,
+                                                  ),
                                                   itemBuilder:
                                                       (context, index) {
-                                                    final movie = movieProvider
-                                                        .movies
-                                                        .toList()[index];
-                                                    final isSelected = index ==
-                                                        movieProvider
-                                                            .selectedMovieIndex;
-
-                                                    final scale =
-                                                        isSelected ? 1.15 : 1.0;
-                                                    final hasListFocus =
-                                                        _listNode!.hasFocus;
-
-                                                    return Padding(
-                                                      padding: EdgeInsets.only(
-                                                        right: isSelected
-                                                            ? MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.025
-                                                            : 0,
-                                                        top: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.016,
-                                                        bottom: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.016,
-                                                        left: isSelected
-                                                            ? MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.050
-                                                            : 0,
-                                                      ),
-                                                      child: Transform.scale(
-                                                        scale: scale,
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            if (movieProvider
-                                                                    .selectedMovieIndex !=
-                                                                index) {
-                                                              movieProvider
-                                                                  .selectMovie(
-                                                                      index);
-                                                            } else if (movieProvider
-                                                                    .selectedMovieIndex ==
-                                                                0) {
-                                                            } else if (index <
-                                                                movieProvider
-                                                                        .movies
-                                                                        .length -
-                                                                    1) {
-                                                              movieProvider
-                                                                  .selectMovie(
-                                                                      index +
-                                                                          1);
-                                                            }
-                                                          },
-                                                          child: AspectRatio(
-                                                            key: ValueKey(
-                                                                movieProvider
-                                                                    .selectedMovieIndex),
-                                                            aspectRatio: 5 / 3,
-                                                            child: Container(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(
-                                                                MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.0045,
-                                                              ),
-                                                              child:
-                                                                  Image.network(
-                                                                movie
-                                                                    .posterImageUrl,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
+                                                    return GestureDetector(
+                                                      onTap: () async {},
+                                                      child: Container(
+                                                        child: AspectRatio(
+                                                          aspectRatio: 5 / 3,
+                                                          child: Container(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                              MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.0045,
+                                                            ),
+                                                            child:
+                                                                Image.network(
+                                                              movies[index]
+                                                                  .posterImageUrl,
+                                                              fit: BoxFit.cover,
                                                             ),
                                                           ),
                                                         ),
@@ -1158,41 +623,753 @@ class _HomePageState extends State<HomePage> {
                                                   },
                                                 ),
                                               ),
-                                              Visibility(
-                                                visible: _listNode!.hasFocus,
-                                                child: AnimatedPositioned(
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                  curve: Curves.easeInOut,
-                                                  top: 0,
-                                                  bottom: 0,
-                                                  left: left,
-                                                  child: Container(
-                                                    width:
+                                            );
+
+                                            /* ListView.builder(
+                                              itemCount: movies.length,
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  title: Text(
+                                                    movies[index].title,
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  subtitle: Text(movies[index]
+                                                      .releaseYear),
+                                                );
+                                              },
+                                            );*/
+                                          }
+                                        },
+                                      )
+                                    : Column(
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.05, // 5% of the screen width as left padding
+                                                  0, // 2% of the screen height as top padding
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.05, // 5% of the screen width as right padding
+                                                  0,
+                                                ),
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: SizedBox(
+                                                    height:
                                                         MediaQuery.of(context)
                                                                 .size
-                                                                .width *
-                                                            0.3,
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                        color: Colors.white,
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.0035,
-                                                      ),
+                                                                .height *
+                                                            0.19,
+                                                    child: Text(
+                                                      selectedMovie.title
+                                                          .toUpperCase(),
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontFamily: 'Bebas',
+                                                          fontSize: selectedMovie
+                                                                      .title.length >
+                                                                  30
+                                                              ? MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.06
+                                                              : MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.08,
+                                                          color: Colors.white),
                                                     ),
                                                   ),
                                                 ),
                                               ),
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.05,
+                                                    0,
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.05,
+                                                    0),
+                                                child: Row(
+                                                  children: [
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.03,
+                                                        child: Image.asset(
+                                                            'assets/images/imdblogo.png')),
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.01,
+                                                    ),
+                                                    Text(
+                                                      selectedMovie.imdbRating,
+                                                    ),
+                                                    Text(
+                                                      '•',
+                                                      style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.02),
+                                                    ),
+                                                    Text(selectedMovie
+                                                        .releaseYear),
+                                                    Text(
+                                                      '•',
+                                                      style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.02),
+                                                    ),
+                                                    Text(categoriesString),
+                                                    Text(
+                                                      '•',
+                                                      style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.02),
+                                                    ),
+                                                    Text(
+                                                        '${selectedMovie.duration} dk'),
+                                                  ],
+                                                ),
+                                              )
                                             ],
                                           ),
-                                        ),
+                                          SizedBox(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.030),
+                                          // Buttons
+                                          Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05, // 5% of the screen width as left padding
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.02, // 2% of the screen height as top padding
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05, // 5% of the screen width as right padding
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.04,
+                                            ),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Actions(
+                                                    actions: <Type,
+                                                        Action<Intent>>{
+                                                      RightButtonIntent:
+                                                          CallbackAction<
+                                                              RightButtonIntent>(
+                                                        onInvoke:
+                                                            (intent) async {
+                                                          await _changeFocus(
+                                                              context,
+                                                              _addMyWishlistNode!);
+                                                          return null;
+                                                        },
+                                                      ),
+                                                      UpButtonIntent:
+                                                          CallbackAction<
+                                                              UpButtonIntent>(
+                                                        onInvoke:
+                                                            (intent) async {
+                                                          await _changeFocus(
+                                                              context,
+                                                              _homePageNode!);
+                                                          return null;
+                                                        },
+                                                      ),
+                                                      EnterButtonIntent:
+                                                          CallbackAction<
+                                                              EnterButtonIntent>(
+                                                        onInvoke:
+                                                            (intent) async {
+                                                          await Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) => VideoPlayerScreen(
+                                                                  videoUrl:
+                                                                      selectedMovie
+                                                                          .url,
+                                                                  subtitle:
+                                                                      selectedMovie
+                                                                          .subtitle),
+                                                            ),
+                                                          );
+                                                          return null;
+                                                        },
+                                                      ),
+                                                      DownButtonIntent:
+                                                          CallbackAction<
+                                                              DownButtonIntent>(
+                                                        onInvoke:
+                                                            (intent) async {
+                                                          await _changeFocus(
+                                                              context,
+                                                              _listNode!);
+                                                          return null;
+                                                        },
+                                                      ),
+                                                    },
+                                                    child: Focus(
+                                                      focusNode: _playNode,
+                                                      child: Container(
+                                                        child: SizedBox(
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              0.07,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.15,
+                                                          child: ElevatedButton(
+                                                            style:
+                                                                ElevatedButton
+                                                                    .styleFrom(
+                                                              foregroundColor:
+                                                                  !(_playNode?.hasFocus ??
+                                                                          false)
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .black,
+                                                              backgroundColor:
+                                                                  !(_playNode?.hasFocus ??
+                                                                          false)
+                                                                      ? Colors
+                                                                          .transparent
+                                                                      : Colors
+                                                                          .white,
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5), // set the desired border radius here
+                                                                side:
+                                                                    BorderSide(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width *
+                                                                      0.0020,
+                                                                ), // set the desired border color and width here
+                                                              ),
+                                                            ),
+                                                            onPressed:
+                                                                () async {
+                                                              await Navigator
+                                                                  .push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (context) => VideoPlayerScreen(
+                                                                      videoUrl:
+                                                                          selectedMovie
+                                                                              .url,
+                                                                      subtitle:
+                                                                          selectedMovie
+                                                                              .subtitle),
+                                                                ),
+                                                              );
+                                                            },
+                                                            child:
+                                                                const FittedBox(
+                                                              child: Text(
+                                                                'Oynat',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Actions(
+                                                    actions: <Type,
+                                                        Action<Intent>>{
+                                                      LeftButtonIntent:
+                                                          CallbackAction<
+                                                              LeftButtonIntent>(
+                                                        onInvoke:
+                                                            (intent) async {
+                                                          await _changeFocus(
+                                                              context,
+                                                              _playNode!);
+                                                          return null;
+                                                        },
+                                                      ),
+                                                      UpButtonIntent:
+                                                          CallbackAction<
+                                                              UpButtonIntent>(
+                                                        onInvoke:
+                                                            (intent) async {
+                                                          await _changeFocus(
+                                                              context,
+                                                              _homePageNode!);
+                                                          return null;
+                                                        },
+                                                      ),
+                                                      DownButtonIntent:
+                                                          CallbackAction<
+                                                              DownButtonIntent>(
+                                                        onInvoke:
+                                                            (intent) async {
+                                                          await _changeFocus(
+                                                              context,
+                                                              _listNode!);
+                                                          return null;
+                                                        },
+                                                      ),
+                                                    },
+                                                    child: Focus(
+                                                      focusNode:
+                                                          _addMyWishlistNode,
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.02, // 5% of the screen width as left padding
+                                                        ),
+                                                        child: FutureBuilder(
+                                                          future: currentUserRef
+                                                              .get(),
+                                                          builder: (context,
+                                                              snapshot) {
+                                                            if (snapshot
+                                                                .hasData) {
+                                                              final watchlist =
+                                                                  snapshot.data!
+                                                                      .reference
+                                                                      .collection(
+                                                                          'watchlist');
+                                                              return FutureBuilder<
+                                                                  DocumentSnapshot>(
+                                                                future: watchlist
+                                                                    .doc(selectedMovieIndex
+                                                                        .toString())
+                                                                    .get(),
+                                                                builder: (context,
+                                                                    snapshot) {
+                                                                  final isOnWatchlist = snapshot
+                                                                          .hasData &&
+                                                                      snapshot
+                                                                          .data!
+                                                                          .exists;
+                                                                  return Container(
+                                                                    child:
+                                                                        SizedBox(
+                                                                      height: MediaQuery.of(context)
+                                                                              .size
+                                                                              .height *
+                                                                          0.07,
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.15,
+                                                                      child:
+                                                                          ElevatedButton(
+                                                                        style: ElevatedButton
+                                                                            .styleFrom(
+                                                                          foregroundColor: !(_addMyWishlistNode?.hasFocus ?? false)
+                                                                              ? Colors.white
+                                                                              : Colors.black,
+                                                                          backgroundColor: !(_addMyWishlistNode?.hasFocus ?? false)
+                                                                              ? Colors.transparent
+                                                                              : Colors.white,
+                                                                          shape:
+                                                                              RoundedRectangleBorder(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(5), // set the desired border radius here
+                                                                            side:
+                                                                                BorderSide(
+                                                                              color: Colors.white,
+                                                                              width: MediaQuery.of(context).size.width * 0.0020,
+                                                                            ), // set the desired border color and width here
+                                                                          ),
+                                                                        ),
+                                                                        onPressed:
+                                                                            () async {
+                                                                          if (isOnWatchlist) {
+                                                                            final querySnapshot =
+                                                                                await watchlist.where('movieId', isEqualTo: selectedMovie.movieId).get();
+                                                                            if (querySnapshot.docs.isNotEmpty) {
+                                                                              final docId = querySnapshot.docs.first.id;
+                                                                              await watchlist.doc(docId).delete();
+                                                                            }
+                                                                          } else {
+                                                                            await watchlist.doc(selectedMovieIndex.toString()).set({
+                                                                              'movieId': selectedMovie.movieId,
+                                                                              'isWatched': false,
+                                                                            });
+                                                                          }
+                                                                          setState(
+                                                                              () {});
+                                                                        },
+                                                                        child:
+                                                                            FittedBox(
+                                                                          child: Text(isOnWatchlist
+                                                                              ? 'Listeden Sil'
+                                                                              : 'Listeye ekle'),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              );
+                                                            } else {
+                                                              return const CircularProgressIndicator();
+                                                            }
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                              left: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05, // 5% of the screen width as left padding
+                                            ),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text('Son Eklenen Filmler',
+                                                  style: TextStyle(
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.02,
+                                                      fontWeight:
+                                                          FontWeight.w400)),
+                                            ),
+                                          ),
+
+                                          Actions(
+                                            actions: <Type, Action<Intent>>{
+                                              UpButtonIntent: CallbackAction<
+                                                  UpButtonIntent>(
+                                                onInvoke: (intent) async {
+                                                  await _changeFocus(
+                                                      context, _playNode!);
+                                                  return null;
+                                                },
+                                              ),
+                                              LeftButtonIntent: CallbackAction<
+                                                  LeftButtonIntent>(
+                                                onInvoke: (intent) async {
+                                                  final screenWidth =
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width;
+                                                  final itemWidth =
+                                                      screenWidth * 0.25;
+
+                                                  if (selectedMovieIndex > 0) {
+                                                    movieProvider.moveLeft();
+
+                                                    double prevMovieOffset =
+                                                        itemWidth *
+                                                                (selectedMovieIndex +
+                                                                    1) -
+                                                            _scrollController
+                                                                .position
+                                                                .pixels;
+
+                                                    _scrollController.animateTo(
+                                                      _scrollController
+                                                              .position.pixels +
+                                                          prevMovieOffset,
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                      curve: Curves.easeInOut,
+                                                    );
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                              RightButtonIntent: CallbackAction<
+                                                  RightButtonIntent>(
+                                                onInvoke: (intent) async {
+                                                  final screenWidth =
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width;
+                                                  final itemWidth =
+                                                      screenWidth * 0.25;
+
+                                                  if (selectedMovieIndex <
+                                                      movieProvider
+                                                              .movies.length -
+                                                          1) {
+                                                    movieProvider.moveRight();
+
+                                                    double nextMovieOffset =
+                                                        itemWidth *
+                                                                (selectedMovieIndex -
+                                                                    1) -
+                                                            _scrollController
+                                                                .position
+                                                                .pixels;
+
+                                                    _scrollController.animateTo(
+                                                      _scrollController
+                                                              .position.pixels +
+                                                          nextMovieOffset,
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                      curve: Curves.easeInOut,
+                                                    );
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                            },
+                                            child: Focus(
+                                              focusNode: _listNode,
+                                              child: Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.05, // 5% of the screen width as left padding
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.02, // 2% of the screen height as top padding
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.05, // 5% of the screen width as right padding
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.04,
+                                                ),
+                                                child: Stack(
+                                                  children: [
+                                                    SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.32,
+                                                      width: double.infinity,
+                                                      child: ListView.builder(
+                                                        controller:
+                                                            _scrollController,
+                                                        shrinkWrap: false,
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        itemCount: movieProvider
+                                                            .movies.length,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          final movie =
+                                                              movieProvider
+                                                                      .movies
+                                                                      .toList()[
+                                                                  index];
+                                                          final isSelected =
+                                                              index ==
+                                                                  movieProvider
+                                                                      .selectedMovieIndex;
+
+                                                          final scale =
+                                                              isSelected
+                                                                  ? 1.15
+                                                                  : 1.0;
+                                                          final hasListFocus =
+                                                              _listNode!
+                                                                  .hasFocus;
+
+                                                          return Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                              right: isSelected
+                                                                  ? MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width *
+                                                                      0.025
+                                                                  : 0,
+                                                              top: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.016,
+                                                              bottom: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.016,
+                                                              left: isSelected
+                                                                  ? MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width *
+                                                                      0.050
+                                                                  : 0,
+                                                            ),
+                                                            child:
+                                                                Transform.scale(
+                                                              scale: scale,
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap: () {
+                                                                  if (movieProvider
+                                                                          .selectedMovieIndex !=
+                                                                      index) {
+                                                                    movieProvider
+                                                                        .selectMovie(
+                                                                            index);
+                                                                  } else if (movieProvider
+                                                                          .selectedMovieIndex ==
+                                                                      0) {
+                                                                  } else if (index <
+                                                                      movieProvider
+                                                                              .movies
+                                                                              .length -
+                                                                          1) {
+                                                                    movieProvider
+                                                                        .selectMovie(
+                                                                            index +
+                                                                                1);
+                                                                  }
+                                                                },
+                                                                child:
+                                                                    AspectRatio(
+                                                                  key: ValueKey(
+                                                                      movieProvider
+                                                                          .selectedMovieIndex),
+                                                                  aspectRatio:
+                                                                      5 / 3,
+                                                                  child:
+                                                                      Container(
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .all(
+                                                                      MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.0045,
+                                                                    ),
+                                                                    child: Image
+                                                                        .network(
+                                                                      movie
+                                                                          .posterImageUrl,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                    Visibility(
+                                                      visible:
+                                                          _listNode!.hasFocus,
+                                                      child: AnimatedPositioned(
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    300),
+                                                        curve: Curves.easeInOut,
+                                                        top: 0,
+                                                        bottom: 0,
+                                                        left: left,
+                                                        child: Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.3,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            border: Border.all(
+                                                              color:
+                                                                  Colors.white,
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.0035,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
                                 const UserWatchlistPage(),
                                 const CategoriesScreen(),
                                 const ProfilePage(),
