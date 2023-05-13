@@ -11,7 +11,8 @@ class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
   final String? subtitle;
 
-  const VideoPlayerScreen({super.key, 
+  const VideoPlayerScreen({
+    super.key,
     required this.videoUrl,
     this.subtitle,
   });
@@ -28,6 +29,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   SubtitleController? subtitleController;
   Timer? _hideTimer;
   bool _isVisible = true;
+  Widget? _positionIcon;
+  bool _isForward = true;
 
   final List<double> fontSizes = [];
 
@@ -48,7 +51,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     _controller = VideoPlayerController.network(widget.videoUrl);
 
     _initializeVideoPlayerFuture = _controller.initialize();
-    _hideTimer = Timer(const Duration(seconds: 500), () {
+    _hideTimer = Timer(const Duration(seconds: 8), () {
       setState(() {
         _isVisible = false;
       });
@@ -72,6 +75,32 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     return Stream.periodic(const Duration(seconds: 1), (i) => i);
   }
 
+  void _rewind() {
+    _controller.seekTo(_controller.value.position - Duration(seconds: 10));
+    setState(() {
+      _positionIcon = Icon(Icons.replay_10, size: 48, color: Colors.white);
+      _isForward = false;
+    });
+    _hidePositionIcon();
+  }
+
+  void _forward() {
+    _controller.seekTo(_controller.value.position + Duration(seconds: 10));
+    setState(() {
+      _positionIcon = Icon(Icons.forward_10, size: 48, color: Colors.white);
+      _isForward = true;
+    });
+    _hidePositionIcon();
+  }
+
+  void _hidePositionIcon() {
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        _positionIcon = null;
+      });
+    });
+  }
+
   // Dispose of the timer when the screen is disposed
   @override
   void dispose() {
@@ -82,6 +111,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       fontSizes.clear();
@@ -125,13 +155,21 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                     },
                     child: Center(
                       child: GestureDetector(
+                        onDoubleTapDown: (details) {
+                          final position = details.localPosition.dx;
+                          if (position < screenWidth / 2) {
+                            _rewind();
+                          } else {
+                            _forward();
+                          }
+                        },
                         onTap: () {
                           setState(() {
                             _isVisible = !_isVisible;
                           });
                           // Cancel and restart the timer when the user interact with screen
                           _hideTimer?.cancel();
-                          _hideTimer = Timer(const Duration(seconds: 500), () {
+                          _hideTimer = Timer(const Duration(seconds: 8), () {
                             setState(() {
                               _isVisible = false;
                             });
@@ -166,7 +204,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                       gradient: LinearGradient(
                                         begin: Alignment.bottomCenter,
                                         end: Alignment.topCenter,
-                                        stops: const [0.0, 0.05, 0.1, 0.15, 0.2, 1.0],
+                                        stops: const [
+                                          0.0,
+                                          0.05,
+                                          0.1,
+                                          0.15,
+                                          0.2,
+                                          1.0
+                                        ],
                                         tileMode: TileMode.clamp,
                                         colors: [
                                           Colors.black.withOpacity(0.6),
@@ -234,7 +279,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                                     builder:
                                                         (context, snapshot) {
                                                       return Text(
-                                                        Duration(seconds: (_controller.value.position.inSeconds).toInt()).toString().split('.')[0],
+                                                        Duration(
+                                                                seconds: (_controller
+                                                                        .value
+                                                                        .position
+                                                                        .inSeconds)
+                                                                    .toInt())
+                                                            .toString()
+                                                            .split('.')[0],
                                                         style: const TextStyle(
                                                           color: Colors.grey,
                                                         ),
@@ -322,7 +374,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                                           (context, snapshot) {
                                                         return Text(
                                                           '-${Duration(seconds: (_controller.value.duration.inSeconds - _controller.value.position.inSeconds).toInt()).toString().split('.')[0]}',
-                                                          style: const TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             color: Colors.grey,
                                                           ),
                                                         );
@@ -339,6 +392,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                   ),
                                 ),
                               ),
+                              Align(
+                                alignment: _isForward
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: _positionIcon,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -349,7 +412,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                   return Center(
                     child: CircularProgressIndicator(
                       backgroundColor: Colors.grey[200],
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.grey),
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(Colors.grey),
                       strokeWidth: 5,
                     ),
                   );

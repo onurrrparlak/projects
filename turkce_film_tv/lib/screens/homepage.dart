@@ -12,6 +12,7 @@ import 'package:turkce_film_tv/screens/watchlist.dart';
 import '../models/movie_models.dart';
 import '../services/searchservice.dart';
 import '../services/user_service.dart';
+import '../widgets/search_widget.dart';
 import 'categories.dart';
 
 //flutter build apk -t lib/main.dart
@@ -37,6 +38,7 @@ class _HomePageState extends State<HomePage> {
   late final DocumentReference currentUserRef;
   String _searchQuery = '';
   bool _isOnline = true;
+  bool _searchisVisible = false;
 
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPageIndex = 0;
@@ -465,184 +467,219 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(
-                                  width: 200,
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      hintText: 'Film ara...',
-                                    ),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _searchQuery = value;
-                                      });
-                                    },
-                                  ),
+                                SearchVisibilityWidget(
+                                  key: ValueKey('my_search_widget'),
+                                  isVisible: _searchisVisible,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _searchQuery = value;
+                                    });
+                                  },
                                 ),
-                                StreamBuilder<DocumentSnapshot>(
-                                  stream: currentUserRef.snapshots(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    } else if (!snapshot.hasData) {
-                                      return const Text('No user data found');
-                                    } else {
-                                      final avatar = snapshot.data!['avatar'];
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          right: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.050,
-                                        ),
-                                        child: GestureDetector(
-                                          onTap: () async {
-                                            if (_currentPageIndex == 3) {
-                                            } else {
-                                              int index = 3;
-                                              _pageController.jumpToPage(index);
-                                              setState(() {
-                                                _currentPageIndex = index;
-                                              });
-                                              await _changeFocus(
-                                                  context, _userAvatarNode!);
-                                            }
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: !(_userAvatarNode
-                                                            ?.hasFocus ??
-                                                        false)
-                                                    ? Colors.transparent
-                                                    : Colors.white,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.0035,
-                                              ),
-                                            ),
+                                Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () async {
+                                        setState(() {
+                                          _searchisVisible = !_searchisVisible;
+                                        });
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white,
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                0.075,
-                                            child: ClipOval(
-                                              child: Image.asset(
-                                                'assets/images/avatars/$avatar.jpg',
-                                                fit: BoxFit.cover,
+                                                0.0020,
+                                          ),
+                                        ),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.095,
+                                        child: ClipOval(
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.110, // change to desired width
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.110,
+                                            child: Icon(
+                                              Icons.search,
+                                              color: Colors.white,
+                                              size: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.050,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    StreamBuilder<DocumentSnapshot>(
+                                      stream: currentUserRef.snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const CircularProgressIndicator();
+                                        } else if (!snapshot.hasData) {
+                                          return const Text(
+                                              'No user data found');
+                                        } else {
+                                          final avatar =
+                                              snapshot.data!['avatar'];
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              right: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.050,
+                                            ),
+                                            child: GestureDetector(
+                                              onTap: () async {
+                                                if (_currentPageIndex == 3) {
+                                                } else {
+                                                  int index = 3;
+                                                  _pageController
+                                                      .jumpToPage(index);
+                                                  setState(() {
+                                                    _currentPageIndex = index;
+                                                  });
+                                                  await _changeFocus(context,
+                                                      _userAvatarNode!);
+                                                }
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: !(_userAvatarNode
+                                                                ?.hasFocus ??
+                                                            false)
+                                                        ? Colors.transparent
+                                                        : Colors.white,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.0035,
+                                                  ),
+                                                ),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.060,
+                                                child: ClipOval(
+                                                  child: Image.asset(
+                                                    'assets/images/avatars/$avatar.jpg',
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
                                               ),
                                             ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          _searchQuery != "" || _searchQuery.isNotEmpty
+                              ? FutureBuilder<List<Movie>>(
+                                  future:
+                                      SearchService.searchMovies(_searchQuery),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Center(
+                                        child: Text('Error: ${snapshot.error}'),
+                                      );
+                                    } else {
+                                      final movies = snapshot.data!;
+                                      return Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                          MediaQuery.of(context).size.width *
+                                              0.09, // 5% of the screen width as left padding
+                                          0, // 2% of the screen height as top padding
+                                          MediaQuery.of(context).size.width *
+                                              0.09, // 5% of the screen width as right padding
+                                          0,
+                                        ),
+                                        child: SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.6,
+                                          child: GridView.builder(
+                                            itemCount: movies.length,
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 4,
+                                              childAspectRatio: 5 / 3,
+                                            ),
+                                            itemBuilder: (context, index) {
+                                              return GestureDetector(
+                                                onTap: () async {
+                                                  await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          VideoPlayerScreen(
+                                                              videoUrl:
+                                                                  movies[index]
+                                                                      .url,
+                                                              subtitle: movies[
+                                                                      index]
+                                                                  .subtitle),
+                                                    ),
+                                                  );
+                                                },
+                                                child: Container(
+                                                  child: AspectRatio(
+                                                    aspectRatio: 5 / 3,
+                                                    child: Container(
+                                                      padding: EdgeInsets.all(
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.0045,
+                                                      ),
+                                                      child: Image.network(
+                                                        movies[index]
+                                                            .posterImageUrl,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
                                           ),
                                         ),
                                       );
                                     }
                                   },
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: PageView(
-                              controller: _pageController,
-                              onPageChanged: (int index) {
-                                setState(() {
-                                  _currentPageIndex = index;
-                                });
-                              },
-                              children: [
-                                _searchQuery != "" || _searchQuery.isNotEmpty
-                                    ? FutureBuilder<List<Movie>>(
-                                        future: SearchService.searchMovies(
-                                            _searchQuery),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            );
-                                          } else if (snapshot.hasError) {
-                                            return Center(
-                                              child: Text(
-                                                  'Error: ${snapshot.error}'),
-                                            );
-                                          } else {
-                                            final movies = snapshot.data!;
-                                            return Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.09, // 5% of the screen width as left padding
-                                                0, // 2% of the screen height as top padding
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.09, // 5% of the screen width as right padding
-                                                0,
-                                              ),
-                                              child: SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.6,
-                                                child: GridView.builder(
-                                                  itemCount: movies.length,
-                                                  gridDelegate:
-                                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 4,
-                                                    childAspectRatio: 5 / 3,
-                                                  ),
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return GestureDetector(
-                                                      onTap: () async {},
-                                                      child: Container(
-                                                        child: AspectRatio(
-                                                          aspectRatio: 5 / 3,
-                                                          child: Container(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                              MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.0045,
-                                                            ),
-                                                            child:
-                                                                Image.network(
-                                                              movies[index]
-                                                                  .posterImageUrl,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            );
-
-                                            /* ListView.builder(
-                                              itemCount: movies.length,
-                                              itemBuilder: (context, index) {
-                                                return ListTile(
-                                                  title: Text(
-                                                    movies[index].title,
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                  subtitle: Text(movies[index]
-                                                      .releaseYear),
-                                                );
-                                              },
-                                            );*/
-                                          }
-                                        },
-                                      )
-                                    : Column(
+                                )
+                              : Expanded(
+                                  child: PageView(
+                                    controller: _pageController,
+                                    onPageChanged: (int index) {
+                                      setState(() {
+                                        _currentPageIndex = index;
+                                      });
+                                    },
+                                    children: [
+                                      Column(
                                         children: [
                                           Column(
                                             children: [
@@ -1370,12 +1407,12 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ],
                                       ),
-                                const UserWatchlistPage(),
-                                const CategoriesScreen(),
-                                const ProfilePage(),
-                              ],
-                            ),
-                          ),
+                                      const UserWatchlistPage(),
+                                      const CategoriesScreen(),
+                                      const ProfilePage(),
+                                    ],
+                                  ),
+                                ),
                         ],
                       ),
                     ),
