@@ -468,7 +468,7 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                                 SearchVisibilityWidget(
-                                  key: ValueKey('my_search_widget'),
+                                  key: const ValueKey('my_search_widget'),
                                   isVisible: _searchisVisible,
                                   onChanged: (value) {
                                     setState(() {
@@ -597,7 +597,7 @@ class _HomePageState extends State<HomePage> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return Center(
+                                      return const Center(
                                         child: CircularProgressIndicator(),
                                       );
                                     } else if (snapshot.hasError) {

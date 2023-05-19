@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../provider/movie_provider.dart';
 
 class MovieListView extends StatelessWidget {
+  const MovieListView({super.key});
+
   @override
   Widget build(BuildContext context) {
     final movieProvider = Provider.of<MovieProvider>(context, listen: false);
@@ -12,11 +14,11 @@ class MovieListView extends StatelessWidget {
         future: movieProvider.fetchMovies(),
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
-            return Center(
+            return const Center(
               child: Text('An error occurred while loading movies.'),
             );
           } else {

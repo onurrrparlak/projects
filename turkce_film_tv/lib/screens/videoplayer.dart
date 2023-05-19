@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:subtitle_wrapper_package/subtitle_wrapper_package.dart';
 import 'package:video_player/video_player.dart';
+import 'package:wakelock/wakelock.dart';
 
 class EnterButtonIntent extends Intent {}
 
@@ -37,6 +38,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   void initState() {
     super.initState();
+    Wakelock.enable();
+
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
@@ -76,25 +79,29 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   }
 
   void _rewind() {
-    _controller.seekTo(_controller.value.position - Duration(seconds: 10));
+    _controller
+        .seekTo(_controller.value.position - const Duration(seconds: 10));
     setState(() {
-      _positionIcon = Icon(Icons.replay_10, size: 48, color: Colors.white);
+      _positionIcon =
+          const Icon(Icons.replay_10, size: 48, color: Colors.white);
       _isForward = false;
     });
     _hidePositionIcon();
   }
 
   void _forward() {
-    _controller.seekTo(_controller.value.position + Duration(seconds: 10));
+    _controller
+        .seekTo(_controller.value.position + const Duration(seconds: 10));
     setState(() {
-      _positionIcon = Icon(Icons.forward_10, size: 48, color: Colors.white);
+      _positionIcon =
+          const Icon(Icons.forward_10, size: 48, color: Colors.white);
       _isForward = true;
     });
     _hidePositionIcon();
   }
 
   void _hidePositionIcon() {
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         _positionIcon = null;
       });
@@ -106,6 +113,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   void dispose() {
     _controller.dispose();
     _hideTimer?.cancel();
+    Wakelock.disable();
+
     super.dispose();
   }
 

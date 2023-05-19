@@ -27,13 +27,13 @@ class VideoPlayerService {
 
   Future<void> seekBackward() async {
     final Duration? currentPosition = await _controller.position;
-    final Duration tenSecondsBack = currentPosition! - Duration(seconds: 10);
+    final Duration tenSecondsBack = currentPosition! - const Duration(seconds: 10);
     await _controller.seekTo(tenSecondsBack);
   }
 
   Future<void> seekForward() async {
     final Duration? currentPosition = await _controller.position;
-    final Duration tenSecondsForward = currentPosition! + Duration(seconds: 10);
+    final Duration tenSecondsForward = currentPosition! + const Duration(seconds: 10);
     await _controller.seekTo(tenSecondsForward);
   }
 

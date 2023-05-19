@@ -28,7 +28,7 @@ class _SearchVisibilityWidgetState extends State<SearchVisibilityWidget>
     );
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0.5, 0),
-      end: Offset(0, 0),
+      end: const Offset(0, 0),
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOut,
@@ -66,7 +66,7 @@ class _SearchVisibilityWidgetState extends State<SearchVisibilityWidget>
           child: SizedBox(
             width: 400,
             child: TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Film ara...',
                 hintStyle: TextStyle(color: Colors.white),
                 enabledBorder: UnderlineInputBorder(
@@ -74,7 +74,7 @@ class _SearchVisibilityWidgetState extends State<SearchVisibilityWidget>
                 ),
               ),
               onChanged: widget.onChanged,
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ),

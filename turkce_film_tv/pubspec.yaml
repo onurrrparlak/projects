@@ -1,5 +1,5 @@
 name: turkce_film_tv
-description: A new Flutter project.
+description: Türkçe film izlemek artık daha kolay
 publish_to: 'none'
 version: 0.1.0
 
@@ -19,6 +19,7 @@ dependencies:
   subtitle_wrapper_package: ^2.1.1
   torrent_streamer: ^0.0.2
   video_player: ^2.6.1
+  wakelock: ^0.6.2
 
 dev_dependencies:
   flutter_test:

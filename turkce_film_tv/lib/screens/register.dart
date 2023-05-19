@@ -28,6 +28,15 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _passwordAgainController =
       TextEditingController();
 
+  final TextStyle whiteTextStyle = TextStyle(
+    color: Colors.white,
+  );
+
+  final whiteInputBorder = OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.white),
+    borderRadius: BorderRadius.circular(38.0),
+  );
+
   FocusNode? _usernameInputNode;
   FocusNode? _emailInputNode;
   FocusNode? _passwordInputNode;
@@ -78,6 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
         LogicalKeySet(LogicalKeyboardKey.select): EnterButtonIntent(),
       },
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -95,9 +105,21 @@ class _RegisterPageState extends State<RegisterPage> {
                   focusNode: _usernameInputNode,
                   child: TextField(
                     controller: _usernameController,
-                    decoration: const InputDecoration(labelText: 'Kullanıcı adı'),
+                    decoration: InputDecoration(
+                      labelText: 'Kullanıcı Adı',
+                      labelStyle: whiteTextStyle,
+                      prefixIcon: Icon(
+                        Icons.person_2_outlined,
+                        color: Colors.white,
+                      ),
+                      enabledBorder: whiteInputBorder,
+                      focusedBorder: whiteInputBorder,
+                    ),
                   ),
                 ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.width * 0.01,
               ),
               Actions(
                 actions: <Type, Action<Intent>>{
@@ -118,9 +140,21 @@ class _RegisterPageState extends State<RegisterPage> {
                   focusNode: _emailInputNode,
                   child: TextField(
                     controller: _emailController,
-                    decoration: const InputDecoration(labelText: 'E-posta'),
+                    decoration: InputDecoration(
+                      labelText: 'E- Posta',
+                      labelStyle: whiteTextStyle,
+                      prefixIcon: Icon(
+                        Icons.mail,
+                        color: Colors.white,
+                      ),
+                      enabledBorder: whiteInputBorder,
+                      focusedBorder: whiteInputBorder,
+                    ),
                   ),
                 ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.width * 0.01,
               ),
               Actions(
                 actions: <Type, Action<Intent>>{
@@ -141,10 +175,22 @@ class _RegisterPageState extends State<RegisterPage> {
                   focusNode: _passwordInputNode,
                   child: TextField(
                     controller: _passwordController,
-                    decoration: const InputDecoration(labelText: 'Şifre'),
+                    decoration: InputDecoration(
+                      labelText: 'Şifre',
+                      labelStyle: whiteTextStyle,
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: Colors.white,
+                      ),
+                      enabledBorder: whiteInputBorder,
+                      focusedBorder: whiteInputBorder,
+                    ),
                     obscureText: false,
                   ),
                 ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.width * 0.01,
               ),
               Actions(
                 actions: <Type, Action<Intent>>{
@@ -165,10 +211,22 @@ class _RegisterPageState extends State<RegisterPage> {
                   focusNode: _passwordAgainNode,
                   child: TextField(
                     controller: _passwordAgainController,
-                    decoration: const InputDecoration(labelText: 'Şifre Tekrar'),
+                    decoration: InputDecoration(
+                      labelText: 'Şifre tekrar',
+                      labelStyle: whiteTextStyle,
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: Colors.white,
+                      ),
+                      enabledBorder: whiteInputBorder,
+                      focusedBorder: whiteInputBorder,
+                    ),
                     obscureText: false,
                   ),
                 ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.width * 0.01,
               ),
               Actions(
                 actions: <Type, Action<Intent>>{
@@ -230,11 +288,31 @@ class _RegisterPageState extends State<RegisterPage> {
                         );
                       }
                     },
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              8.0), // Adjust the radius as needed
+                        ),
+                      ),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        EdgeInsets.symmetric(
+                            vertical: 12.0,
+                            horizontal: 24.0), // Adjust the padding as needed
+                      ),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.green),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      overlayColor: MaterialStateProperty.all<Color>(
+                          Colors.green.withOpacity(0.8)),
+                      elevation: MaterialStateProperty.all<double>(
+                          0.0), // Remove the button shadow
+                    ),
                     child: const Text('Kayıt ol'),
                   ),
                 ),
               ),
-              ElevatedButton(onPressed: () {}, child: const Text('Geri Dön'))
             ],
           ),
         ),
