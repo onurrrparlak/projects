@@ -143,199 +143,264 @@ class _ProfilePageState extends State<ProfilePage> {
               return const Center(child: CircularProgressIndicator());
             } else {
               final userData = snapshot.data!;
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: 500,
-                              child: Row(
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text('Kullanıcının adı:'),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.0120,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.white),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Theme(
+                                          data: ThemeData(
+                                            primaryColor: Colors.white,
+                                            textTheme: const TextTheme(
+                                              titleMedium: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                          child: SizedBox(
+                                            width: 200,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.white),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: TextFormField(
+                                                initialValue:
+                                                    userData['username'],
+                                                enabled: false,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16.0),
+                                Row(
+                                  children: [
+                                    const Text('Güncel şifrenizi giriniz:'),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.0120,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.white),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: TextFormField(
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                          onChanged: (value) {
+                                            _password = value;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16.0),
+                                Row(
+                                  children: [
+                                    const Text('Yeni şifrenizi giriniz:'),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.0120,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.white),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: TextFormField(
+                                          onChanged: (value) {
+                                            _newPassword = value;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _password != null
+                                        ? _changePassword(
+                                            _password!, _newPassword!)
+                                        : print('abd');
+                                  },
+                                  child: const Text('Güncelle'),
+                                  style: ButtonStyle(
+                                    shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    padding: MaterialStateProperty.all<
+                                        EdgeInsetsGeometry>(
+                                      EdgeInsets.symmetric(
+                                          vertical: 12.0, horizontal: 24.0),
+                                    ),
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.green),
+                                    foregroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.white),
+                                    overlayColor:
+                                        MaterialStateProperty.all<Color>(
+                                      Colors.green.withOpacity(0.8),
+                                    ),
+                                    elevation:
+                                        MaterialStateProperty.all<double>(0.0),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    await _userService.logoutUser();
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginPage()),
+                                    );
+                                  },
+                                  child: const Text('Çıkış yap'),
+                                  style: ButtonStyle(
+                                    shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    padding: MaterialStateProperty.all<
+                                        EdgeInsetsGeometry>(
+                                      EdgeInsets.symmetric(
+                                          vertical: 12.0, horizontal: 24.0),
+                                    ),
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.red),
+                                    foregroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.white),
+                                    overlayColor:
+                                        MaterialStateProperty.all<Color>(
+                                      Colors.red.withOpacity(0.8),
+                                    ),
+                                    elevation:
+                                        MaterialStateProperty.all<double>(0.0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  const Text('Kullacını adı:'),
-                                  const SizedBox(
-                                    width: 50,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.white),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        primaryColor: Colors.white,
-                                        textTheme: const TextTheme(
-                                          titleMedium:
-                                              TextStyle(color: Colors.white),
-                                        ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.width *
+                                        0.38,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.38,
+                                    child: GridView.builder(
+                                      itemCount: _avatars.length,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 6,
+                                        childAspectRatio: 1.0,
+                                        mainAxisSpacing: 10.0,
+                                        crossAxisSpacing: 10.0,
                                       ),
-                                      child: SizedBox(
-                                        width: 200,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border:
-                                                Border.all(color: Colors.white),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: TextFormField(
-                                            initialValue: userData['username'],
-                                            enabled: false,
-                                            style: const TextStyle(
-                                              color: Colors
-                                                  .white, // set the initial value color
-                                            ),
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 16.0),
-                            Row(
-                              children: [
-                                const Text('Güncel şifrenizi giriniz:'),
-                                const SizedBox(
-                                  width: 50,
-                                ),
-                                SizedBox(
-                                  width: 200,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.white),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: TextFormField(
-                                      style: const TextStyle(
-                                        color: Colors
-                                            .white, // set the initial value color
-                                      ),
-                                      onChanged: (value) {
-                                        _password = value;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16.0),
-                            Row(
-                              children: [
-                                const Text('Yeni şifrenizi giriniz:'),
-                                const SizedBox(
-                                  width: 50,
-                                ),
-                                SizedBox(
-                                  width: 200,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.white),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: TextFormField(
-                                      onChanged: (value) {
-                                        _newPassword = value;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                _password != null
-                                    ? _changePassword(_password!, _newPassword!)
-                                    : print('abd');
-                              },
-                              child: const Text('Güncelle'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                await _userService.logoutUser();
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const LoginPage()),
-                                );
-                              },
-                              child: const Text('Çıkış yap'),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.38,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.38,
-                                  child: GridView.builder(
-                                    itemCount: _avatars.length,
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 6,
-                                      childAspectRatio: 1.0,
-                                      mainAxisSpacing: 10.0,
-                                      crossAxisSpacing: 10.0,
-                                    ),
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          setState(() {
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return GestureDetector(
+                                          onTap: () {
                                             setState(() {
-                                              _selectedAvatar = _avatars[index];
-                                              updateAvatar(_selectedAvatar,
-                                                  _currentUserId);
+                                              setState(() {
+                                                _selectedAvatar =
+                                                    _avatars[index];
+                                                updateAvatar(_selectedAvatar,
+                                                    _currentUserId);
+                                              });
                                             });
-                                          });
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/avatars/${_avatars[index]}.jpg'),
-                                              fit: BoxFit.cover,
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    'assets/images/avatars/${_avatars[index]}.jpg'),
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
+                                            child: _selectedAvatar ==
+                                                    _avatars[index]
+                                                ? const Icon(Icons.check_circle,
+                                                    color: Colors.white,
+                                                    size: 50.0)
+                                                : Container(),
                                           ),
-                                          child:
-                                              _selectedAvatar == _avatars[index]
-                                                  ? const Icon(Icons.check_circle,
-                                                      color: Colors.white,
-                                                      size: 50.0)
-                                                  : Container(),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      )
-                    ],
+                                        );
+                                      },
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               );

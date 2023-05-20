@@ -28,10 +28,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _passwordAgainController =
       TextEditingController();
 
-  final TextStyle whiteTextStyle = TextStyle(
-    color: Colors.white,
-  );
-
   final whiteInputBorder = OutlineInputBorder(
     borderSide: BorderSide(color: Colors.white),
     borderRadius: BorderRadius.circular(38.0),
@@ -78,6 +74,14 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_usernameInputNode == null) {
       _setFirstFocus(context);
     }
+    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final baseFontSize = 14.0;
+    final scaledFontSize = baseFontSize * textScaleFactor;
+    final TextStyle whiteTextStyle = TextStyle(
+      color: Colors.white,
+      fontSize: scaledFontSize,
+    );
+
     return Shortcuts(
       shortcuts: <LogicalKeySet, Intent>{
         LogicalKeySet(LogicalKeyboardKey.arrowLeft): LeftButtonIntent(),
@@ -88,232 +92,241 @@ class _RegisterPageState extends State<RegisterPage> {
       },
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Actions(
-                actions: <Type, Action<Intent>>{
-                  DownButtonIntent: CallbackAction<DownButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _emailInputNode!);
-                      return null;
-                    },
-                  ),
-                },
-                child: Focus(
-                  focusNode: _usernameInputNode,
-                  child: TextField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: 'Kullanıcı Adı',
-                      labelStyle: whiteTextStyle,
-                      prefixIcon: Icon(
-                        Icons.person_2_outlined,
-                        color: Colors.white,
-                      ),
-                      enabledBorder: whiteInputBorder,
-                      focusedBorder: whiteInputBorder,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Actions(
+                  actions: <Type, Action<Intent>>{
+                    DownButtonIntent: CallbackAction<DownButtonIntent>(
+                      onInvoke: (intent) async {
+                        await _changeFocus(context, _emailInputNode!);
+                        return null;
+                      },
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.width * 0.01,
-              ),
-              Actions(
-                actions: <Type, Action<Intent>>{
-                  UpButtonIntent: CallbackAction<UpButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _usernameInputNode!);
-                      return null;
-                    },
-                  ),
-                  DownButtonIntent: CallbackAction<DownButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _passwordInputNode!);
-                      return null;
-                    },
-                  ),
-                },
-                child: Focus(
-                  focusNode: _emailInputNode,
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'E- Posta',
-                      labelStyle: whiteTextStyle,
-                      prefixIcon: Icon(
-                        Icons.mail,
-                        color: Colors.white,
-                      ),
-                      enabledBorder: whiteInputBorder,
-                      focusedBorder: whiteInputBorder,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.width * 0.01,
-              ),
-              Actions(
-                actions: <Type, Action<Intent>>{
-                  UpButtonIntent: CallbackAction<UpButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _emailInputNode!);
-                      return null;
-                    },
-                  ),
-                  DownButtonIntent: CallbackAction<DownButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _passwordAgainNode!);
-                      return null;
-                    },
-                  ),
-                },
-                child: Focus(
-                  focusNode: _passwordInputNode,
-                  child: TextField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Şifre',
-                      labelStyle: whiteTextStyle,
-                      prefixIcon: Icon(
-                        Icons.lock,
-                        color: Colors.white,
-                      ),
-                      enabledBorder: whiteInputBorder,
-                      focusedBorder: whiteInputBorder,
-                    ),
-                    obscureText: false,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.width * 0.01,
-              ),
-              Actions(
-                actions: <Type, Action<Intent>>{
-                  UpButtonIntent: CallbackAction<UpButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _passwordInputNode!);
-                      return null;
-                    },
-                  ),
-                  DownButtonIntent: CallbackAction<DownButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _registerNode!);
-                      return null;
-                    },
-                  ),
-                },
-                child: Focus(
-                  focusNode: _passwordAgainNode,
-                  child: TextField(
-                    controller: _passwordAgainController,
-                    decoration: InputDecoration(
-                      labelText: 'Şifre tekrar',
-                      labelStyle: whiteTextStyle,
-                      prefixIcon: Icon(
-                        Icons.lock,
-                        color: Colors.white,
-                      ),
-                      enabledBorder: whiteInputBorder,
-                      focusedBorder: whiteInputBorder,
-                    ),
-                    obscureText: false,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.width * 0.01,
-              ),
-              Actions(
-                actions: <Type, Action<Intent>>{
-                  UpButtonIntent: CallbackAction<UpButtonIntent>(
-                    onInvoke: (intent) async {
-                      await _changeFocus(context, _passwordAgainNode!);
-                      return null;
-                    },
-                  ),
-                  EnterButtonIntent: CallbackAction<EnterButtonIntent>(
-                    onInvoke: (intent) async {
-                      if (_passwordController.text ==
-                          _passwordAgainController.text) {
-                        try {
-                          await _userService.registerUser(
-                            _emailController.text,
-                            _passwordController.text,
-                            _usernameController.text,
-                          );
-                          Navigator.pop(context);
-                        } catch (e) {
-                          print(e);
-                        }
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Girdiğiniz şifreler aynı değil')),
-                        );
-                      }
-                      return null;
-                    },
-                  ),
-                },
-                child: Focus(
-                  focusNode: _registerNode,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_passwordController.text ==
-                          _passwordAgainController.text) {
-                        try {
-                          await _userService.registerUser(
-                            _emailController.text,
-                            _passwordController.text,
-                            _usernameController.text,
-                          );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HomePage(),
-                            ),
-                          );
-                        } catch (e) {
-                          print(e);
-                        }
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Girdiğiniz şifreler aynı değil')),
-                        );
-                      }
-                    },
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              8.0), // Adjust the radius as needed
+                  },
+                  child: Focus(
+                    focusNode: _usernameInputNode,
+                    child: TextField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(
+                        labelText: 'Kullanıcı Adı',
+                        labelStyle: whiteTextStyle,
+                        prefixIcon: Icon(
+                          Icons.person_2_outlined,
+                          color: Colors.white,
                         ),
+                        enabledBorder: whiteInputBorder,
+                        focusedBorder: whiteInputBorder,
                       ),
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                        EdgeInsets.symmetric(
-                            vertical: 12.0,
-                            horizontal: 24.0), // Adjust the padding as needed
-                      ),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.green),
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      overlayColor: MaterialStateProperty.all<Color>(
-                          Colors.green.withOpacity(0.8)),
-                      elevation: MaterialStateProperty.all<double>(
-                          0.0), // Remove the button shadow
+                      style: whiteTextStyle,
                     ),
-                    child: const Text('Kayıt ol'),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: MediaQuery.of(context).size.width * 0.01,
+                ),
+                Actions(
+                  actions: <Type, Action<Intent>>{
+                    UpButtonIntent: CallbackAction<UpButtonIntent>(
+                      onInvoke: (intent) async {
+                        await _changeFocus(context, _usernameInputNode!);
+                        return null;
+                      },
+                    ),
+                    DownButtonIntent: CallbackAction<DownButtonIntent>(
+                      onInvoke: (intent) async {
+                        await _changeFocus(context, _passwordInputNode!);
+                        return null;
+                      },
+                    ),
+                  },
+                  child: Focus(
+                    focusNode: _emailInputNode,
+                    child: TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: 'E- Posta',
+                        labelStyle: whiteTextStyle,
+                        prefixIcon: Icon(
+                          Icons.mail,
+                          color: Colors.white,
+                        ),
+                        enabledBorder: whiteInputBorder,
+                        focusedBorder: whiteInputBorder,
+                      ),
+                      style: whiteTextStyle,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.width * 0.01,
+                ),
+                Actions(
+                  actions: <Type, Action<Intent>>{
+                    UpButtonIntent: CallbackAction<UpButtonIntent>(
+                      onInvoke: (intent) async {
+                        await _changeFocus(context, _emailInputNode!);
+                        return null;
+                      },
+                    ),
+                    DownButtonIntent: CallbackAction<DownButtonIntent>(
+                      onInvoke: (intent) async {
+                        await _changeFocus(context, _passwordAgainNode!);
+                        return null;
+                      },
+                    ),
+                  },
+                  child: Focus(
+                    focusNode: _passwordInputNode,
+                    child: TextField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Şifre',
+                        labelStyle: whiteTextStyle,
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: Colors.white,
+                        ),
+                        enabledBorder: whiteInputBorder,
+                        focusedBorder: whiteInputBorder,
+                      ),
+                      style: whiteTextStyle,
+                      obscureText: false,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.width * 0.01,
+                ),
+                Actions(
+                  actions: <Type, Action<Intent>>{
+                    UpButtonIntent: CallbackAction<UpButtonIntent>(
+                      onInvoke: (intent) async {
+                        await _changeFocus(context, _passwordInputNode!);
+                        return null;
+                      },
+                    ),
+                    DownButtonIntent: CallbackAction<DownButtonIntent>(
+                      onInvoke: (intent) async {
+                        await _changeFocus(context, _registerNode!);
+                        return null;
+                      },
+                    ),
+                  },
+                  child: Focus(
+                    focusNode: _passwordAgainNode,
+                    child: TextField(
+                      controller: _passwordAgainController,
+                      decoration: InputDecoration(
+                        labelText: 'Şifre tekrar',
+                        labelStyle: whiteTextStyle,
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: Colors.white,
+                        ),
+                        enabledBorder: whiteInputBorder,
+                        focusedBorder: whiteInputBorder,
+                      ),
+                      style: whiteTextStyle,
+                      obscureText: false,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.width * 0.01,
+                ),
+                Actions(
+                  actions: <Type, Action<Intent>>{
+                    UpButtonIntent: CallbackAction<UpButtonIntent>(
+                      onInvoke: (intent) async {
+                        await _changeFocus(context, _passwordAgainNode!);
+                        return null;
+                      },
+                    ),
+                    EnterButtonIntent: CallbackAction<EnterButtonIntent>(
+                      onInvoke: (intent) async {
+                        if (_passwordController.text ==
+                            _passwordAgainController.text) {
+                          try {
+                            await _userService.registerUser(
+                              _emailController.text,
+                              _passwordController.text,
+                              _usernameController.text,
+                            );
+                            Navigator.pop(context);
+                          } catch (e) {
+                            print(e);
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('Girdiğiniz şifreler aynı değil')),
+                          );
+                        }
+                        return null;
+                      },
+                    ),
+                  },
+                  child: Focus(
+                    focusNode: _registerNode,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (_passwordController.text ==
+                            _passwordAgainController.text) {
+                          try {
+                            await _userService.registerUser(
+                              _emailController.text,
+                              _passwordController.text,
+                              _usernameController.text,
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HomePage(),
+                              ),
+                            );
+                          } catch (e) {
+                            print(e);
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('Girdiğiniz şifreler aynı değil')),
+                          );
+                        }
+                      },
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Adjust the radius as needed
+                          ),
+                        ),
+                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                          EdgeInsets.symmetric(
+                              vertical: 12.0,
+                              horizontal: 24.0), // Adjust the padding as needed
+                        ),
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.green),
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
+                        overlayColor: MaterialStateProperty.all<Color>(
+                            Colors.green.withOpacity(0.8)),
+                        elevation: MaterialStateProperty.all<double>(
+                            0.0), // Remove the button shadow
+                      ),
+                      child: const Text('Kayıt ol'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

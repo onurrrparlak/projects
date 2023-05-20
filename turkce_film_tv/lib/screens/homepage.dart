@@ -219,6 +219,15 @@ class _HomePageState extends State<HomePage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
+                                    Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.1,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.040,
+                                      child:
+                                          Image.asset('assets/images/logo.png'),
+                                    ),
                                     Actions(
                                       actions: <Type, Action<Intent>>{
                                         RightButtonIntent:
@@ -333,12 +342,6 @@ class _HomePageState extends State<HomePage> {
                                       child: Focus(
                                         focusNode: _watchlistNode,
                                         child: Container(
-                                          padding: EdgeInsets.only(
-                                            bottom: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.002,
-                                          ),
                                           decoration: BoxDecoration(
                                             border: !(_watchlistNode
                                                         ?.hasFocus ??
@@ -467,125 +470,134 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ],
                                 ),
-                                SearchVisibilityWidget(
-                                  key: const ValueKey('my_search_widget'),
-                                  isVisible: _searchisVisible,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _searchQuery = value;
-                                    });
-                                  },
-                                ),
-                                Row(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () async {
-                                        setState(() {
-                                          _searchisVisible = !_searchisVisible;
-                                        });
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Colors.white,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.0020,
-                                          ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.580,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: SearchVisibilityWidget(
+                                          key: const ValueKey(
+                                              'my_search_widget'),
+                                          isVisible: _searchisVisible,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _searchQuery = value;
+                                            });
+                                          },
                                         ),
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.095,
-                                        child: ClipOval(
-                                          child: SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.110, // change to desired width
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.110,
-                                            child: Icon(
-                                              Icons.search,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          setState(() {
+                                            _searchisVisible =
+                                                !_searchisVisible;
+                                          });
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
                                               color: Colors.white,
-                                              size: MediaQuery.of(context)
+                                              width: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.050,
+                                                  0.0020,
+                                            ),
+                                          ),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.095,
+                                          child: ClipOval(
+                                            child: SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.110, // change to desired width
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.110,
+                                              child: Icon(
+                                                Icons.search,
+                                                color: Colors.white,
+                                                size: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.050,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    StreamBuilder<DocumentSnapshot>(
-                                      stream: currentUserRef.snapshots(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
-                                        } else if (!snapshot.hasData) {
-                                          return const Text(
-                                              'No user data found');
-                                        } else {
-                                          final avatar =
-                                              snapshot.data!['avatar'];
-                                          return Padding(
-                                            padding: EdgeInsets.only(
-                                              right: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.050,
-                                            ),
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                if (_currentPageIndex == 3) {
-                                                } else {
-                                                  int index = 3;
-                                                  _pageController
-                                                      .jumpToPage(index);
-                                                  setState(() {
-                                                    _currentPageIndex = index;
-                                                  });
-                                                  await _changeFocus(context,
-                                                      _userAvatarNode!);
-                                                }
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                    color: !(_userAvatarNode
-                                                                ?.hasFocus ??
-                                                            false)
-                                                        ? Colors.transparent
-                                                        : Colors.white,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.0035,
-                                                  ),
-                                                ),
-                                                width: MediaQuery.of(context)
+                                      StreamBuilder<DocumentSnapshot>(
+                                        stream: currentUserRef.snapshots(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const CircularProgressIndicator();
+                                          } else if (!snapshot.hasData) {
+                                            return const Text(
+                                                'No user data found');
+                                          } else {
+                                            final avatar =
+                                                snapshot.data!['avatar'];
+                                            return Padding(
+                                              padding: EdgeInsets.only(
+                                                right: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.060,
-                                                child: ClipOval(
-                                                  child: Image.asset(
-                                                    'assets/images/avatars/$avatar.jpg',
-                                                    fit: BoxFit.cover,
+                                                    0.050,
+                                              ),
+                                              child: GestureDetector(
+                                                onTap: () async {
+                                                  if (_currentPageIndex == 3) {
+                                                  } else {
+                                                    int index = 3;
+                                                    _pageController
+                                                        .jumpToPage(index);
+                                                    setState(() {
+                                                      _currentPageIndex = index;
+                                                    });
+                                                    await _changeFocus(context,
+                                                        _userAvatarNode!);
+                                                  }
+                                                },
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                      color: !(_userAvatarNode
+                                                                  ?.hasFocus ??
+                                                              false)
+                                                          ? Colors.transparent
+                                                          : Colors.white,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.0035,
+                                                    ),
+                                                  ),
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.060,
+                                                  child: ClipOval(
+                                                    child: Image.asset(
+                                                      'assets/images/avatars/$avatar.jpg',
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ],
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -606,6 +618,38 @@ class _HomePageState extends State<HomePage> {
                                       );
                                     } else {
                                       final movies = snapshot.data!;
+
+                                      if (movies.isEmpty) {
+                                        return Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.09, // 5% of the screen width as left padding
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.15, // 2% of the screen height as top padding
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.09, // 5% of the screen width as right padding
+                                              0,
+                                            ),
+                                            child: Text(
+                                              'Aradığınız film bulunamadı',
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.030),
+                                            ),
+                                          ),
+                                        );
+                                      }
+
                                       return Padding(
                                         padding: EdgeInsets.fromLTRB(
                                           MediaQuery.of(context).size.width *
@@ -1033,7 +1077,8 @@ class _HomePageState extends State<HomePage> {
                                                               return FutureBuilder<
                                                                   DocumentSnapshot>(
                                                                 future: watchlist
-                                                                    .doc(selectedMovieIndex
+                                                                    .doc(selectedMovie
+                                                                        .movieId
                                                                         .toString())
                                                                     .get(),
                                                                 builder: (context,
@@ -1085,7 +1130,7 @@ class _HomePageState extends State<HomePage> {
                                                                               await watchlist.doc(docId).delete();
                                                                             }
                                                                           } else {
-                                                                            await watchlist.doc(selectedMovieIndex.toString()).set({
+                                                                            await watchlist.doc(selectedMovie.movieId.toString()).set({
                                                                               'movieId': selectedMovie.movieId,
                                                                               'isWatched': false,
                                                                             });
@@ -1142,6 +1187,12 @@ class _HomePageState extends State<HomePage> {
                                                           FontWeight.w400)),
                                             ),
                                           ),
+                                          /*ElevatedButton(
+                                            onPressed: () async {
+                                              movieProvider.moveRight();
+                                            },
+                                            child: Text('Sağ git'),
+                                          ),*/
 
                                           Actions(
                                             actions: <Type, Action<Intent>>{
@@ -1324,6 +1375,9 @@ class _HomePageState extends State<HomePage> {
                                                                   } else if (movieProvider
                                                                           .selectedMovieIndex ==
                                                                       0) {
+                                                                  } else if (movieProvider
+                                                                          .selectedMovieIndex ==
+                                                                      index) {
                                                                   } else if (index <
                                                                       movieProvider
                                                                               .movies

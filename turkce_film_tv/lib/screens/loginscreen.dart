@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:turkce_film_tv/screens/forgotpassword.dart';
 import 'package:turkce_film_tv/screens/register.dart';
 import '../services/user_service.dart';
 import 'homepage.dart';
@@ -95,8 +96,8 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        height: MediaQuery.of(context).size.height * 0.6,
-                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        width: MediaQuery.of(context).size.width * 0.2,
                         child: Image.asset('assets/images/logo.png'),
                       ),
                       Text(
@@ -222,144 +223,153 @@ class _LoginPageState extends State<LoginPage> {
                           },
                           children: [
                             // Giriş page
-                            Container(
-                                child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(height: 16.0),
-                                TextField(
-                                  controller: _emailController,
-                                  focusNode: _emailInputNode,
-                                  onEditingComplete: () {
-                                    FocusScope.of(context)
-                                        .requestFocus(_passwordInputNode);
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: 'E-Posta',
-                                    labelStyle: whiteTextStyle,
-                                    prefixIcon: Icon(
-                                      Icons.mail,
-                                      color: Colors.white,
+                            SingleChildScrollView(
+                              child: Container(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(height: 16.0),
+                                  TextField(
+                                    controller: _emailController,
+                                    focusNode: _emailInputNode,
+                                    onEditingComplete: () {
+                                      FocusScope.of(context)
+                                          .requestFocus(_passwordInputNode);
+                                    },
+                                    decoration: InputDecoration(
+                                      labelText: 'E-Posta',
+                                      labelStyle: whiteTextStyle,
+                                      prefixIcon: Icon(
+                                        Icons.mail,
+                                        color: Colors.white,
+                                      ),
+                                      enabledBorder: whiteInputBorder,
+                                      focusedBorder: whiteInputBorder,
                                     ),
-                                    enabledBorder: whiteInputBorder,
-                                    focusedBorder: whiteInputBorder,
+                                    style: whiteTextStyle,
                                   ),
-                                  style: whiteTextStyle,
-                                ),
-                                SizedBox(height: 16.0),
-                                TextField(
-                                  focusNode: _passwordInputNode,
-                                  controller: _passwordController,
-                                  textInputAction: TextInputAction.next,
-                                  onEditingComplete: () async {
-                                    try {
-                                      await _userService.loginUser(
-                                        _emailController.text,
-                                        _passwordController.text,
-                                      );
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const HomePage(),
+                                  SizedBox(height: 16.0),
+                                  TextField(
+                                    focusNode: _passwordInputNode,
+                                    controller: _passwordController,
+                                    textInputAction: TextInputAction.next,
+                                    onEditingComplete: () async {
+                                      try {
+                                        await _userService.loginUser(
+                                          _emailController.text,
+                                          _passwordController.text,
+                                        );
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const HomePage(),
+                                          ),
+                                        );
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(content: Text(e.toString())),
+                                        );
+                                      }
+                                    },
+                                    decoration: InputDecoration(
+                                      labelText: 'Şifre',
+                                      labelStyle: whiteTextStyle,
+                                      prefixIcon: Icon(
+                                        Icons.lock,
+                                        color: Colors.white,
+                                      ),
+                                      enabledBorder: whiteInputBorder,
+                                      focusedBorder: whiteInputBorder,
+                                    ),
+                                    style: whiteTextStyle,
+                                  ),
+                                  SizedBox(height: 16.0),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          try {
+                                            await _userService.loginUser(
+                                              _emailController.text,
+                                              _passwordController.text,
+                                            );
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const HomePage(),
+                                              ),
+                                            );
+                                          } catch (e) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                  content: Text(e.toString())),
+                                            );
+                                          }
+                                        },
+                                        style: ButtonStyle(
+                                          shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  8.0), // Adjust the radius as needed
+                                            ),
+                                          ),
+                                          padding: MaterialStateProperty.all<
+                                              EdgeInsetsGeometry>(
+                                            EdgeInsets.symmetric(
+                                                vertical: 12.0,
+                                                horizontal:
+                                                    24.0), // Adjust the padding as needed
+                                          ),
+                                          backgroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  Colors.green),
+                                          foregroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  Colors.white),
+                                          overlayColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  Colors.green
+                                                      .withOpacity(0.8)),
+                                          elevation: MaterialStateProperty.all<
+                                                  double>(
+                                              0.0), // Remove the button shadow
                                         ),
-                                      );
-                                    } catch (e) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(content: Text(e.toString())),
-                                      );
-                                    }
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: 'Şifre',
-                                    labelStyle: whiteTextStyle,
-                                    prefixIcon: Icon(
-                                      Icons.lock,
-                                      color: Colors.white,
-                                    ),
-                                    enabledBorder: whiteInputBorder,
-                                    focusedBorder: whiteInputBorder,
-                                  ),
-                                  style: whiteTextStyle,
-                                ),
-                                SizedBox(height: 16.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        try {
-                                          await _userService.loginUser(
-                                            _emailController.text,
-                                            _passwordController.text,
-                                          );
+                                        child: Text(
+                                          'Giriş yap',
+                                          style: TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  const HomePage(),
+                                                  ForgotPasswordScreen(),
                                             ),
                                           );
-                                        } catch (e) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                                content: Text(e.toString())),
-                                          );
-                                        }
-                                      },
-                                      style: ButtonStyle(
-                                        shape: MaterialStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                8.0), // Adjust the radius as needed
-                                          ),
-                                        ),
-                                        padding: MaterialStateProperty.all<
-                                            EdgeInsetsGeometry>(
-                                          EdgeInsets.symmetric(
-                                              vertical: 12.0,
-                                              horizontal:
-                                                  24.0), // Adjust the padding as needed
-                                        ),
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.green),
-                                        foregroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.white),
-                                        overlayColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.green.withOpacity(0.8)),
-                                        elevation: MaterialStateProperty.all<
-                                                double>(
-                                            0.0), // Remove the button shadow
-                                      ),
-                                      child: Text(
-                                        'Giriş yap',
-                                        style: TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold,
+                                        },
+                                        child: Text(
+                                          'Şifreni mi unuttun?',
+                                          style: TextStyle(color: Colors.grey),
                                         ),
                                       ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        // Perform forgot password action
-                                      },
-                                      child: Text(
-                                        'Şifreni mi unuttun?',
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            )),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                            ),
                             // Kayıt page
                             RegisterPage(),
                           ],
@@ -372,103 +382,6 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ),
-
-        /* Padding(
-          padding: const EdgeInsets.all(16),
-          child: Align(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                  ),
-                  textInputAction: TextInputAction.next,
-                  onEditingComplete: () {
-                    FocusScope.of(context).requestFocus(_passwordInputNode);
-                  },
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                TextField(
-                  controller: _passwordController,
-                  focusNode: _passwordInputNode,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                  ),
-                  obscureText: true,
-                  textInputAction: TextInputAction.done,
-                  onEditingComplete: () async {
-                    try {
-                      await _userService.loginUser(
-                        _emailController.text,
-                        _passwordController.text,
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
-                      );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
-                    }
-                  },
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      await _userService.loginUser(
-                        _emailController.text,
-                        _passwordController.text,
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
-                      );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
-                    }
-                  },
-                  child: const Text('Giriş Yap'),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text('Şifreni mi unuttun?'),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterPage(),
-                      ),
-                    );
-                  },
-                  child: const Text('Kayıt ol'),
-                ),
-              ],
-            ),
-          ),
-        ),*/
       ),
     );
   }

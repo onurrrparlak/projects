@@ -66,6 +66,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 children: [
                   categoryButton('Aile', _selectedCategory == 'Aile'),
                   categoryButton('Aksiyon', _selectedCategory == 'Aksiyon'),
+                  categoryButton('Animasyon', _selectedCategory == 'Animasyon'),
                   categoryButton(
                       'Bilim Kurgu', _selectedCategory == 'Bilim Kurgu'),
                   categoryButton('Biyografi', _selectedCategory == 'Biyografi'),

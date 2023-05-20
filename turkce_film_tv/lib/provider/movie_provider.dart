@@ -28,7 +28,7 @@ class MovieProvider with ChangeNotifier {
 
   void moveRight() {
     if (_selectedMovieIndex < _movies.length - 1) {
-      _selectedMovieIndex--;
+      _selectedMovieIndex++;
 
       notifyListeners();
     }
@@ -36,7 +36,7 @@ class MovieProvider with ChangeNotifier {
 
   void moveLeft() {
     if (_selectedMovieIndex > 0) {
-      _selectedMovieIndex++;
+      _selectedMovieIndex--;
 
       notifyListeners();
     }

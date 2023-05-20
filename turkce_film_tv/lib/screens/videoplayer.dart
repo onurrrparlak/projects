@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:subtitle_wrapper_package/subtitle_wrapper_package.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 class EnterButtonIntent extends Intent {}
 
@@ -32,6 +33,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   bool _isVisible = true;
   Widget? _positionIcon;
   bool _isForward = true;
+  double _currentVolume = 0.5;
+  bool _volumeDrag = false;
+  late double _initialVolume;
 
   final List<double> fontSizes = [];
 
@@ -39,7 +43,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   void initState() {
     super.initState();
     Wakelock.enable();
+    VolumeController().showSystemUI = false;
+    VolumeController().listener((volume) {
+      setState(() => _currentVolume = volume);
+    });
 
+    VolumeController().getVolume().then((volume) => _currentVolume = volume);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
@@ -71,6 +80,35 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           ));
         }
       }
+    });
+  }
+
+  void _onDragStart(DragStartDetails details) {
+    _initialVolume = _currentVolume;
+    setState(() {
+      _volumeDrag = true;
+    });
+  }
+
+  void _onDragUpdate(DragUpdateDetails details) {
+    final globalPosition = details.globalPosition.dy;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final positionRatio = 1 - (globalPosition / screenHeight);
+    final increment = positionRatio * 2 - 1;
+
+    setState(() {
+      _currentVolume = (_initialVolume + increment).clamp(0.0, 1.0);
+      _controller.setVolume(_currentVolume);
+      VolumeController().setVolume(_currentVolume);
+      _volumeDrag = true;
+    });
+  }
+
+  void _onDragEnd(DragEndDetails details) {
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        _volumeDrag = false;
+      });
     });
   }
 
@@ -164,6 +202,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                     },
                     child: Center(
                       child: GestureDetector(
+                        onVerticalDragStart: _onDragStart,
+                        onVerticalDragUpdate: _onDragUpdate,
+                        onVerticalDragEnd: _onDragEnd,
                         onDoubleTapDown: (details) {
                           final position = details.localPosition.dx;
                           if (position < screenWidth / 2) {
@@ -188,7 +229,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                           aspectRatio: _controller.value.aspectRatio,
                           child: Stack(
                             children: [
-                              widget.subtitle != null && widget.subtitle == ""
+                              widget.subtitle != null &&
+                                      widget.subtitle!.isNotEmpty
                                   ? SubtitleWrapper(
                                       subtitleStyle: SubtitleStyle(
                                         hasBorder: true,
@@ -400,6 +442,22 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                     ),
                                   ),
                                 ),
+                              ),
+                              Align(
+                                alignment: Alignment.center,
+                                child: _volumeDrag
+                                    ? Container(
+                                        color: Colors.black.withOpacity(
+                                            0.5), // Set the black color with 50% opacity
+                                        child: Text(
+                                          '%${(_currentVolume * 100).toStringAsFixed(0)}',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox(),
                               ),
                               Align(
                                 alignment: _isForward

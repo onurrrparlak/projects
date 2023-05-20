@@ -215,7 +215,7 @@ class _UserWatchlistPageState extends State<UserWatchlistPage> {
                                 fontWeight: FontWeight.w400)),
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.25,
+                        height: MediaQuery.of(context).size.height * 0.30,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           shrinkWrap: true,
