@@ -36,7 +36,8 @@ class _UserWatchlistPageState extends State<UserWatchlistPage> {
           MediaQuery.of(context).size.width * 0.02,
         ),
         child: StreamBuilder<QuerySnapshot>(
-          stream: _watchlistRef.snapshots(),
+          stream:
+              _watchlistRef.orderBy('timestamp', descending: true).snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());

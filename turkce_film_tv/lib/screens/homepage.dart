@@ -61,10 +61,12 @@ class _HomePageState extends State<HomePage> {
   FocusNode? _homePageNode;
   FocusNode? _watchlistNode;
   FocusNode? _categoriesNode;
+  FocusNode? _searchNode;
+  FocusNode? _userAvatarNode;
   FocusNode? _playNode;
   FocusNode? _addMyWishlistNode;
   FocusNode? _listNode;
-  FocusNode? _userAvatarNode;
+
   final _scrollController = ScrollController();
 
   _setFirstFocus(BuildContext context) {
@@ -72,10 +74,12 @@ class _HomePageState extends State<HomePage> {
       _homePageNode = FocusNode();
       _watchlistNode = FocusNode();
       _categoriesNode = FocusNode();
+      _searchNode = FocusNode();
+      _userAvatarNode = FocusNode();
       _playNode = FocusNode();
       _addMyWishlistNode = FocusNode();
       _listNode = FocusNode();
-      _userAvatarNode = FocusNode();
+
       FocusScope.of(context).requestFocus(_homePageNode);
     }
   }
@@ -86,9 +90,10 @@ class _HomePageState extends State<HomePage> {
     _homePageNode?.dispose();
     _watchlistNode?.dispose();
     _categoriesNode?.dispose();
+    _searchNode?.dispose();
+    _userAvatarNode?.dispose();
     _playNode?.dispose();
     _addMyWishlistNode?.dispose();
-    _userAvatarNode?.dispose();
     _listNode?.dispose();
   }
 
@@ -104,6 +109,7 @@ class _HomePageState extends State<HomePage> {
   _changeFocus(BuildContext context, FocusNode node) {
     FocusScope.of(context).requestFocus(node);
     setState(() {});
+    print(node);
   }
 
   @override
@@ -111,6 +117,8 @@ class _HomePageState extends State<HomePage> {
     if (_homePageNode == null) {
       _setFirstFocus(context);
     }
+    final screenWidth = MediaQuery.of(context).size.width;
+    final itemWidth = screenWidth * 0.20;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -138,9 +146,12 @@ class _HomePageState extends State<HomePage> {
                 }
 
                 bool isEndOfList = selectedMovieIndex >= listLength - 3;
-                final leftPositions = [100.0, 335.0, 570.0];
+                final leftPositions = [
+                  MediaQuery.of(context).size.width * 0.24,
+                  MediaQuery.of(context).size.width * 0.44,
+                  MediaQuery.of(context).size.width * 0.64,
+                ];
 
-// Calculate the left position dynamically based on the selectedMovieIndex and listLength
                 final lastIndex = listLength - 3;
                 final selectedLastIndex = selectedMovieIndex - lastIndex;
                 final left = selectedMovieIndex < lastIndex
@@ -151,7 +162,6 @@ class _HomePageState extends State<HomePage> {
                     .map((category) => category.split(',')[0])
                     .toList();
                 String categoriesString = categoryNames.join(', ');
-                print(categoriesString);
 
                 return Stack(
                   children: [
@@ -487,45 +497,93 @@ class _HomePageState extends State<HomePage> {
                                           },
                                         ),
                                       ),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          setState(() {
-                                            _searchisVisible =
-                                                !_searchisVisible;
-                                          });
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: Colors.white,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.0020,
-                                            ),
+                                      Actions(
+                                        actions: <Type, Action<Intent>>{
+                                          LeftButtonIntent:
+                                              CallbackAction<LeftButtonIntent>(
+                                            onInvoke: (intent) async {
+                                              await _changeFocus(
+                                                  context, _categoriesNode!);
+                                              int index = 2;
+                                              _pageController.jumpToPage(index);
+                                              setState(() {
+                                                _currentPageIndex = index;
+                                              });
+                                              return null;
+                                            },
                                           ),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.095,
-                                          child: ClipOval(
-                                            child: SizedBox(
+                                          RightButtonIntent:
+                                              CallbackAction<RightButtonIntent>(
+                                            onInvoke: (intent) async {
+                                              await _changeFocus(
+                                                  context, _userAvatarNode!);
+                                              int index = 3;
+                                              _pageController.jumpToPage(index);
+                                              setState(() {
+                                                _currentPageIndex = index;
+                                              });
+                                              return null;
+                                            },
+                                          ),
+                                          DownButtonIntent:
+                                              CallbackAction<DownButtonIntent>(
+                                            onInvoke: (intent) async {
+                                              await _changeFocus(
+                                                  context, _playNode!);
+                                              return null;
+                                            },
+                                          ),
+                                        },
+                                        child: Focus(
+                                          focusNode: _searchNode,
+                                          child: GestureDetector(
+                                            onTap: () async {
+                                              await _changeFocus(
+                                                  context, _searchNode!);
+                                              setState(() {
+                                                _searchisVisible =
+                                                    !_searchisVisible;
+                                              });
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border:
+                                                    (_searchNode?.hasFocus ??
+                                                            false)
+                                                        ? Border.all(
+                                                            color: Colors.white,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.0020,
+                                                          )
+                                                        : null,
+                                              ),
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.110, // change to desired width
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.110,
-                                              child: Icon(
-                                                Icons.search,
-                                                color: Colors.white,
-                                                size: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.050,
+                                                  0.095,
+                                              child: ClipOval(
+                                                child: SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.110, // change to desired width
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.110,
+                                                  child: Icon(
+                                                    Icons.search,
+                                                    color: Colors.white,
+                                                    size: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.050,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -543,51 +601,72 @@ class _HomePageState extends State<HomePage> {
                                           } else {
                                             final avatar =
                                                 snapshot.data!['avatar'];
-                                            return Padding(
-                                              padding: EdgeInsets.only(
-                                                right: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.050,
-                                              ),
-                                              child: GestureDetector(
-                                                onTap: () async {
-                                                  if (_currentPageIndex == 3) {
-                                                  } else {
-                                                    int index = 3;
-                                                    _pageController
-                                                        .jumpToPage(index);
-                                                    setState(() {
-                                                      _currentPageIndex = index;
-                                                    });
-                                                    await _changeFocus(context,
-                                                        _userAvatarNode!);
-                                                  }
-                                                },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    border: Border.all(
-                                                      color: !(_userAvatarNode
-                                                                  ?.hasFocus ??
-                                                              false)
-                                                          ? Colors.transparent
-                                                          : Colors.white,
+                                            return Actions(
+                                              actions: <Type, Action<Intent>>{
+                                                LeftButtonIntent:
+                                                    CallbackAction<
+                                                        LeftButtonIntent>(
+                                                  onInvoke: (intent) async {
+                                                    await _changeFocus(
+                                                        context, _searchNode!);
+                                                  },
+                                                ),
+                                              },
+                                              child: Focus(
+                                                focusNode: _userAvatarNode,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                    right:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.050,
+                                                  ),
+                                                  child: GestureDetector(
+                                                    onTap: () async {
+                                                      if (_currentPageIndex ==
+                                                          3) {
+                                                      } else {
+                                                        int index = 3;
+                                                        _pageController
+                                                            .jumpToPage(index);
+                                                        setState(() {
+                                                          _currentPageIndex =
+                                                              index;
+                                                        });
+                                                        await _changeFocus(
+                                                            context,
+                                                            _userAvatarNode!);
+                                                      }
+                                                    },
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                          color: !(_userAvatarNode
+                                                                      ?.hasFocus ??
+                                                                  false)
+                                                              ? Colors
+                                                                  .transparent
+                                                              : Colors.white,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.0035,
+                                                        ),
+                                                      ),
                                                       width:
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .width *
-                                                              0.0035,
-                                                    ),
-                                                  ),
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.060,
-                                                  child: ClipOval(
-                                                    child: Image.asset(
-                                                      'assets/images/avatars/$avatar.jpg',
-                                                      fit: BoxFit.cover,
+                                                              0.060,
+                                                      child: ClipOval(
+                                                        child: Image.asset(
+                                                          'assets/images/avatars/$avatar.jpg',
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -1133,6 +1212,7 @@ class _HomePageState extends State<HomePage> {
                                                                             await watchlist.doc(selectedMovie.movieId.toString()).set({
                                                                               'movieId': selectedMovie.movieId,
                                                                               'isWatched': false,
+                                                                              'timestamp': FieldValue.serverTimestamp(),
                                                                             });
                                                                           }
                                                                           setState(
@@ -1187,39 +1267,18 @@ class _HomePageState extends State<HomePage> {
                                                           FontWeight.w400)),
                                             ),
                                           ),
-                                          /*ElevatedButton(
-                                            onPressed: () async {
-                                              movieProvider.moveRight();
-                                            },
-                                            child: Text('Sağ git'),
-                                          ),*/
-
-                                          Actions(
-                                            actions: <Type, Action<Intent>>{
-                                              UpButtonIntent: CallbackAction<
-                                                  UpButtonIntent>(
-                                                onInvoke: (intent) async {
-                                                  await _changeFocus(
-                                                      context, _playNode!);
-                                                  return null;
-                                                },
-                                              ),
-                                              LeftButtonIntent: CallbackAction<
-                                                  LeftButtonIntent>(
-                                                onInvoke: (intent) async {
-                                                  final screenWidth =
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width;
-                                                  final itemWidth =
-                                                      screenWidth * 0.25;
-
-                                                  if (selectedMovieIndex > 0) {
+                                          /* Row(
+                                            children: [
+                                              ElevatedButton(
+                                                onPressed: () async {
+                                                  if (selectedMovieIndex == 0) {
+                                                  } else if (selectedMovieIndex >
+                                                      0) {
                                                     movieProvider.moveLeft();
 
                                                     double prevMovieOffset =
                                                         itemWidth *
-                                                                (selectedMovieIndex +
+                                                                (selectedMovieIndex -
                                                                     1) -
                                                             _scrollController
                                                                 .position
@@ -1234,20 +1293,16 @@ class _HomePageState extends State<HomePage> {
                                                       curve: Curves.easeInOut,
                                                     );
                                                   }
-                                                  return null;
                                                 },
+                                                child: Text('Sol git'),
                                               ),
-                                              RightButtonIntent: CallbackAction<
-                                                  RightButtonIntent>(
-                                                onInvoke: (intent) async {
-                                                  final screenWidth =
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width;
-                                                  final itemWidth =
-                                                      screenWidth * 0.25;
-
-                                                  if (selectedMovieIndex <
+                                              ElevatedButton(
+                                                onPressed: () async {
+                                                  if (selectedMovieIndex ==
+                                                      movieProvider
+                                                              .movies.length +
+                                                          1) {
+                                                  } else if (selectedMovieIndex <
                                                       movieProvider
                                                               .movies.length -
                                                           1) {
@@ -1255,7 +1310,7 @@ class _HomePageState extends State<HomePage> {
 
                                                     double nextMovieOffset =
                                                         itemWidth *
-                                                                (selectedMovieIndex -
+                                                                (selectedMovieIndex +
                                                                     1) -
                                                             _scrollController
                                                                 .position
@@ -1270,7 +1325,79 @@ class _HomePageState extends State<HomePage> {
                                                       curve: Curves.easeInOut,
                                                     );
                                                   }
+                                                },
+                                                child: Text('Sağ git'),
+                                              ),
+                                            ],
+                                          ),
+*/
+                                          Actions(
+                                            actions: <Type, Action<Intent>>{
+                                              UpButtonIntent: CallbackAction<
+                                                  UpButtonIntent>(
+                                                onInvoke: (intent) async {
+                                                  await _changeFocus(
+                                                      context, _playNode!);
                                                   return null;
+                                                },
+                                              ),
+                                              LeftButtonIntent: CallbackAction<
+                                                  LeftButtonIntent>(
+                                                onInvoke: (intent) async {
+                                                  if (selectedMovieIndex == 0) {
+                                                  } else if (selectedMovieIndex >
+                                                      0) {
+                                                    movieProvider.moveLeft();
+
+                                                    double prevMovieOffset =
+                                                        itemWidth *
+                                                                (selectedMovieIndex -
+                                                                    1) -
+                                                            _scrollController
+                                                                .position
+                                                                .pixels;
+
+                                                    _scrollController.animateTo(
+                                                      _scrollController
+                                                              .position.pixels +
+                                                          prevMovieOffset,
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                      curve: Curves.easeInOut,
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                              RightButtonIntent: CallbackAction<
+                                                  RightButtonIntent>(
+                                                onInvoke: (intent) async {
+                                                  if (selectedMovieIndex ==
+                                                      movieProvider
+                                                              .movies.length +
+                                                          1) {
+                                                  } else if (selectedMovieIndex <
+                                                      movieProvider
+                                                              .movies.length -
+                                                          1) {
+                                                    movieProvider.moveRight();
+
+                                                    double nextMovieOffset =
+                                                        itemWidth *
+                                                                (selectedMovieIndex +
+                                                                    1) -
+                                                            _scrollController
+                                                                .position
+                                                                .pixels;
+
+                                                    _scrollController.animateTo(
+                                                      _scrollController
+                                                              .position.pixels +
+                                                          nextMovieOffset,
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                      curve: Curves.easeInOut,
+                                                    );
+                                                  }
                                                 },
                                               ),
                                             },
@@ -1340,7 +1467,7 @@ class _HomePageState extends State<HomePage> {
                                                                               context)
                                                                           .size
                                                                           .width *
-                                                                      0.025
+                                                                      0.030
                                                                   : 0,
                                                               top: MediaQuery.of(
                                                                           context)
@@ -1357,7 +1484,7 @@ class _HomePageState extends State<HomePage> {
                                                                               context)
                                                                           .size
                                                                           .width *
-                                                                      0.050
+                                                                      0.027
                                                                   : 0,
                                                             ),
                                                             child:
@@ -1438,7 +1565,7 @@ class _HomePageState extends State<HomePage> {
                                                                       context)
                                                                   .size
                                                                   .width *
-                                                              0.3,
+                                                              0.25,
                                                           decoration:
                                                               BoxDecoration(
                                                             border: Border.all(
