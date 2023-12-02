@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:turkce_film_tv/screens/forgotpassword.dart';
 import 'package:turkce_film_tv/screens/register.dart';
+import '../services/focusnodeservice.dart';
 import '../services/user_service.dart';
 import 'homepage.dart';
 
@@ -39,44 +40,19 @@ class _LoginPageState extends State<LoginPage> {
     borderRadius: BorderRadius.circular(38.0),
   );
 
-  FocusNode? _loginUpNode;
-  FocusNode? _emailInputNode;
-  FocusNode? _passwordInputNode;
-  FocusNode? _loginButtonNode;
-  FocusNode? _forgotPasswordNode;
-  FocusNode? _registerButtonNode;
-
-  _setFirstFocus(BuildContext context) {
-    if (_loginUpNode == null) {
-      _loginUpNode = FocusNode();
-      _emailInputNode = FocusNode();
-      _passwordInputNode = FocusNode();
-      _loginButtonNode = FocusNode();
-      _forgotPasswordNode = FocusNode();
-      _registerButtonNode = FocusNode();
-
-      FocusScope.of(context).requestFocus(_loginUpNode);
-    }
-  }
-
-  _changeFocus(BuildContext context, FocusNode node) {
-    FocusScope.of(context).requestFocus(node);
-    setState(() {});
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      FocusService.changeFocus(context, FocusService.loginButtonNode);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_loginUpNode == null) {
-      _setFirstFocus(context);
-    }
     return Shortcuts(
-      shortcuts: <LogicalKeySet, Intent>{
-        LogicalKeySet(LogicalKeyboardKey.arrowLeft): LeftButtonIntent(),
-        LogicalKeySet(LogicalKeyboardKey.arrowRight): RightButtonIntent(),
-        LogicalKeySet(LogicalKeyboardKey.arrowUp): UpButtonIntent(),
-        LogicalKeySet(LogicalKeyboardKey.arrowDown): DownButtonIntent(),
-        LogicalKeySet(LogicalKeyboardKey.select): EnterButtonIntent(),
-      },
+      shortcuts: FocusService.shortcuts,
       child: Scaffold(
         body: Container(
           decoration: BoxDecoration(
@@ -126,8 +102,9 @@ class _LoginPageState extends State<LoginPage> {
                               RightButtonIntent:
                                   CallbackAction<RightButtonIntent>(
                                 onInvoke: (intent) async {
-                                  await _changeFocus(
-                                      context, _registerButtonNode!);
+                                  FocusService.changeFocus(
+                                      context, FocusService.registerButtonNode);
+
                                   _pageController.animateToPage(
                                     1,
                                     duration: Duration(milliseconds: 300),
@@ -138,30 +115,32 @@ class _LoginPageState extends State<LoginPage> {
                               DownButtonIntent:
                                   CallbackAction<DownButtonIntent>(
                                 onInvoke: (intent) async {
-                                  await _changeFocus(context, _emailInputNode!);
-                                  return null;
+                                  FocusService.changeFocus(
+                                      context, FocusService.loginEpostaNode);
                                 },
                               ),
                             },
                             child: Focus(
-                              focusNode: _loginUpNode,
+                              focusNode: FocusService.loginButtonNode,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  border: !(_loginUpNode?.hasFocus ?? false)
-                                      ? null
-                                      : Border(
-                                          bottom: BorderSide(
-                                            color: Colors.white,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.0020,
-                                          ),
-                                        ),
+                                  border:
+                                      (FocusService.loginButtonNode.hasFocus)
+                                          ? Border(
+                                              bottom: BorderSide(
+                                                color: Colors.white,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.0020,
+                                              ),
+                                            )
+                                          : null,
                                 ),
                                 child: TextButton(
                                   onPressed: () async {
-                                    await _changeFocus(context, _loginUpNode!);
+                                    FocusService.changeFocus(
+                                        context, FocusService.loginButtonNode);
                                     _pageController.animateToPage(
                                       0,
                                       duration: Duration(milliseconds: 300),
@@ -177,14 +156,30 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           SizedBox(width: 8.0),
-                          Focus(
-                            focusNode: _registerButtonNode,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border:
-                                    !(_registerButtonNode?.hasFocus ?? false)
-                                        ? null
-                                        : Border(
+                          Actions(
+                            actions: <Type, Action<Intent>>{
+                              DownButtonIntent:
+                                  CallbackAction<DownButtonIntent>(
+                                onInvoke: (intent) async {
+                                  FocusService.changeFocus(context,
+                                      FocusService.registerKullaniciAdiNode);
+                                },
+                              ),
+                              LeftButtonIntent:
+                                  CallbackAction<LeftButtonIntent>(
+                                onInvoke: (intent) async {
+                                  FocusService.changeFocus(
+                                      context, FocusService.loginButtonNode);
+                                },
+                              ),
+                            },
+                            child: Focus(
+                              focusNode: FocusService.registerButtonNode,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    border: (FocusService
+                                            .registerButtonNode.hasFocus)
+                                        ? Border(
                                             bottom: BorderSide(
                                               color: Colors.white,
                                               width: MediaQuery.of(context)
@@ -192,21 +187,22 @@ class _LoginPageState extends State<LoginPage> {
                                                       .width *
                                                   0.0020,
                                             ),
-                                          ),
-                              ),
-                              child: TextButton(
-                                onPressed: () async {
-                                  await _changeFocus(
-                                      context, _registerButtonNode!);
-                                  _pageController.animateToPage(
-                                    1,
-                                    duration: Duration(milliseconds: 300),
-                                    curve: Curves.easeInOut,
-                                  );
-                                },
-                                child: const Text(
-                                  'Kayıt',
-                                  style: TextStyle(color: Colors.white),
+                                          )
+                                        : null),
+                                child: TextButton(
+                                  onPressed: () async {
+                                    FocusService.changeFocus(context,
+                                        FocusService.registerButtonNode);
+                                    _pageController.animateToPage(
+                                      1,
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Kayıt',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                               ),
                             ),
@@ -232,10 +228,10 @@ class _LoginPageState extends State<LoginPage> {
                                   SizedBox(height: 16.0),
                                   TextField(
                                     controller: _emailController,
-                                    focusNode: _emailInputNode,
+                                    focusNode: FocusService.loginEpostaNode,
                                     onEditingComplete: () {
-                                      FocusScope.of(context)
-                                          .requestFocus(_passwordInputNode);
+                                      FocusService.changeFocus(
+                                          context, FocusService.loginSifreNode);
                                     },
                                     decoration: InputDecoration(
                                       labelText: 'E-Posta',
@@ -250,119 +246,221 @@ class _LoginPageState extends State<LoginPage> {
                                     style: whiteTextStyle,
                                   ),
                                   SizedBox(height: 16.0),
-                                  TextField(
-                                    focusNode: _passwordInputNode,
-                                    controller: _passwordController,
-                                    textInputAction: TextInputAction.next,
-                                    onEditingComplete: () async {
-                                      try {
-                                        await _userService.loginUser(
-                                          _emailController.text,
-                                          _passwordController.text,
-                                        );
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const HomePage(),
-                                          ),
-                                        );
-                                      } catch (e) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(content: Text(e.toString())),
-                                        );
-                                      }
-                                    },
-                                    decoration: InputDecoration(
-                                      labelText: 'Şifre',
-                                      labelStyle: whiteTextStyle,
-                                      prefixIcon: Icon(
-                                        Icons.lock,
-                                        color: Colors.white,
+                                  Actions(
+                                    actions: <Type, Action<Intent>>{
+                                      UpButtonIntent:
+                                          CallbackAction<UpButtonIntent>(
+                                        onInvoke: (intent) async {
+                                          FocusService.changeFocus(context,
+                                              FocusService.loginEpostaNode);
+                                        },
                                       ),
-                                      enabledBorder: whiteInputBorder,
-                                      focusedBorder: whiteInputBorder,
+                                      DownButtonIntent:
+                                          CallbackAction<DownButtonIntent>(
+                                        onInvoke: (intent) async {
+                                          FocusService.changeFocus(
+                                              context,
+                                              FocusService
+                                                  .loginLoginButtonNode);
+                                        },
+                                      ),
+                                    },
+                                    child: TextField(
+                                      focusNode: FocusService.loginSifreNode,
+                                      controller: _passwordController,
+                                      textInputAction: TextInputAction.next,
+                                      onEditingComplete: () async {
+                                        try {
+                                          await _userService.loginUser(
+                                            _emailController.text,
+                                            _passwordController.text,
+                                          );
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const HomePage(),
+                                            ),
+                                          );
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                                content: Text(e.toString())),
+                                          );
+                                        }
+                                      },
+                                      decoration: InputDecoration(
+                                        labelText: 'Şifre',
+                                        labelStyle: whiteTextStyle,
+                                        prefixIcon: Icon(
+                                          Icons.lock,
+                                          color: Colors.white,
+                                        ),
+                                        enabledBorder: whiteInputBorder,
+                                        focusedBorder: whiteInputBorder,
+                                      ),
+                                      style: whiteTextStyle,
                                     ),
-                                    style: whiteTextStyle,
                                   ),
                                   SizedBox(height: 16.0),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      ElevatedButton(
-                                        onPressed: () async {
-                                          try {
-                                            await _userService.loginUser(
-                                              _emailController.text,
-                                              _passwordController.text,
-                                            );
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const HomePage(),
-                                              ),
-                                            );
-                                          } catch (e) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                  content: Text(e.toString())),
-                                            );
-                                          }
+                                      Actions(
+                                        actions: <Type, Action<Intent>>{
+                                          RightButtonIntent:
+                                              CallbackAction<RightButtonIntent>(
+                                            onInvoke: (intent) async {
+                                              FocusService.changeFocus(
+                                                  context,
+                                                  FocusService
+                                                      .loginForgotPasswordButtonNode);
+                                            },
+                                          ),
+                                          UpButtonIntent:
+                                              CallbackAction<UpButtonIntent>(
+                                            onInvoke: (intent) async {
+                                              FocusService.changeFocus(context,
+                                                  FocusService.loginSifreNode);
+                                            },
+                                          ),
+                                          EnterButtonIntent:
+                                              CallbackAction<EnterButtonIntent>(
+                                            onInvoke: (intent) async {
+                                              try {
+                                                await _userService.loginUser(
+                                                  _emailController.text,
+                                                  _passwordController.text,
+                                                );
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const HomePage(),
+                                                  ),
+                                                );
+                                              } catch (e) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                      content:
+                                                          Text(e.toString())),
+                                                );
+                                              }
+                                            },
+                                          ),
                                         },
-                                        style: ButtonStyle(
-                                          shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  8.0), // Adjust the radius as needed
+                                        child: Focus(
+                                          focusNode:
+                                              FocusService.loginLoginButtonNode,
+                                          child: ElevatedButton(
+                                            onPressed: () async {
+                                              try {
+                                                await _userService.loginUser(
+                                                  _emailController.text,
+                                                  _passwordController.text,
+                                                );
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const HomePage(),
+                                                  ),
+                                                );
+                                              } catch (e) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                      content:
+                                                          Text(e.toString())),
+                                                );
+                                              }
+                                            },
+                                            style: ButtonStyle(
+                                              shape: MaterialStateProperty.all<
+                                                  RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0), // Adjust the radius as needed
+                                                ),
+                                              ),
+                                              padding: MaterialStateProperty
+                                                  .all<EdgeInsetsGeometry>(
+                                                EdgeInsets.symmetric(
+                                                    vertical: 12.0,
+                                                    horizontal:
+                                                        24.0), // Adjust the padding as needed
+                                              ),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all<
+                                                      Color>(Colors.green),
+                                              foregroundColor:
+                                                  MaterialStateProperty.all<
+                                                      Color>(Colors.white),
+                                              overlayColor:
+                                                  MaterialStateProperty
+                                                      .all<Color>(Colors.green
+                                                          .withOpacity(0.8)),
+                                              elevation: MaterialStateProperty.all<
+                                                      double>(
+                                                  0.0), // Remove the button shadow
                                             ),
-                                          ),
-                                          padding: MaterialStateProperty.all<
-                                              EdgeInsetsGeometry>(
-                                            EdgeInsets.symmetric(
-                                                vertical: 12.0,
-                                                horizontal:
-                                                    24.0), // Adjust the padding as needed
-                                          ),
-                                          backgroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  Colors.green),
-                                          foregroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  Colors.white),
-                                          overlayColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  Colors.green
-                                                      .withOpacity(0.8)),
-                                          elevation: MaterialStateProperty.all<
-                                                  double>(
-                                              0.0), // Remove the button shadow
-                                        ),
-                                        child: Text(
-                                          'Giriş yap',
-                                          style: TextStyle(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
+                                            child: Text(
+                                              'Giriş yap',
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ForgotPasswordScreen(),
-                                            ),
-                                          );
+                                      Actions(
+                                        actions: <Type, Action<Intent>>{
+                                          LeftButtonIntent:
+                                              CallbackAction<LeftButtonIntent>(
+                                            onInvoke: (intent) async {
+                                              FocusService.changeFocus(
+                                                  context,
+                                                  FocusService
+                                                      .loginLoginButtonNode);
+                                            },
+                                          ),
+                                          EnterButtonIntent:
+                                              CallbackAction<EnterButtonIntent>(
+                                            onInvoke: (intent) async {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ForgotPasswordScreen(),
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         },
-                                        child: Text(
-                                          'Şifreni mi unuttun?',
-                                          style: TextStyle(color: Colors.grey),
+                                        child: Focus(
+                                          focusNode: FocusService
+                                              .loginForgotPasswordButtonNode,
+                                          child: TextButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ForgotPasswordScreen(),
+                                                ),
+                                              );
+                                            },
+                                            child: Text(
+                                              'Şifreni mi unuttun?',
+                                              style:
+                                                  TextStyle(color: Colors.grey),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ],

@@ -8,11 +8,13 @@ import 'package:turkce_film_tv/provider/movie_provider.dart';
 import 'package:turkce_film_tv/screens/profilepage.dart';
 import 'package:turkce_film_tv/screens/videoplayer.dart';
 import 'package:turkce_film_tv/screens/watchlist.dart';
+import 'package:turkce_film_tv/services/focusnodeservice.dart';
 
 import '../models/movie_models.dart';
 import '../services/searchservice.dart';
 import '../services/user_service.dart';
 import '../widgets/search_widget.dart';
+import '../widgets/shortcutswidget.dart';
 import 'categories.dart';
 
 //flutter build apk -t lib/main.dart
@@ -26,6 +28,13 @@ class DownButtonIntent extends Intent {}
 
 class EnterButtonIntent extends Intent {}
 
+enum DPadDirection {
+  up,
+  down,
+  left,
+  right,
+}
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -34,6 +43,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late DPadDirection currentDirection;
+
+  void handleDirectionChange(DPadDirection direction) {
+    setState(() {
+      currentDirection = direction;
+      // Perform actions based on the currentDirection
+      switch (currentDirection) {
+        case DPadDirection.up:
+          print('Up button pressed');
+          break;
+        case DPadDirection.down:
+          print('Down button pressed');
+          break;
+        case DPadDirection.left:
+          print('Left button pressed');
+          break;
+        case DPadDirection.right:
+          print('Right button pressed');
+          break;
+      }
+    });
+  }
+
   final userService = UserService();
   late final DocumentReference currentUserRef;
   String _searchQuery = '';
@@ -58,44 +90,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  FocusNode? _homePageNode;
-  FocusNode? _watchlistNode;
-  FocusNode? _categoriesNode;
-  FocusNode? _searchNode;
-  FocusNode? _userAvatarNode;
-  FocusNode? _playNode;
-  FocusNode? _addMyWishlistNode;
-  FocusNode? _listNode;
-
   final _scrollController = ScrollController();
-
-  _setFirstFocus(BuildContext context) {
-    if (_homePageNode == null) {
-      _homePageNode = FocusNode();
-      _watchlistNode = FocusNode();
-      _categoriesNode = FocusNode();
-      _searchNode = FocusNode();
-      _userAvatarNode = FocusNode();
-      _playNode = FocusNode();
-      _addMyWishlistNode = FocusNode();
-      _listNode = FocusNode();
-
-      FocusScope.of(context).requestFocus(_homePageNode);
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _homePageNode?.dispose();
-    _watchlistNode?.dispose();
-    _categoriesNode?.dispose();
-    _searchNode?.dispose();
-    _userAvatarNode?.dispose();
-    _playNode?.dispose();
-    _addMyWishlistNode?.dispose();
-    _listNode?.dispose();
-  }
 
   @override
   void initState() {
@@ -104,6 +99,9 @@ class _HomePageState extends State<HomePage> {
     currentUserRef = userService.firestore
         .collection('users')
         .doc(userService.getCurrentUserId()!);
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      FocusService.changeFocus(context, FocusService.homepageMenuAnasayfaNode);
+    });
   }
 
   _changeFocus(BuildContext context, FocusNode node) {
@@ -114,9 +112,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_homePageNode == null) {
-      _setFirstFocus(context);
-    }
     final screenWidth = MediaQuery.of(context).size.width;
     final itemWidth = screenWidth * 0.20;
 
@@ -243,8 +238,10 @@ class _HomePageState extends State<HomePage> {
                                         RightButtonIntent:
                                             CallbackAction<RightButtonIntent>(
                                           onInvoke: (intent) async {
-                                            await _changeFocus(
-                                                context, _watchlistNode!);
+                                            FocusService.changeFocus(
+                                                context,
+                                                FocusService
+                                                    .homepageMenuWatchlistNode);
                                             int index = 1;
                                             _pageController.jumpToPage(index);
                                             setState(() {
@@ -256,14 +253,15 @@ class _HomePageState extends State<HomePage> {
                                         DownButtonIntent:
                                             CallbackAction<DownButtonIntent>(
                                           onInvoke: (intent) async {
-                                            await _changeFocus(
-                                                context, _playNode!);
+                                            FocusService.changeFocus(context,
+                                                FocusService.homepagePlayNode);
                                             return null;
                                           },
                                         ),
                                       },
                                       child: Focus(
-                                        focusNode: _homePageNode,
+                                        focusNode: FocusService
+                                            .homepageMenuAnasayfaNode,
                                         child: Container(
                                           child: TextButton(
                                             onPressed: () async {
@@ -275,8 +273,10 @@ class _HomePageState extends State<HomePage> {
                                                 setState(() {
                                                   _currentPageIndex = index;
                                                 });
-                                                await _changeFocus(
-                                                    context, _homePageNode!);
+                                                FocusService.changeFocus(
+                                                    context,
+                                                    FocusService
+                                                        .homepageMenuAnasayfaNode);
                                               }
                                             },
                                             child: Container(
@@ -287,21 +287,20 @@ class _HomePageState extends State<HomePage> {
                                                     0.005,
                                               ),
                                               decoration: BoxDecoration(
-                                                border: !(_homePageNode
-                                                            ?.hasFocus ??
-                                                        false)
-                                                    ? null
-                                                    : Border(
-                                                        bottom: BorderSide(
-                                                          color: Colors.white,
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.0020,
-                                                        ),
-                                                      ),
-                                              ),
+                                                  border: (FocusService
+                                                          .homepageMenuAnasayfaNode
+                                                          .hasFocus)
+                                                      ? Border(
+                                                          bottom: BorderSide(
+                                                            color: Colors.white,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.0020,
+                                                          ),
+                                                        )
+                                                      : null),
                                               child: const Text(
                                                 'Anasayfa',
                                                 style: TextStyle(
@@ -317,8 +316,10 @@ class _HomePageState extends State<HomePage> {
                                         LeftButtonIntent:
                                             CallbackAction<LeftButtonIntent>(
                                           onInvoke: (intent) async {
-                                            await _changeFocus(
-                                                context, _homePageNode!);
+                                            FocusService.changeFocus(
+                                                context,
+                                                FocusService
+                                                    .homepageMenuAnasayfaNode);
                                             int index = 0;
                                             _pageController.jumpToPage(index);
                                             setState(() {
@@ -330,8 +331,10 @@ class _HomePageState extends State<HomePage> {
                                         RightButtonIntent:
                                             CallbackAction<RightButtonIntent>(
                                           onInvoke: (intent) async {
-                                            await _changeFocus(
-                                                context, _categoriesNode!);
+                                            FocusService.changeFocus(
+                                                context,
+                                                FocusService
+                                                    .homepageMenuCategoriesNode);
                                             int index = 3;
                                             _pageController.jumpToPage(index);
                                             setState(() {
@@ -343,31 +346,31 @@ class _HomePageState extends State<HomePage> {
                                         DownButtonIntent:
                                             CallbackAction<DownButtonIntent>(
                                           onInvoke: (intent) async {
-                                            await _changeFocus(
-                                                context, _playNode!);
+                                            FocusService.changeFocus(context,
+                                                FocusService.homepagePlayNode);
                                             return null;
                                           },
                                         ),
                                       },
                                       child: Focus(
-                                        focusNode: _watchlistNode,
+                                        focusNode: FocusService
+                                            .homepageMenuWatchlistNode,
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            border: !(_watchlistNode
-                                                        ?.hasFocus ??
-                                                    false)
-                                                ? null
-                                                : Border(
-                                                    bottom: BorderSide(
-                                                      color: Colors.white,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.0020,
-                                                    ),
-                                                  ),
-                                          ),
+                                              border: (FocusService
+                                                      .homepageMenuWatchlistNode
+                                                      .hasFocus)
+                                                  ? Border(
+                                                      bottom: BorderSide(
+                                                        color: Colors.white,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.0020,
+                                                      ),
+                                                    )
+                                                  : null),
                                           child: TextButton(
                                             onPressed: () async {
                                               if (_currentPageIndex == 1) {
@@ -378,8 +381,10 @@ class _HomePageState extends State<HomePage> {
                                                 setState(() {
                                                   _currentPageIndex = index;
                                                 });
-                                                await _changeFocus(
-                                                    context, _watchlistNode!);
+                                                FocusService.changeFocus(
+                                                    context,
+                                                    FocusService
+                                                        .homepageMenuWatchlistNode);
                                               }
                                             },
                                             child: const Text(
@@ -396,8 +401,10 @@ class _HomePageState extends State<HomePage> {
                                         LeftButtonIntent:
                                             CallbackAction<LeftButtonIntent>(
                                           onInvoke: (intent) async {
-                                            await _changeFocus(
-                                                context, _watchlistNode!);
+                                            FocusService.changeFocus(
+                                                context,
+                                                FocusService
+                                                    .homepageMenuWatchlistNode);
                                             int index = 1;
                                             _pageController.jumpToPage(index);
                                             setState(() {
@@ -409,8 +416,10 @@ class _HomePageState extends State<HomePage> {
                                         RightButtonIntent:
                                             CallbackAction<RightButtonIntent>(
                                           onInvoke: (intent) async {
-                                            await _changeFocus(
-                                                context, _userAvatarNode!);
+                                            FocusService.changeFocus(
+                                                context,
+                                                FocusService
+                                                    .homepageMenuAvatarNode);
                                             int index = 3;
                                             _pageController.jumpToPage(index);
                                             setState(() {
@@ -422,14 +431,15 @@ class _HomePageState extends State<HomePage> {
                                         DownButtonIntent:
                                             CallbackAction<DownButtonIntent>(
                                           onInvoke: (intent) async {
-                                            await _changeFocus(
-                                                context, _playNode!);
+                                            FocusService.changeFocus(context,
+                                                FocusService.homepagePlayNode);
                                             return null;
                                           },
                                         ),
                                       },
                                       child: Focus(
-                                        focusNode: _categoriesNode,
+                                        focusNode: FocusService
+                                            .homepageMenuCategoriesNode,
                                         child: Container(
                                           child: TextButton(
                                             onPressed: () async {
@@ -441,8 +451,10 @@ class _HomePageState extends State<HomePage> {
                                                 setState(() {
                                                   _currentPageIndex = index;
                                                 });
-                                                await _changeFocus(
-                                                    context, _categoriesNode!);
+                                                FocusService.changeFocus(
+                                                    context,
+                                                    FocusService
+                                                        .homepageMenuCategoriesNode);
                                               }
                                             },
                                             child: Container(
@@ -453,21 +465,20 @@ class _HomePageState extends State<HomePage> {
                                                     0.005,
                                               ),
                                               decoration: BoxDecoration(
-                                                border: !(_categoriesNode
-                                                            ?.hasFocus ??
-                                                        false)
-                                                    ? null
-                                                    : Border(
-                                                        bottom: BorderSide(
-                                                          color: Colors.white,
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.0020,
-                                                        ),
-                                                      ),
-                                              ),
+                                                  border: (FocusService
+                                                          .homepageMenuCategoriesNode
+                                                          .hasFocus)
+                                                      ? Border(
+                                                          bottom: BorderSide(
+                                                            color: Colors.white,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.0020,
+                                                          ),
+                                                        )
+                                                      : null),
                                               child: const Text(
                                                 'Kategoriler',
                                                 style: TextStyle(
@@ -502,8 +513,10 @@ class _HomePageState extends State<HomePage> {
                                           LeftButtonIntent:
                                               CallbackAction<LeftButtonIntent>(
                                             onInvoke: (intent) async {
-                                              await _changeFocus(
-                                                  context, _categoriesNode!);
+                                              FocusService.changeFocus(
+                                                  context,
+                                                  FocusService
+                                                      .homepageMenuCategoriesNode);
                                               int index = 2;
                                               _pageController.jumpToPage(index);
                                               setState(() {
@@ -515,8 +528,10 @@ class _HomePageState extends State<HomePage> {
                                           RightButtonIntent:
                                               CallbackAction<RightButtonIntent>(
                                             onInvoke: (intent) async {
-                                              await _changeFocus(
-                                                  context, _userAvatarNode!);
+                                              FocusService.changeFocus(
+                                                  context,
+                                                  FocusService
+                                                      .homepageMenuAvatarNode);
                                               int index = 3;
                                               _pageController.jumpToPage(index);
                                               setState(() {
@@ -528,18 +543,23 @@ class _HomePageState extends State<HomePage> {
                                           DownButtonIntent:
                                               CallbackAction<DownButtonIntent>(
                                             onInvoke: (intent) async {
-                                              await _changeFocus(
-                                                  context, _playNode!);
+                                              FocusService.changeFocus(
+                                                  context,
+                                                  FocusService
+                                                      .homepagePlayNode);
                                               return null;
                                             },
                                           ),
                                         },
                                         child: Focus(
-                                          focusNode: _searchNode,
+                                          focusNode: FocusService
+                                              .homepageMenuSearchNode,
                                           child: GestureDetector(
                                             onTap: () async {
-                                              await _changeFocus(
-                                                  context, _searchNode!);
+                                              FocusService.changeFocus(
+                                                  context,
+                                                  FocusService
+                                                      .homepageMenuSearchNode);
                                               setState(() {
                                                 _searchisVisible =
                                                     !_searchisVisible;
@@ -548,18 +568,18 @@ class _HomePageState extends State<HomePage> {
                                             child: Container(
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
-                                                border:
-                                                    (_searchNode?.hasFocus ??
-                                                            false)
-                                                        ? Border.all(
-                                                            color: Colors.white,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.0020,
-                                                          )
-                                                        : null,
+                                                border: (FocusService
+                                                        .homepageMenuSearchNode
+                                                        .hasFocus)
+                                                    ? Border.all(
+                                                        color: Colors.white,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.0020,
+                                                      )
+                                                    : null,
                                               ),
                                               width: MediaQuery.of(context)
                                                       .size
@@ -607,13 +627,16 @@ class _HomePageState extends State<HomePage> {
                                                     CallbackAction<
                                                         LeftButtonIntent>(
                                                   onInvoke: (intent) async {
-                                                    await _changeFocus(
-                                                        context, _searchNode!);
+                                                    FocusService.changeFocus(
+                                                        context,
+                                                        FocusService
+                                                            .homepageMenuSearchNode);
                                                   },
                                                 ),
                                               },
                                               child: Focus(
-                                                focusNode: _userAvatarNode,
+                                                focusNode: FocusService
+                                                    .homepageMenuAvatarNode,
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
                                                     right:
@@ -634,21 +657,22 @@ class _HomePageState extends State<HomePage> {
                                                           _currentPageIndex =
                                                               index;
                                                         });
-                                                        await _changeFocus(
+                                                        FocusService.changeFocus(
                                                             context,
-                                                            _userAvatarNode!);
+                                                            FocusService
+                                                                .homepageMenuAvatarNode);
                                                       }
                                                     },
                                                     child: Container(
                                                       decoration: BoxDecoration(
                                                         shape: BoxShape.circle,
                                                         border: Border.all(
-                                                          color: !(_userAvatarNode
-                                                                      ?.hasFocus ??
-                                                                  false)
-                                                              ? Colors
-                                                                  .transparent
-                                                              : Colors.white,
+                                                          color: (FocusService
+                                                                  .homepageMenuAvatarNode
+                                                                  .hasFocus)
+                                                              ? Colors.white
+                                                              : Colors
+                                                                  .transparent,
                                                           width: MediaQuery.of(
                                                                       context)
                                                                   .size
@@ -962,9 +986,10 @@ class _HomePageState extends State<HomePage> {
                                                               RightButtonIntent>(
                                                         onInvoke:
                                                             (intent) async {
-                                                          await _changeFocus(
+                                                          FocusService.changeFocus(
                                                               context,
-                                                              _addMyWishlistNode!);
+                                                              FocusService
+                                                                  .homepageAddToListNode);
                                                           return null;
                                                         },
                                                       ),
@@ -973,9 +998,10 @@ class _HomePageState extends State<HomePage> {
                                                               UpButtonIntent>(
                                                         onInvoke:
                                                             (intent) async {
-                                                          await _changeFocus(
+                                                          FocusService.changeFocus(
                                                               context,
-                                                              _homePageNode!);
+                                                              FocusService
+                                                                  .homepageMenuAnasayfaNode);
                                                           return null;
                                                         },
                                                       ),
@@ -1004,15 +1030,17 @@ class _HomePageState extends State<HomePage> {
                                                               DownButtonIntent>(
                                                         onInvoke:
                                                             (intent) async {
-                                                          await _changeFocus(
+                                                          FocusService.changeFocus(
                                                               context,
-                                                              _listNode!);
+                                                              FocusService
+                                                                  .homepageListNode);
                                                           return null;
                                                         },
                                                       ),
                                                     },
                                                     child: Focus(
-                                                      focusNode: _playNode,
+                                                      focusNode: FocusService
+                                                          .homepagePlayNode,
                                                       child: Container(
                                                         child: SizedBox(
                                                           height: MediaQuery.of(
@@ -1030,19 +1058,19 @@ class _HomePageState extends State<HomePage> {
                                                                 ElevatedButton
                                                                     .styleFrom(
                                                               foregroundColor:
-                                                                  !(_playNode?.hasFocus ??
-                                                                          false)
+                                                                  (FocusService
+                                                                          .homepagePlayNode
+                                                                          .hasFocus)
                                                                       ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .black,
-                                                              backgroundColor:
-                                                                  !(_playNode?.hasFocus ??
-                                                                          false)
-                                                                      ? Colors
-                                                                          .transparent
+                                                                          .black
                                                                       : Colors
                                                                           .white,
+                                                              backgroundColor: (FocusService
+                                                                      .homepagePlayNode
+                                                                      .hasFocus)
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .transparent,
                                                               shape:
                                                                   RoundedRectangleBorder(
                                                                 borderRadius:
@@ -1100,9 +1128,10 @@ class _HomePageState extends State<HomePage> {
                                                               LeftButtonIntent>(
                                                         onInvoke:
                                                             (intent) async {
-                                                          await _changeFocus(
+                                                          FocusService.changeFocus(
                                                               context,
-                                                              _playNode!);
+                                                              FocusService
+                                                                  .homepagePlayNode);
                                                           return null;
                                                         },
                                                       ),
@@ -1111,9 +1140,10 @@ class _HomePageState extends State<HomePage> {
                                                               UpButtonIntent>(
                                                         onInvoke:
                                                             (intent) async {
-                                                          await _changeFocus(
+                                                          FocusService.changeFocus(
                                                               context,
-                                                              _homePageNode!);
+                                                              FocusService
+                                                                  .homepageMenuAnasayfaNode);
                                                           return null;
                                                         },
                                                       ),
@@ -1122,16 +1152,17 @@ class _HomePageState extends State<HomePage> {
                                                               DownButtonIntent>(
                                                         onInvoke:
                                                             (intent) async {
-                                                          await _changeFocus(
+                                                          FocusService.changeFocus(
                                                               context,
-                                                              _listNode!);
+                                                              FocusService
+                                                                  .homepageListNode);
                                                           return null;
                                                         },
                                                       ),
                                                     },
                                                     child: Focus(
-                                                      focusNode:
-                                                          _addMyWishlistNode,
+                                                      focusNode: FocusService
+                                                          .homepageAddToListNode,
                                                       child: Padding(
                                                         padding:
                                                             EdgeInsets.only(
@@ -1182,12 +1213,12 @@ class _HomePageState extends State<HomePage> {
                                                                           ElevatedButton(
                                                                         style: ElevatedButton
                                                                             .styleFrom(
-                                                                          foregroundColor: !(_addMyWishlistNode?.hasFocus ?? false)
-                                                                              ? Colors.white
-                                                                              : Colors.black,
-                                                                          backgroundColor: !(_addMyWishlistNode?.hasFocus ?? false)
-                                                                              ? Colors.transparent
+                                                                          foregroundColor: (FocusService.homepageAddToListNode.hasFocus)
+                                                                              ? Colors.black
                                                                               : Colors.white,
+                                                                          backgroundColor: (FocusService.homepageAddToListNode.hasFocus)
+                                                                              ? Colors.white
+                                                                              : Colors.transparent,
                                                                           shape:
                                                                               RoundedRectangleBorder(
                                                                             borderRadius:
@@ -1267,77 +1298,53 @@ class _HomePageState extends State<HomePage> {
                                                           FontWeight.w400)),
                                             ),
                                           ),
-                                          /* Row(
+                                          Row(
                                             children: [
                                               ElevatedButton(
+                                                onPressed: () =>
+                                                    handleDirectionChange(
+                                                        DPadDirection.up),
+                                                child: Text('Yukarı git'),
+                                              ),
+                                              ElevatedButton(
                                                 onPressed: () async {
-                                                  if (selectedMovieIndex == 0) {
-                                                  } else if (selectedMovieIndex >
-                                                      0) {
-                                                    movieProvider.moveLeft();
-
-                                                    double prevMovieOffset =
-                                                        itemWidth *
-                                                                (selectedMovieIndex -
-                                                                    1) -
-                                                            _scrollController
-                                                                .position
-                                                                .pixels;
-
-                                                    _scrollController.animateTo(
-                                                      _scrollController
-                                                              .position.pixels +
-                                                          prevMovieOffset,
-                                                      duration: const Duration(
-                                                          milliseconds: 300),
-                                                      curve: Curves.easeInOut,
-                                                    );
-                                                  }
+                                                  FocusService.changeFocus(
+                                                      context,
+                                                      FocusService
+                                                          .homepagePlayNode);
+                                                },
+                                                child: Text('Aşağı git'),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () async {
+                                                  FocusService.changeFocus(
+                                                      context,
+                                                      FocusService
+                                                          .homepageAddToListNode);
                                                 },
                                                 child: Text('Sol git'),
                                               ),
                                               ElevatedButton(
-                                                onPressed: () async {
-                                                  if (selectedMovieIndex ==
-                                                      movieProvider
-                                                              .movies.length +
-                                                          1) {
-                                                  } else if (selectedMovieIndex <
-                                                      movieProvider
-                                                              .movies.length -
-                                                          1) {
-                                                    movieProvider.moveRight();
-
-                                                    double nextMovieOffset =
-                                                        itemWidth *
-                                                                (selectedMovieIndex +
-                                                                    1) -
-                                                            _scrollController
-                                                                .position
-                                                                .pixels;
-
-                                                    _scrollController.animateTo(
-                                                      _scrollController
-                                                              .position.pixels +
-                                                          nextMovieOffset,
-                                                      duration: const Duration(
-                                                          milliseconds: 300),
-                                                      curve: Curves.easeInOut,
-                                                    );
-                                                  }
+                                                onPressed: () {
+                                                  FocusService.changeFocus(
+                                                      context,
+                                                      FocusService
+                                                          .homepagePlayNode);
                                                 },
                                                 child: Text('Sağ git'),
                                               ),
                                             ],
                                           ),
-*/
+
                                           Actions(
                                             actions: <Type, Action<Intent>>{
                                               UpButtonIntent: CallbackAction<
                                                   UpButtonIntent>(
                                                 onInvoke: (intent) async {
-                                                  await _changeFocus(
-                                                      context, _playNode!);
+                                                  FocusService.changeFocus(
+                                                      context,
+                                                      FocusService
+                                                          .homepageListNode);
                                                   return null;
                                                 },
                                               ),
@@ -1402,7 +1409,8 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                             },
                                             child: Focus(
-                                              focusNode: _listNode,
+                                              focusNode:
+                                                  FocusService.homepageListNode,
                                               child: Padding(
                                                 padding: EdgeInsets.fromLTRB(
                                                   MediaQuery.of(context)
@@ -1456,7 +1464,8 @@ class _HomePageState extends State<HomePage> {
                                                                   ? 1.15
                                                                   : 1.0;
                                                           final hasListFocus =
-                                                              _listNode!
+                                                              FocusService
+                                                                  .homepageListNode
                                                                   .hasFocus;
 
                                                           return Padding(
@@ -1549,8 +1558,9 @@ class _HomePageState extends State<HomePage> {
                                                       ),
                                                     ),
                                                     Visibility(
-                                                      visible:
-                                                          _listNode!.hasFocus,
+                                                      visible: FocusService
+                                                          .homepageListNode
+                                                          .hasFocus,
                                                       child: AnimatedPositioned(
                                                         duration:
                                                             const Duration(

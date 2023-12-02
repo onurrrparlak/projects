@@ -11,6 +11,7 @@ import 'package:turkce_film_tv/screens/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:turkce_film_tv/screens/loginscreen.dart';
 import 'package:turkce_film_tv/screens/updatescreen.dart';
+import 'package:turkce_film_tv/services/focusnodeservice.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -92,9 +93,9 @@ void main() async {
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
                 if (snapshot.hasData) {
-                  return const HomePage();
+                  return HomePage();
                 } else {
-                  return const LoginPage();
+                  return LoginPage();
                 }
               },
             ),

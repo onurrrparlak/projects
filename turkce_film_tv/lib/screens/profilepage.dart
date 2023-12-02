@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:turkce_film_tv/screens/loginscreen.dart';
 
+import '../services/focusnodeservice.dart';
 import '../services/user_service.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -20,6 +21,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _password;
   String? _newPassword;
   String? _selectedAvatar;
+
+  int selectedItemIndex = -1;
 
   final List<String> _avatars = [
     '1',
@@ -225,6 +228,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                               BorderRadius.circular(10),
                                         ),
                                         child: TextFormField(
+                                          focusNode: FocusService
+                                              .avatarCurrentPasswordNode,
                                           style: const TextStyle(
                                             color: Colors.white,
                                           ),
@@ -253,6 +258,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                               BorderRadius.circular(10),
                                         ),
                                         child: TextFormField(
+                                          focusNode: FocusService
+                                              .avatarNewPasswordNode,
                                           onChanged: (value) {
                                             _newPassword = value;
                                           },
@@ -261,77 +268,87 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ],
                                 ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    _password != null
-                                        ? _changePassword(
-                                            _password!, _newPassword!)
-                                        : print('abd');
-                                  },
-                                  child: const Text('Güncelle'),
-                                  style: ButtonStyle(
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
+                                Focus(
+                                  focusNode:
+                                      FocusService.avatarUpdateSubmitNode,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      _password != null
+                                          ? _changePassword(
+                                              _password!, _newPassword!)
+                                          : null;
+                                    },
+                                    child: const Text('Güncelle'),
+                                    style: ButtonStyle(
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
                                       ),
+                                      padding: MaterialStateProperty.all<
+                                          EdgeInsetsGeometry>(
+                                        EdgeInsets.symmetric(
+                                            vertical: 12.0, horizontal: 24.0),
+                                      ),
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.green),
+                                      foregroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.white),
+                                      overlayColor:
+                                          MaterialStateProperty.all<Color>(
+                                        Colors.green.withOpacity(0.8),
+                                      ),
+                                      elevation:
+                                          MaterialStateProperty.all<double>(
+                                              0.0),
                                     ),
-                                    padding: MaterialStateProperty.all<
-                                        EdgeInsetsGeometry>(
-                                      EdgeInsets.symmetric(
-                                          vertical: 12.0, horizontal: 24.0),
-                                    ),
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.green),
-                                    foregroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.white),
-                                    overlayColor:
-                                        MaterialStateProperty.all<Color>(
-                                      Colors.green.withOpacity(0.8),
-                                    ),
-                                    elevation:
-                                        MaterialStateProperty.all<double>(0.0),
                                   ),
                                 ),
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    await _userService.logoutUser();
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoginPage()),
-                                    );
-                                  },
-                                  child: const Text('Çıkış yap'),
-                                  style: ButtonStyle(
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
+                                Focus(
+                                  focusNode:
+                                      FocusService.avatarUpdateSubmitNode,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      await _userService.logoutUser();
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const LoginPage()),
+                                      );
+                                    },
+                                    child: const Text('Çıkış yap'),
+                                    style: ButtonStyle(
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
                                       ),
+                                      padding: MaterialStateProperty.all<
+                                          EdgeInsetsGeometry>(
+                                        EdgeInsets.symmetric(
+                                            vertical: 12.0, horizontal: 24.0),
+                                      ),
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.red),
+                                      foregroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.white),
+                                      overlayColor:
+                                          MaterialStateProperty.all<Color>(
+                                        Colors.red.withOpacity(0.8),
+                                      ),
+                                      elevation:
+                                          MaterialStateProperty.all<double>(
+                                              0.0),
                                     ),
-                                    padding: MaterialStateProperty.all<
-                                        EdgeInsetsGeometry>(
-                                      EdgeInsets.symmetric(
-                                          vertical: 12.0, horizontal: 24.0),
-                                    ),
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.red),
-                                    foregroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.white),
-                                    overlayColor:
-                                        MaterialStateProperty.all<Color>(
-                                      Colors.red.withOpacity(0.8),
-                                    ),
-                                    elevation:
-                                        MaterialStateProperty.all<double>(0.0),
                                   ),
                                 ),
                               ],
@@ -373,22 +390,34 @@ class _ProfilePageState extends State<ProfilePage> {
                                               });
                                             });
                                           },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              image: DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/images/avatars/${_avatars[index]}.jpg'),
-                                                fit: BoxFit.cover,
+                                          child: Focus(
+                                            focusNode: FocusService
+                                                .avatarGridViewBuilderNode,
+                                            onFocusChange: (bool hasFocus) {
+                                              if (hasFocus &&
+                                                  selectedItemIndex == -1) {
+                                                // Set initial focus to the first item
+                                                selectedItemIndex = 0;
+                                              }
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/images/avatars/${_avatars[index]}.jpg'),
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
+                                              child: _selectedAvatar ==
+                                                      _avatars[index]
+                                                  ? const Icon(
+                                                      Icons.check_circle,
+                                                      color: Colors.white,
+                                                      size: 50.0)
+                                                  : Container(),
                                             ),
-                                            child: _selectedAvatar ==
-                                                    _avatars[index]
-                                                ? const Icon(Icons.check_circle,
-                                                    color: Colors.white,
-                                                    size: 50.0)
-                                                : Container(),
                                           ),
                                         );
                                       },

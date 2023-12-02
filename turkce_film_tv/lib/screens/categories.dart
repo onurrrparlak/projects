@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:turkce_film_tv/screens/videoplayer.dart';
 
+import '../services/focusnodeservice.dart';
+
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
 
@@ -148,28 +150,31 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     );
   }
 
-  ElevatedButton categoryButton(String categoryName, bool isSelected) {
+  Widget categoryButton(String categoryName, bool isSelected) {
     Color buttonColor = isSelected ? Colors.black : Colors.grey[900]!;
-    return ElevatedButton(
-      onPressed: () {
-        _onCategorySelected(categoryName);
-      },
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(buttonColor),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
+    return Focus(
+      focusNode: FocusService.categoryMenuNode,
+      child: ElevatedButton(
+        onPressed: () {
+          _onCategorySelected(categoryName);
+        },
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(buttonColor),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
           ),
+          side: MaterialStateProperty.all<BorderSide>(
+            const BorderSide(color: Colors.white, width: 1.0),
+          ),
+          minimumSize: MaterialStateProperty.all<Size>(const Size(45, 25)),
         ),
-        side: MaterialStateProperty.all<BorderSide>(
-          const BorderSide(color: Colors.white, width: 1.0),
-        ),
-        minimumSize: MaterialStateProperty.all<Size>(const Size(45, 25)),
-      ),
-      child: FittedBox(
-        child: Text(
-          categoryName,
-          style: const TextStyle(color: Colors.white),
+        child: FittedBox(
+          child: Text(
+            categoryName,
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );
