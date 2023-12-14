@@ -2,11 +2,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_app_installer/flutter_app_installer.dart';
 import 'package:path_provider/path_provider.dart';
 
 class UpdateScreen extends StatefulWidget {
+  const UpdateScreen({super.key});
+
   @override
   _UpdateScreenState createState() => _UpdateScreenState();
 }
@@ -27,7 +28,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
       final data = snapshot.data();
 
-      if (data != null && data is Map<String, dynamic>) {
+      if (data != null) {
         setState(() {
           downloadUrl = data['downloadUrl'];
           patchNotes = data['patchNotes'];
@@ -56,7 +57,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
         downloadProgress = 0;
       });
 
-      final fileName = 'app-release.apk';
+      const fileName = 'app-release.apk';
       final downloadDir = await getExternalStorageDirectory();
       final savePath = '${downloadDir!.path}/Download/$fileName';
 
@@ -105,7 +106,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/background.jpg'),
             fit: BoxFit.cover,
@@ -120,13 +121,13 @@ class _UpdateScreenState extends State<UpdateScreen> {
               ),
               Text(
                 'Versiyon Numarası: $versionNumber',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 16),
-              Text(
+              const SizedBox(height: 16),
+              const Text(
                 'Güncelleme Notları:',
                 style: TextStyle(
                   fontSize: 16,
@@ -143,17 +144,16 @@ class _UpdateScreenState extends State<UpdateScreen> {
                       .split('. ')
                       .map((note) => TextSpan(
                             text: '$note\n',
-                            style: TextStyle(fontSize: 16),
+                            style: const TextStyle(fontSize: 16),
                           ))
                       .toList(),
                 ),
               ),
-              SizedBox(height: 32),
+              const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {
                   downloadFile(downloadUrl);
                 },
-                child: Text('Güncelle'),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
@@ -162,7 +162,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     ),
                   ),
                   padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                    EdgeInsets.symmetric(
+                    const EdgeInsets.symmetric(
                         vertical: 12.0,
                         horizontal: 24.0), // Adjust the padding as needed
                   ),
@@ -175,6 +175,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                   elevation: MaterialStateProperty.all<double>(
                       0.0), // Remove the button shadow
                 ),
+                child: const Text('Güncelle'),
               ),
               if (downloading)
                 Column(
@@ -182,10 +183,10 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     LinearProgressIndicator(
                       value: downloadProgress,
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       '${(downloadProgress * 100).toStringAsFixed(0)}%',
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ],
                 ),

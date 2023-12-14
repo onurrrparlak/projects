@@ -1,35 +1,32 @@
-import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdMobService {
+
+   void Function(String message)? rewardedAdNotReadyCallback;
+
   String get bannerAdUnitId => Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/6300978111'
-      : 'ca-app-pub-3940256099942544/6300978111';
+      ? 'ca-app-pub-6463656772430340/8565172142'
+      : 'ca-app-pub-6463656772430340/8565172142';
   String get rewardedAdUnitId => Platform.isAndroid
-      ? 'ca-app-pub-6463656772430340/5800139246' // test ad unit id
-      : 'ca-app-pub-6463656772430340/5800139246';
+      ? 'ca-app-pub-6463656772430340/5192123096' // test ad unit id
+      : 'ca-app-pub-6463656772430340/5192123096';
 
   BannerAd? _bannerAd;
   RewardedAd? _rewardedAd;
+   Function()? adDismissedCallback;
 
-  bool _canShowRewardedAd = true;
+  
 
   void initialize() {
     createBannerAd();
     createRewardedAd();
-    startRewardedAdTimer();
+    
+  
   }
 
-  void startRewardedAdTimer() {
-    Timer(const Duration(seconds: 5), () {
-      if (_canShowRewardedAd) {
-        showRewardedAd();
-      }
-    });
-  }
+  
 
   void showRewardedAd() {
     if (_rewardedAd != null) {
@@ -37,34 +34,32 @@ class AdMobService {
         onAdDismissedFullScreenContent: (ad) {
           ad.dispose();
           _rewardedAd = null;
-          _canShowRewardedAd = false;
-          startAdCooldownTimer();
+          
+         if (adDismissedCallback != null) {
+          adDismissedCallback!(); // Invoke the callback when ad is dismissed
+        }
           createRewardedAd();
         },
         onAdFailedToShowFullScreenContent: (ad, error) {
           ad.dispose();
           _rewardedAd = null;
-          print('Failed to show rewarded ad: $error');
         },
       );
 
       _rewardedAd!.setImmersiveMode(true);
       _rewardedAd!.show(
         onUserEarnedReward: (ad, reward) {
-          print('User earned reward: ${reward.amount}');
-          // TODO: Implement reward functionality
+          
         },
       );
     } else {
-      print('Rewarded ad is not ready.');
+     if (rewardedAdNotReadyCallback != null) {
+        rewardedAdNotReadyCallback!("Reklam henüz hazır değil. Lütfen bekleyiniz ve internet bağlantınızı kontrol ediniz"); // Pass the message to the callback
+      }
     }
   }
 
-  void startAdCooldownTimer() {
-    Timer(const Duration(hours: 12), () {
-      _canShowRewardedAd = true;
-    });
-  }
+
 
   void createBannerAd() {
     _bannerAd = BannerAd(
@@ -75,7 +70,6 @@ class AdMobService {
         onAdLoaded: (ad) => print('Ad loaded'),
         onAdFailedToLoad: (ad, error) {
           ad.dispose();
-          print('Ad failed to load: $error');
         },
       ),
     );

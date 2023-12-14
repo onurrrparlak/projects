@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../services/focusnodeservice.dart';
 import '../services/user_service.dart';
 import 'homepage.dart';
@@ -30,7 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
       TextEditingController();
 
   final whiteInputBorder = OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.white),
+    borderSide: const BorderSide(color: Colors.white),
     borderRadius: BorderRadius.circular(38.0),
   );
 
@@ -38,7 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(FocusService.registerButtonNode);
     });
   }
@@ -46,7 +45,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final textScaleFactor = MediaQuery.of(context).textScaleFactor;
-    final baseFontSize = 14.0;
+    const baseFontSize = 14.0;
     final scaledFontSize = baseFontSize * textScaleFactor;
     final TextStyle whiteTextStyle = TextStyle(
       color: Colors.white,
@@ -72,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   decoration: InputDecoration(
                     labelText: 'Kullanıcı Adı',
                     labelStyle: whiteTextStyle,
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.person_2_outlined,
                       color: Colors.white,
                     ),
@@ -94,7 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   decoration: InputDecoration(
                     labelText: 'E- Posta',
                     labelStyle: whiteTextStyle,
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.mail,
                       color: Colors.white,
                     ),
@@ -116,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   decoration: InputDecoration(
                     labelText: 'Şifre',
                     labelStyle: whiteTextStyle,
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.lock,
                       color: Colors.white,
                     ),
@@ -160,7 +159,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   decoration: InputDecoration(
                     labelText: 'Şifre tekrar',
                     labelStyle: whiteTextStyle,
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.lock,
                       color: Colors.white,
                     ),
@@ -209,7 +208,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                        EdgeInsets.symmetric(
+                        const EdgeInsets.symmetric(
                             vertical: 12.0,
                             horizontal: 24.0), // Adjust the padding as needed
                       ),

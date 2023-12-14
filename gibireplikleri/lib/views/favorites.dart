@@ -2,17 +2,33 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gibireplikleri/core/replikler.dart';
+import 'package:gibireplikleri/services/admob_service.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
-class Favorites extends StatelessWidget {
-  Favorites({Key? key}) : super(key: key);
+class Favorites extends StatefulWidget {
+  const Favorites({super.key});
 
+  @override
+  State<Favorites> createState() => _FavoritesState();
+}
+
+class _FavoritesState extends State<Favorites> {
   List repliklerList = Replikler.replikler;
+
   final audioPlayer = AudioPlayer();
+
+  final AdMobService _adMobService = AdMobService();
+
+  @override
+  void initState() {
+    super.initState();
+    _adMobService.initialize();
+    _adMobService.createRewardedAd();
+  }
+
   @override
   Widget build(BuildContext context) {
-    double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +53,6 @@ class Favorites extends StatelessWidget {
               valueListenable: Hive.box('favoriler').listenable(),
               builder: (context, box, child) {
                 List posts = List.from(box.values);
-                final isFavorite = posts != null;
                 if (posts.isNotEmpty) {
                   return ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -48,16 +63,13 @@ class Favorites extends StatelessWidget {
                         (p) => ListTile(
                           onTap: () {
                             audioPlayer.stop();
-                            audioPlayer.play(AssetSource(
-                                'sounds/${p['id']}.mp3'));
+                            audioPlayer
+                                .play(AssetSource('sounds/${p['id']}.mp3'));
                           },
                           leading: CircleAvatar(
                             radius: 20,
-                            backgroundImage: AssetImage('assets/images/${p['soyleyen'] == 0
-                                    ? 'yilmaz.jpg'
-                                    : p['soyleyen'] == 1
-                                        ? 'ilkkan.jpg'
-                                        : 'ersoy.jpg'}'),
+                            backgroundImage: AssetImage(
+                                'assets/images/${p['soyleyen'] == 0 ? 'yilmaz.jpg' : p['soyleyen'] == 1 ? 'ilkkan.jpg' : 'ersoy.jpg'}'),
                           ),
                           title: Text(
                             p['replik'],
@@ -88,17 +100,35 @@ class Favorites extends StatelessWidget {
                                     Icons.share,
                                   ),
                                   onPressed: () async {
-                                    final data = await rootBundle.load(
-                                        'assets/sounds/${p['id']}.mp3');
-                                    final buffer = data.buffer;
-                                    await Share.shareXFiles([
-                                      XFile.fromData(
-                                        buffer.asUint8List(data.offsetInBytes,
-                                            data.lengthInBytes),
-                                        mimeType: 'audio/x-aiff',
-                                      )
-                                    ]);
-                                  },
+                                    _adMobService.adDismissedCallback =
+                                        () async {
+                                      final data = await rootBundle.load(
+                                          'assets/sounds/${p['id']}.mp3');
+                                      final buffer = data.buffer;
+                                      await Share.shareXFiles([
+                                        XFile.fromData(
+                                          buffer.asUint8List(
+                                              data.offsetInBytes,
+                                              data.lengthInBytes),
+                                          mimeType: 'audio/x-aiff',
+                                        )
+                                      ]);
+                                    };
+                                      _adMobService
+                                                      .rewardedAdNotReadyCallback =
+                                                  (String message) {
+                                                ScaffoldMessenger.of(
+                                                        context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        message), 
+                                                  ),
+                                                );
+                                              };
+                                      _adMobService
+                                                    .showRewardedAd();
+                                                                    },
                                 ),
                               ),
                             ],

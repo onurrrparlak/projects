@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class RatingDialog extends StatelessWidget {
-  const RatingDialog({Key? key}) : super(key: key);
+  const RatingDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class RatingDialog extends StatelessWidget {
           child: const Text("Puan ver"),
           onPressed: () async {
             const url =
-                "https://example.com/rate"; // replace with your app store link
+                "https://play.google.com/store/apps/details?id=com.wivizo.gibireplikleri"; // replace with your app store link
             if (await canLaunchUrlString(url)) {
               await launchUrlString(url);
             }

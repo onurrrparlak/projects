@@ -11,7 +11,7 @@ class FilterService {
     }
   }
 
-  static List filterBySearch(String query, List replikler, bool showKufur) {
+   static List filterBySearch(String query, List replikler, bool showKufur) {
     if (query.isEmpty) {
       return FilterService.filterByKufur(showKufur, replikler);
     } else {
@@ -21,6 +21,7 @@ class FilterService {
           .toList();
     }
   }
+
 
   static List filterByKufur(bool showKufur, List replikler) {
     if (showKufur) {

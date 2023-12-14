@@ -1,0 +1,97 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+    
+        {
+            "name": "gibireplikleri",
+            "cwd": "gibireplikleri",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "gibireplikleri (profile mode)",
+            "cwd": "gibireplikleri",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "gibireplikleri (release mode)",
+            "cwd": "gibireplikleri",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "gibirepliko",
+            "cwd": "gibirepliko",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "gibirepliko (profile mode)",
+            "cwd": "gibirepliko",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "gibirepliko (release mode)",
+            "cwd": "gibirepliko",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "torrent4kmovie",
+            "cwd": "torrent4kmovie",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "torrent4kmovie (profile mode)",
+            "cwd": "torrent4kmovie",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "torrent4kmovie (release mode)",
+            "cwd": "torrent4kmovie",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "turkce_film_tv",
+            "cwd": "turkce_film_tv",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "turkce_film_tv (profile mode)",
+            "cwd": "turkce_film_tv",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "turkce_film_tv (release mode)",
+            "cwd": "turkce_film_tv",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "testapp (profile mode)",
+            "cwd": "testapp",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+    ]
+}

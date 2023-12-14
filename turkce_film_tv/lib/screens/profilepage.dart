@@ -278,7 +278,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                               _password!, _newPassword!)
                                           : null;
                                     },
-                                    child: const Text('Güncelle'),
                                     style: ButtonStyle(
                                       shape: MaterialStateProperty.all<
                                           RoundedRectangleBorder>(
@@ -289,7 +288,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                       padding: MaterialStateProperty.all<
                                           EdgeInsetsGeometry>(
-                                        EdgeInsets.symmetric(
+                                        const EdgeInsets.symmetric(
                                             vertical: 12.0, horizontal: 24.0),
                                       ),
                                       backgroundColor:
@@ -306,6 +305,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           MaterialStateProperty.all<double>(
                                               0.0),
                                     ),
+                                    child: const Text('Güncelle'),
                                   ),
                                 ),
                                 Focus(
@@ -321,7 +321,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 const LoginPage()),
                                       );
                                     },
-                                    child: const Text('Çıkış yap'),
                                     style: ButtonStyle(
                                       shape: MaterialStateProperty.all<
                                           RoundedRectangleBorder>(
@@ -332,7 +331,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                       padding: MaterialStateProperty.all<
                                           EdgeInsetsGeometry>(
-                                        EdgeInsets.symmetric(
+                                        const EdgeInsets.symmetric(
                                             vertical: 12.0, horizontal: 24.0),
                                       ),
                                       backgroundColor:
@@ -349,6 +348,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           MaterialStateProperty.all<double>(
                                               0.0),
                                     ),
+                                    child: const Text('Çıkış yap'),
                                   ),
                                 ),
                               ],

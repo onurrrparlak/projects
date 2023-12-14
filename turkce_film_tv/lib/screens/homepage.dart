@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,7 +16,6 @@ import '../models/movie_models.dart';
 import '../services/searchservice.dart';
 import '../services/user_service.dart';
 import '../widgets/search_widget.dart';
-import '../widgets/shortcutswidget.dart';
 import 'categories.dart';
 
 //flutter build apk -t lib/main.dart
@@ -51,16 +52,12 @@ class _HomePageState extends State<HomePage> {
       // Perform actions based on the currentDirection
       switch (currentDirection) {
         case DPadDirection.up:
-          print('Up button pressed');
           break;
         case DPadDirection.down:
-          print('Down button pressed');
           break;
         case DPadDirection.left:
-          print('Left button pressed');
           break;
         case DPadDirection.right:
-          print('Right button pressed');
           break;
       }
     });
@@ -99,16 +96,11 @@ class _HomePageState extends State<HomePage> {
     currentUserRef = userService.firestore
         .collection('users')
         .doc(userService.getCurrentUserId()!);
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusService.changeFocus(context, FocusService.homepageMenuAnasayfaNode);
     });
   }
 
-  _changeFocus(BuildContext context, FocusNode node) {
-    FocusScope.of(context).requestFocus(node);
-    setState(() {});
-    print(node);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Container(
+                                    SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
                                               0.1,
@@ -262,50 +254,48 @@ class _HomePageState extends State<HomePage> {
                                       child: Focus(
                                         focusNode: FocusService
                                             .homepageMenuAnasayfaNode,
-                                        child: Container(
-                                          child: TextButton(
-                                            onPressed: () async {
-                                              if (_currentPageIndex == 0) {
-                                              } else {
-                                                int index = 0;
-                                                _pageController
-                                                    .jumpToPage(index);
-                                                setState(() {
-                                                  _currentPageIndex = index;
-                                                });
-                                                FocusService.changeFocus(
-                                                    context,
-                                                    FocusService
-                                                        .homepageMenuAnasayfaNode);
-                                              }
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.005,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                  border: (FocusService
-                                                          .homepageMenuAnasayfaNode
-                                                          .hasFocus)
-                                                      ? Border(
-                                                          bottom: BorderSide(
-                                                            color: Colors.white,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.0020,
-                                                          ),
-                                                        )
-                                                      : null),
-                                              child: const Text(
-                                                'Anasayfa',
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
+                                        child: TextButton(
+                                          onPressed: () async {
+                                            if (_currentPageIndex == 0) {
+                                            } else {
+                                              int index = 0;
+                                              _pageController
+                                                  .jumpToPage(index);
+                                              setState(() {
+                                                _currentPageIndex = index;
+                                              });
+                                              FocusService.changeFocus(
+                                                  context,
+                                                  FocusService
+                                                      .homepageMenuAnasayfaNode);
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.005,
+                                            ),
+                                            decoration: BoxDecoration(
+                                                border: (FocusService
+                                                        .homepageMenuAnasayfaNode
+                                                        .hasFocus)
+                                                    ? Border(
+                                                        bottom: BorderSide(
+                                                          color: Colors.white,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.0020,
+                                                        ),
+                                                      )
+                                                    : null),
+                                            child: const Text(
+                                              'Anasayfa',
+                                              style: TextStyle(
+                                                  color: Colors.white),
                                             ),
                                           ),
                                         ),
@@ -440,50 +430,48 @@ class _HomePageState extends State<HomePage> {
                                       child: Focus(
                                         focusNode: FocusService
                                             .homepageMenuCategoriesNode,
-                                        child: Container(
-                                          child: TextButton(
-                                            onPressed: () async {
-                                              if (_currentPageIndex == 2) {
-                                              } else {
-                                                int index = 2;
-                                                _pageController
-                                                    .jumpToPage(index);
-                                                setState(() {
-                                                  _currentPageIndex = index;
-                                                });
-                                                FocusService.changeFocus(
-                                                    context,
-                                                    FocusService
-                                                        .homepageMenuCategoriesNode);
-                                              }
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.005,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                  border: (FocusService
-                                                          .homepageMenuCategoriesNode
-                                                          .hasFocus)
-                                                      ? Border(
-                                                          bottom: BorderSide(
-                                                            color: Colors.white,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.0020,
-                                                          ),
-                                                        )
-                                                      : null),
-                                              child: const Text(
-                                                'Kategoriler',
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
+                                        child: TextButton(
+                                          onPressed: () async {
+                                            if (_currentPageIndex == 2) {
+                                            } else {
+                                              int index = 2;
+                                              _pageController
+                                                  .jumpToPage(index);
+                                              setState(() {
+                                                _currentPageIndex = index;
+                                              });
+                                              FocusService.changeFocus(
+                                                  context,
+                                                  FocusService
+                                                      .homepageMenuCategoriesNode);
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.005,
+                                            ),
+                                            decoration: BoxDecoration(
+                                                border: (FocusService
+                                                        .homepageMenuCategoriesNode
+                                                        .hasFocus)
+                                                    ? Border(
+                                                        bottom: BorderSide(
+                                                          color: Colors.white,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.0020,
+                                                        ),
+                                                      )
+                                                    : null),
+                                            child: const Text(
+                                              'Kategoriler',
+                                              style: TextStyle(
+                                                  color: Colors.white),
                                             ),
                                           ),
                                         ),
@@ -491,7 +479,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ],
                                 ),
-                                Container(
+                                SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.580,
                                   child: Row(
@@ -631,6 +619,7 @@ class _HomePageState extends State<HomePage> {
                                                         context,
                                                         FocusService
                                                             .homepageMenuSearchNode);
+                                                    return null;
                                                   },
                                                 ),
                                               },
@@ -791,21 +780,19 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                   );
                                                 },
-                                                child: Container(
-                                                  child: AspectRatio(
-                                                    aspectRatio: 5 / 3,
-                                                    child: Container(
-                                                      padding: EdgeInsets.all(
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.0045,
-                                                      ),
-                                                      child: Image.network(
-                                                        movies[index]
-                                                            .posterImageUrl,
-                                                        fit: BoxFit.cover,
-                                                      ),
+                                                child: AspectRatio(
+                                                  aspectRatio: 5 / 3,
+                                                  child: Container(
+                                                    padding: EdgeInsets.all(
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.0045,
+                                                    ),
+                                                    child: Image.network(
+                                                      movies[index]
+                                                          .posterImageUrl,
+                                                      fit: BoxFit.cover,
                                                     ),
                                                   ),
                                                 ),
@@ -1041,79 +1028,77 @@ class _HomePageState extends State<HomePage> {
                                                     child: Focus(
                                                       focusNode: FocusService
                                                           .homepagePlayNode,
-                                                      child: Container(
-                                                        child: SizedBox(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              0.07,
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.15,
-                                                          child: ElevatedButton(
-                                                            style:
-                                                                ElevatedButton
-                                                                    .styleFrom(
-                                                              foregroundColor:
-                                                                  (FocusService
-                                                                          .homepagePlayNode
-                                                                          .hasFocus)
-                                                                      ? Colors
-                                                                          .black
-                                                                      : Colors
-                                                                          .white,
-                                                              backgroundColor: (FocusService
-                                                                      .homepagePlayNode
-                                                                      .hasFocus)
-                                                                  ? Colors.white
-                                                                  : Colors
-                                                                      .transparent,
-                                                              shape:
-                                                                  RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5), // set the desired border radius here
-                                                                side:
-                                                                    BorderSide(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      0.0020,
-                                                                ), // set the desired border color and width here
-                                                              ),
+                                                      child: SizedBox(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.07,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.15,
+                                                        child: ElevatedButton(
+                                                          style:
+                                                              ElevatedButton
+                                                                  .styleFrom(
+                                                            foregroundColor:
+                                                                (FocusService
+                                                                        .homepagePlayNode
+                                                                        .hasFocus)
+                                                                    ? Colors
+                                                                        .black
+                                                                    : Colors
+                                                                        .white,
+                                                            backgroundColor: (FocusService
+                                                                    .homepagePlayNode
+                                                                    .hasFocus)
+                                                                ? Colors.white
+                                                                : Colors
+                                                                    .transparent,
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5), // set the desired border radius here
+                                                              side:
+                                                                  BorderSide(
+                                                                color: Colors
+                                                                    .white,
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.0020,
+                                                              ), // set the desired border color and width here
                                                             ),
-                                                            onPressed:
-                                                                () async {
-                                                              await Navigator
-                                                                  .push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (context) => VideoPlayerScreen(
-                                                                      videoUrl:
-                                                                          selectedMovie
-                                                                              .url,
-                                                                      subtitle:
-                                                                          selectedMovie
-                                                                              .subtitle),
-                                                                ),
-                                                              );
-                                                            },
-                                                            child:
-                                                                const FittedBox(
-                                                              child: Text(
-                                                                'Oynat',
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600),
+                                                          ),
+                                                          onPressed:
+                                                              () async {
+                                                            await Navigator
+                                                                .push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) => VideoPlayerScreen(
+                                                                    videoUrl:
+                                                                        selectedMovie
+                                                                            .url,
+                                                                    subtitle:
+                                                                        selectedMovie
+                                                                            .subtitle),
                                                               ),
+                                                            );
+                                                          },
+                                                          child:
+                                                              const FittedBox(
+                                                            child: Text(
+                                                              'Oynat',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600),
                                                             ),
                                                           ),
                                                         ),
@@ -1198,66 +1183,63 @@ class _HomePageState extends State<HomePage> {
                                                                       snapshot
                                                                           .data!
                                                                           .exists;
-                                                                  return Container(
-                                                                    child:
-                                                                        SizedBox(
-                                                                      height: MediaQuery.of(context)
-                                                                              .size
-                                                                              .height *
-                                                                          0.07,
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          0.15,
-                                                                      child:
-                                                                          ElevatedButton(
-                                                                        style: ElevatedButton
-                                                                            .styleFrom(
-                                                                          foregroundColor: (FocusService.homepageAddToListNode.hasFocus)
-                                                                              ? Colors.black
-                                                                              : Colors.white,
-                                                                          backgroundColor: (FocusService.homepageAddToListNode.hasFocus)
-                                                                              ? Colors.white
-                                                                              : Colors.transparent,
-                                                                          shape:
-                                                                              RoundedRectangleBorder(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(5), // set the desired border radius here
-                                                                            side:
-                                                                                BorderSide(
-                                                                              color: Colors.white,
-                                                                              width: MediaQuery.of(context).size.width * 0.0020,
-                                                                            ), // set the desired border color and width here
-                                                                          ),
-                                                                        ),
-                                                                        onPressed:
-                                                                            () async {
-                                                                          if (isOnWatchlist) {
-                                                                            final querySnapshot =
-                                                                                await watchlist.where('movieId', isEqualTo: selectedMovie.movieId).get();
-                                                                            if (querySnapshot.docs.isNotEmpty) {
-                                                                              final docId = querySnapshot.docs.first.id;
-                                                                              await watchlist.doc(docId).delete();
-                                                                            }
-                                                                          } else {
-                                                                            await watchlist.doc(selectedMovie.movieId.toString()).set({
-                                                                              'movieId': selectedMovie.movieId,
-                                                                              'isWatched': false,
-                                                                              'timestamp': FieldValue.serverTimestamp(),
-                                                                            });
-                                                                          }
-                                                                          setState(
-                                                                              () {});
-                                                                        },
-                                                                        child:
-                                                                            FittedBox(
-                                                                          child: Text(isOnWatchlist
-                                                                              ? 'Listeden Sil'
-                                                                              : 'Listeye ekle'),
-                                                                        ),
-                                                                      ),
+                                                                  return SizedBox(
+                                                                                                                                        height: MediaQuery.of(context)
+                                                                        .size
+                                                                        .height *
+                                                                    0.07,
+                                                                                                                                        width: MediaQuery.of(context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.15,
+                                                                                                                                        child:
+                                                                    ElevatedButton(
+                                                                  style: ElevatedButton
+                                                                      .styleFrom(
+                                                                    foregroundColor: (FocusService.homepageAddToListNode.hasFocus)
+                                                                        ? Colors.black
+                                                                        : Colors.white,
+                                                                    backgroundColor: (FocusService.homepageAddToListNode.hasFocus)
+                                                                        ? Colors.white
+                                                                        : Colors.transparent,
+                                                                    shape:
+                                                                        RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(5), // set the desired border radius here
+                                                                      side:
+                                                                          BorderSide(
+                                                                        color: Colors.white,
+                                                                        width: MediaQuery.of(context).size.width * 0.0020,
+                                                                      ), // set the desired border color and width here
                                                                     ),
-                                                                  );
+                                                                  ),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    if (isOnWatchlist) {
+                                                                      final querySnapshot =
+                                                                          await watchlist.where('movieId', isEqualTo: selectedMovie.movieId).get();
+                                                                      if (querySnapshot.docs.isNotEmpty) {
+                                                                        final docId = querySnapshot.docs.first.id;
+                                                                        await watchlist.doc(docId).delete();
+                                                                      }
+                                                                    } else {
+                                                                      await watchlist.doc(selectedMovie.movieId.toString()).set({
+                                                                        'movieId': selectedMovie.movieId,
+                                                                        'isWatched': false,
+                                                                        'timestamp': FieldValue.serverTimestamp(),
+                                                                      });
+                                                                    }
+                                                                    setState(
+                                                                        () {});
+                                                                  },
+                                                                  child:
+                                                                      FittedBox(
+                                                                    child: Text(isOnWatchlist
+                                                                        ? 'Listeden Sil'
+                                                                        : 'Listeye ekle'),
+                                                                  ),
+                                                                                                                                        ),
+                                                                                                                                      );
                                                                 },
                                                               );
                                                             } else {
@@ -1298,43 +1280,7 @@ class _HomePageState extends State<HomePage> {
                                                           FontWeight.w400)),
                                             ),
                                           ),
-                                          Row(
-                                            children: [
-                                              ElevatedButton(
-                                                onPressed: () =>
-                                                    handleDirectionChange(
-                                                        DPadDirection.up),
-                                                child: Text('Yukarı git'),
-                                              ),
-                                              ElevatedButton(
-                                                onPressed: () async {
-                                                  FocusService.changeFocus(
-                                                      context,
-                                                      FocusService
-                                                          .homepagePlayNode);
-                                                },
-                                                child: Text('Aşağı git'),
-                                              ),
-                                              ElevatedButton(
-                                                onPressed: () async {
-                                                  FocusService.changeFocus(
-                                                      context,
-                                                      FocusService
-                                                          .homepageAddToListNode);
-                                                },
-                                                child: Text('Sol git'),
-                                              ),
-                                              ElevatedButton(
-                                                onPressed: () {
-                                                  FocusService.changeFocus(
-                                                      context,
-                                                      FocusService
-                                                          .homepagePlayNode);
-                                                },
-                                                child: Text('Sağ git'),
-                                              ),
-                                            ],
-                                          ),
+                                        
 
                                           Actions(
                                             actions: <Type, Action<Intent>>{
@@ -1373,6 +1319,7 @@ class _HomePageState extends State<HomePage> {
                                                       curve: Curves.easeInOut,
                                                     );
                                                   }
+                                                  return null;
                                                 },
                                               ),
                                               RightButtonIntent: CallbackAction<
@@ -1405,6 +1352,7 @@ class _HomePageState extends State<HomePage> {
                                                       curve: Curves.easeInOut,
                                                     );
                                                   }
+                                                  return null;
                                                 },
                                               ),
                                             },

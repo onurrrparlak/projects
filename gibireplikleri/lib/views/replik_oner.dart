@@ -14,7 +14,7 @@ class _ReplikOnerState extends State<ReplikOner> {
       TextEditingController();
 
   void _submitForm() async {
-    final String subject = '$_replikController';
+    final String subject = _replikController.text;
     final String body =
         'Replik: ${_replikController.text}\nNerede geçiyor: ${_neredeGeciyorController.text}';
     const String recipient = 'gibireplikleriapp@gmail.com';

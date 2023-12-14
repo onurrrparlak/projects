@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:turkce_film_tv/models/movie_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

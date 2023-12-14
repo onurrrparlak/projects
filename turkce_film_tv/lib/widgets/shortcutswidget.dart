@@ -14,7 +14,7 @@ class EnterButtonIntent extends Intent {}
 class MyShortcutsWidget extends StatelessWidget {
   final Widget child;
 
-  const MyShortcutsWidget({required this.child});
+  const MyShortcutsWidget({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

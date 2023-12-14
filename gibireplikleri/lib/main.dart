@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:gibireplikleri/gibi_icons_icons.dart';
 import 'package:gibireplikleri/provider/settings_provider.dart';
-import 'package:gibireplikleri/services/admob_service.dart';
 import 'package:gibireplikleri/services/audioplayer_service.dart';
 
 import 'package:gibireplikleri/views/favorites.dart';
 import 'package:gibireplikleri/views/homepage.dart';
 import 'package:gibireplikleri/views/settings.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
-import 'dart:math';
-import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart' as path_provider;
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,8 +19,8 @@ Future<void> main() async {
   await Hive.openBox('settings');
   await Hive.openBox('replikBox');
 
-  final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
-  final hiveBox = await Hive.openBox('adBox', path: appDocumentDir.path);
+ 
+
 
   runApp(MultiProvider(
     providers: [
@@ -33,7 +28,7 @@ Future<void> main() async {
       ChangeNotifierProvider<SettingsProvider>(
           create: (_) => SettingsProvider()),
     ],
-    child: MainApp(),
+    child: const MainApp(),
   ));
 }
 
@@ -45,21 +40,21 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/settings': (context) => Settings(),
+        '/settings': (context) => const Settings(),
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.dark(),
+        colorScheme: const ColorScheme.dark(),
         inputDecorationTheme: InputDecorationTheme(
             filled: true,
             fillColor: const Color(0xFF1d1c21),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30.0),
-              borderSide: BorderSide(width: 0, color: Color(0xFF1d1c21)),
+              borderSide: const BorderSide(width: 0, color: Color(0xFF1d1c21)),
             ),
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30.0),
-                borderSide: BorderSide(width: 0, color: Color(0xFF1d1c21)))),
+                borderSide: const BorderSide(width: 0, color: Color(0xFF1d1c21)))),
         fontFamily: 'Euclid',
         scaffoldBackgroundColor: const Color(0xFF09090F),
       ),
@@ -74,7 +69,7 @@ class MainApp extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else {
             // Once the initialization is complete, show the main content of the app
-            return SafeArea(child: MyHomePage());
+            return const SafeArea(child: MyHomePage());
           }
         },
       ),
@@ -92,9 +87,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _screenIndex = 0;
   final List _screens = [
-    {"screen": Homepage()},
-    {"screen": Favorites()},
-    {"screen": Settings()}
+    {"screen": const Homepage()},
+    {"screen": const Favorites()},
+    {"screen": const Settings()}
   ];
 
   void _selectScreen(int index) {
@@ -108,11 +103,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: _screens[_screenIndex]["screen"],
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
+        padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
         child: Container(
           height: 75,
           clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(40)),
           ),
           child: BottomNavigationBar(
@@ -121,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
             showSelectedLabels: false,
             showUnselectedLabels: true,
             onTap: _selectScreen,
-            backgroundColor: Color(0xFF1d1c21),
+            backgroundColor: const Color(0xFF1d1c21),
             items: [
               BottomNavigationBarItem(
                 label: '',

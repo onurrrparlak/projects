@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field, unused_local_variable, unused_element, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:gibireplikleri/services/admob_service.dart';
 import 'package:gibireplikleri/services/audioplayer_service.dart';
@@ -37,13 +39,7 @@ class _SettingsState extends State<Settings> {
     Provider.of<SettingsProvider>(context, listen: false).loadSettings();
   }
 
-  @override
-  void dispose() {
-    _adMobService.dispose();
-    _audioService.dispose();
-    super.dispose();
-  }
-
+ 
   void _loadSettings() async {
     final box = await Hive.openBox('settings');
     if (box.containsKey('kufur')) {
@@ -99,7 +95,7 @@ class _SettingsState extends State<Settings> {
                         },
                       );
                     case 2:
-                      return ShareAppWidget();
+                      return const ShareAppWidget();
 
                     case 3:
                       return ListTile(

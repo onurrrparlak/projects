@@ -16,7 +16,7 @@ import '../services/replik_filter_service.dart';
 import '../widgets/floating_action_button.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({Key? key}) : super(key: key);
+  const Homepage({super.key});
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -25,7 +25,7 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
   bool _isKeyboardVisible = false;
   bool? w;
-  AdMobService? _adMobService;
+  final AdMobService _adMobService = AdMobService();
 
   var r = Replikler.replikler;
 
@@ -34,8 +34,8 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
 
   String getRandomReplik() {
     final random = Random();
-    final randomIndex = random.nextInt(r.length);
-    return r[randomIndex]['replik']!;
+    final randomIndex = random.nextInt(_filteredReplikler.length);
+    return _filteredReplikler[randomIndex]['replik']!;
   }
 
   String getStoredReplik() {
@@ -60,39 +60,32 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
     }
   }
 
-  String? _gununRepligi;
-  final String _searchQuery = '';
 
-  void _filterReplikler() {
-    print(w);
-    _filteredReplikler =
-        FilterService.filterBySoyleyen(_selectedSoyleyen, r, excludeKufur: w!);
-
-    setState(() {});
-  }
 
   @override
   void initState() {
     super.initState();
+    _adMobService.initialize();
     WidgetsBinding.instance.addObserver(this);
     final kufurBox = Hive.box('settings');
-    w = kufurBox.get('kufur') ?? true;
+    w = kufurBox.get('kufur') ?? false;
 
     _filteredReplikler = FilterService.filterByKufur(w!, r);
-    _adMobService = AdMobService();
-    _adMobService!.createBannerAd();
+
+    _adMobService.createBannerAd();
+    _adMobService.createRewardedAd();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _adMobService!.dispose();
+    _adMobService.dispose();
     super.dispose();
   }
 
   @override
   void didChangeMetrics() {
-    final bottomInset = WidgetsBinding.instance.window.viewInsets.bottom;
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     setState(() {
       _isKeyboardVisible = bottomInset > 0;
     });
@@ -120,7 +113,6 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
     });
   }
 
-  final List<bool> _selections = [false, false, false];
 
   void _runFilter(String enteredKeyword) {
     setState(() {
@@ -132,7 +124,6 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final audioService = Provider.of<AudioService>(context);
-    final settingsProvider = Provider.of<SettingsProvider>(context);
     double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
     updateReplikIfNeeded();
     final replik = getStoredReplik();
@@ -274,7 +265,31 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
                       CircleAvatar(
                         radius: 30,
                         backgroundColor: const Color(0xFF1d1c21),
-                        child: IconButton(
+                        child: GestureDetector(
+                          onLongPress: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                backgroundColor: Colors
+                                    .red, // Set the background color to red
+                                content: Text(
+                                  'Rastgele replik, tüm replik listesinden birini oynatır. Replik, küfür içerebilir.',
+                                  style: TextStyle(
+                                    color: Colors
+                                        .white, // Set the text color to white
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          onTap: () async {
+                            var max = r.length;
+                            int randomNumber = Random().nextInt(max);
+                            stopRandomSnackbar(context);
+                            showRandomSnackbar(context, randomNumber);
+                            await audioService.stopSound();
+                            await audioService.playSound(randomNumber);
+                          },
+                          child: IconButton(
                             onPressed: () async {
                               var max = r.length;
                               int randomNumber = Random().nextInt(max);
@@ -284,8 +299,11 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
                               await audioService.playSound(randomNumber);
                             },
                             icon: const Icon(
+                              color: Color(0XFFecebd4),
                               Icons.casino,
-                            )),
+                            ),
+                          ),
+                        ),
                       )
                     ],
                   ),
@@ -305,128 +323,145 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
                       child: ValueListenableBuilder(
                           valueListenable: Hive.box('favoriler').listenable(),
                           builder: (context, box, child) {
-                            return ListView.builder(
-                                itemCount: _filteredReplikler.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  final word = _filteredReplikler[index];
-                                  var deger = _filteredReplikler[index]['id'];
-                                  final isFavorite = box.get(deger) != null;
-                                  return ListTile(
-                                    onTap: () async {
-                                      await audioService.stopSound();
-                                      await audioService.playSound(
-                                          _filteredReplikler[index]['id']);
-                                    },
-                                    subtitle: Text(
-                                      audioService.audioDurations.containsKey(
-                                              'sounds/${_filteredReplikler[index]['id']}.mp3')
-                                          ? '${audioService.audioDurations['sounds/${_filteredReplikler[index]['id']}.mp3']!.inSeconds} saniye'
-                                          : 'Yükleniyor',
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                    leading: CircleAvatar(
-                                      radius: 20,
-                                      backgroundImage: AssetImage(
-                                          'assets/images/${_filteredReplikler[index]
-                                                          ['soyleyen'] ==
-                                                      0
-                                                  ? 'yilmaz.jpg'
-                                                  : _filteredReplikler[index]
-                                                              ['soyleyen'] ==
-                                                          1
-                                                      ? 'ilkkan.jpg'
-                                                      : 'ersoy.jpg'}'),
-                                    ),
-                                    title: Text(
-                                        _filteredReplikler[index]['replik'],
-                                        style: TextStyle(
-                                            color: (_filteredReplikler[index]
-                                                        ['kufur'] ==
-                                                    true)
-                                                ? Colors.red.shade400
-                                                : Colors.white,
-                                            fontSize: 14)),
-                                    trailing: Wrap(
-                                      spacing: -10,
-                                      children: [
-                                        Material(
-                                          color: Colors.transparent,
-                                          clipBehavior: Clip.hardEdge,
-                                          shape: const CircleBorder(),
-                                          child: IconButton(
-                                            icon: Icon(
-                                                color: Colors.white,
-                                                isFavorite
-                                                    ? Icons.favorite
-                                                    : Icons.favorite_border),
-                                            onPressed: () async {
-                                              ScaffoldMessenger.of(context)
-                                                  .clearSnackBars();
-                                              if (isFavorite) {
-                                                print(deger);
-                                                await box.delete(deger);
-                                              } else {
-                                                await box.put(deger, word);
-                                                print(deger);
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                        Material(
-                                          color: Colors.transparent,
-                                          clipBehavior: Clip.hardEdge,
-                                          shape: const CircleBorder(),
-                                          child: IconButton(
-                                            icon: const Icon(
-                                              Icons.share,
+                            if (_filteredReplikler.isEmpty) {
+                              return const Center(
+                                child: Text(
+                                  'Aradığınız replik bulunamadı.',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              );
+                            } else {
+                              return ListView.builder(
+                                  itemCount: _filteredReplikler.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    final reversedList =
+                                        _filteredReplikler.reversed.toList();
+                                    final word = reversedList[index];
+                                    var deger = reversedList[index]['id'];
+                                    final isFavorite = box.get(deger) != null;
+                                    return ListTile(
+                                      onTap: () async {
+                                        await audioService.stopSound();
+                                        await audioService.playSound(
+                                            reversedList[index]['id']);
+                                      },
+                                      subtitle: Text(
+                                        audioService.audioDurations.containsKey(
+                                                'sounds/${reversedList[index]['id']}.mp3')
+                                            ? '${audioService.audioDurations['sounds/${reversedList[index]['id']}.mp3']!.inSeconds} saniye'
+                                            : 'Yükleniyor',
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      leading: CircleAvatar(
+                                        radius: 20,
+                                        backgroundImage: AssetImage(
+                                            'assets/images/${reversedList[index]['soyleyen'] == 0 ? 'yilmaz.jpg' : reversedList[index]['soyleyen'] == 1 ? 'ilkkan.jpg' : 'ersoy.jpg'}'),
+                                      ),
+                                      title: Text(reversedList[index]['replik'],
+                                          style: TextStyle(
+                                              color: (reversedList[index]
+                                                          ['kufur'] ==
+                                                      true)
+                                                  ? Colors.red.shade400
+                                                  : Colors.white,
+                                              fontSize: 14)),
+                                      trailing: Wrap(
+                                        spacing: -10,
+                                        children: [
+                                          Material(
+                                            color: Colors.transparent,
+                                            clipBehavior: Clip.hardEdge,
+                                            shape: const CircleBorder(),
+                                            child: IconButton(
+                                              icon: Icon(
+                                                  color: Colors.white,
+                                                  isFavorite
+                                                      ? Icons.favorite
+                                                      : Icons.favorite_border),
+                                              onPressed: () async {
+                                                ScaffoldMessenger.of(context)
+                                                    .clearSnackBars();
+                                                if (isFavorite) {
+                                                  await box.delete(deger);
+                                                } else {
+                                                  await box.put(deger, word);
+                                                }
+                                              },
                                             ),
-                                            onPressed: () async {
-                                              final selectedReplik =
-                                                  _filteredReplikler[index];
-                                              final indexInOriginalList =
-                                                  Replikler.replikler
-                                                      .indexWhere(
-                                                (replik) =>
-                                                    replik['id'] ==
-                                                    selectedReplik['id'],
-                                              );
-                                              final data = await rootBundle.load(
-                                                  'assets/sounds/$indexInOriginalList.mp3');
-                                              final buffer = data.buffer;
-                                              await Share.shareXFiles([
-                                                XFile.fromData(
-                                                  buffer.asUint8List(
-                                                      data.offsetInBytes,
-                                                      data.lengthInBytes),
-                                                  mimeType: 'audio/x-aiff',
-                                                ),
-                                              ]);
-                                            },
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                });
+                                          Material(
+                                            color: Colors.transparent,
+                                            clipBehavior: Clip.hardEdge,
+                                            shape: const CircleBorder(),
+                                            child: IconButton(
+                                              icon: const Icon(
+                                                Icons.share,
+                                              ),
+                                              onPressed: () async {
+                                                _adMobService
+                                                        .adDismissedCallback =
+                                                    () async {
+                                                  final selectedReplik =
+                                                      reversedList[index];
+                                                  final indexInOriginalList =
+                                                      Replikler.replikler
+                                                          .indexWhere(
+                                                    (replik) =>
+                                                        replik['id'] ==
+                                                        selectedReplik['id'],
+                                                  );
+                                                  final data =
+                                                      await rootBundle.load(
+                                                          'assets/sounds/$indexInOriginalList.mp3');
+                                                  final buffer = data.buffer;
+                                                  await Share.shareXFiles([
+                                                    XFile.fromData(
+                                                      buffer.asUint8List(
+                                                          data.offsetInBytes,
+                                                          data.lengthInBytes),
+                                                      mimeType:
+                                                          'audio/x-aiff',
+                                                    ),
+                                                  ]);
+                                                };
+                                                _adMobService
+                                                        .rewardedAdNotReadyCallback =
+                                                    (String message) {
+                                                  ScaffoldMessenger.of(
+                                                          context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          message), 
+                                                    ),
+                                                  );
+                                                };
+                                                _adMobService
+                                                    .showRewardedAd();
+                                                                                            },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  });
+                            }
                           })),
                 ),
               ),
               Expanded(
                 flex: 0,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.03,
-                    ),
-                    if (_adMobService != null)
-                      _adMobService!.showBannerAd()
-                    else
-                      const Center(child: CircularProgressIndicator()),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.03,
-                    )
-                  ],
+                child: SafeArea(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                      _adMobService.showBannerAd(),
+                    ],
+                  ),
                 ),
               ),
             ],

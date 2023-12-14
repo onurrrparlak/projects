@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_torrentz_stream/flutter_torrentz_stream.dart';
 
 class TorrentStreamerView extends StatefulWidget {
+  const TorrentStreamerView({super.key});
+
   @override
   _TorrentStreamerViewState createState() => _TorrentStreamerViewState();
 }
@@ -38,17 +40,17 @@ class _TorrentStreamerViewState extends State<TorrentStreamerView> {
       showDialog(
           builder: (BuildContext context) {
             return AlertDialog(
-                title: new Text('Are You Sure?'),
-                content: new Text(
+                title: const Text('Are You Sure?'),
+                content: const Text(
                     'Playing video while it is still downloading is experimental and only works on limited set of apps.'),
                 actions: <Widget>[
                   ElevatedButton(
-                      child: new Text("Cancel"),
+                      child: const Text("Cancel"),
                       onPressed: () {
                         Navigator.of(context).pop();
                       }),
                   ElevatedButton(
-                      child: new Text("Yes, Proceed"),
+                      child: const Text("Yes, Proceed"),
                       onPressed: () async {
                         await TorrentStreamer.launchVideo();
                         Navigator.of(context).pop();
@@ -62,19 +64,20 @@ class _TorrentStreamerViewState extends State<TorrentStreamerView> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        padding: const EdgeInsets.all(16),
         child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               ElevatedButton(
-                  child: Text('Start Download'), onPressed: _startDownload),
+                  onPressed: _startDownload,
+                  child: const Text('Start Download')),
               Container(height: 8),
               ElevatedButton(
                 onPressed: () => _openVideo(context),
-                child: Text('Play Video'),
+                child: const Text('Play Video'),
               )
-            ],
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max),
-        padding: EdgeInsets.all(16));
+            ]));
   }
 }

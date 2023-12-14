@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../services/focusnodeservice.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
+
   @override
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
@@ -16,17 +18,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusService.changeFocus(context, FocusService.forgotPasswordMailNode);
     });
   }
 
-  final TextStyle whiteTextStyle = TextStyle(
+  final TextStyle whiteTextStyle = const TextStyle(
     color: Colors.white,
   );
 
   final whiteInputBorder = OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.white),
+    borderSide: const BorderSide(color: Colors.white),
     borderRadius: BorderRadius.circular(38.0),
   );
 
@@ -44,7 +46,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         email: _emailController.text,
       );
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password reset email sent')),
+        const SnackBar(content: Text('Password reset email sent')),
       );
       Navigator.of(context).pop();
     } catch (error) {
@@ -62,14 +64,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/background.jpg'),
             fit: BoxFit.cover,
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -85,7 +87,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   decoration: InputDecoration(
                     labelText: 'E-Posta',
                     labelStyle: whiteTextStyle,
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.mail,
                       color: Colors.white,
                     ),
@@ -99,14 +101,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Focus(
                   focusNode: FocusService.forgotPasswordSubmitNode,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _resetPassword,
-                    child: _isLoading
-                        ? CircularProgressIndicator()
-                        : Text('Şifre sıfırlama mailini gönder'),
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
@@ -115,7 +114,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       ),
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                        EdgeInsets.symmetric(
+                        const EdgeInsets.symmetric(
                             vertical: 12.0,
                             horizontal: 24.0), // Adjust the padding as needed
                       ),
@@ -128,6 +127,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       elevation: MaterialStateProperty.all<double>(
                           0.0), // Remove the button shadow
                     ),
+                    child: _isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text('Şifre sıfırlama mailini gönder'),
                   ),
                 ),
               ],

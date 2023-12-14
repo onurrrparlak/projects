@@ -116,7 +116,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   }
 
   void _onDragEnd(DragEndDetails details) {
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         _volumeDrag = false;
       });
@@ -208,11 +208,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                       RightButtonIntent: CallbackAction<RightButtonIntent>(
                         onInvoke: (intent) async {
                           _forward();
+                          return null;
                         },
                       ),
                       LeftButtonIntent: CallbackAction<LeftButtonIntent>(
                         onInvoke: (intent) async {
                           _rewind();
+                          return null;
                         },
                       ),
                       EnterButtonIntent: CallbackAction<EnterButtonIntent>(
@@ -490,13 +492,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                               0.5), // Set the black color with 50% opacity
                                           child: Text(
                                             '%${(_currentVolume * 100).toStringAsFixed(0)}',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 20,
                                               color: Colors.white,
                                             ),
                                           ),
                                         )
-                                      : SizedBox(),
+                                      : const SizedBox(),
                                 ),
                                 Align(
                                   alignment: _isForward

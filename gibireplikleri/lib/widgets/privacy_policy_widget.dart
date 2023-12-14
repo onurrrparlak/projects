@@ -18,18 +18,16 @@ class PrivacyPolicy extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
           child: SingleChildScrollView(
-            child: Container(
-              child: FutureBuilder(
-                future: loadAsset(),
-                builder:
-                    (BuildContext context, AsyncSnapshot<String> snapshot) {
-                  if (snapshot.hasData) {
-                    return Center(child: Text(snapshot.data ?? ''));
-                  } else {
-                    return const CircularProgressIndicator(); // or any other loading indicator
-                  }
-                },
-              ),
+            child: FutureBuilder(
+              future: loadAsset(),
+              builder:
+                  (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  return Center(child: Text(snapshot.data ?? ''));
+                } else {
+                  return const CircularProgressIndicator(); // or any other loading indicator
+                }
+              },
             ),
           ),
         ),

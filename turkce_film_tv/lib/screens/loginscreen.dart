@@ -1,5 +1,6 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:turkce_film_tv/screens/forgotpassword.dart';
 import 'package:turkce_film_tv/screens/register.dart';
 import '../services/focusnodeservice.dart';
@@ -28,23 +29,22 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  PageController _pageController = PageController(initialPage: 0);
-  int _currentPageIndex = 0;
+  final PageController _pageController = PageController(initialPage: 0);
 
-  final TextStyle whiteTextStyle = TextStyle(
+  final TextStyle whiteTextStyle = const TextStyle(
     color: Colors.white,
   );
 
   final whiteInputBorder = OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.white),
+    borderSide: const BorderSide(color: Colors.white),
     borderRadius: BorderRadius.circular(38.0),
   );
 
   @override
   void initState() {
-    // TODO: implement initState
+    
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusService.changeFocus(context, FocusService.loginButtonNode);
     });
   }
@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
       shortcuts: FocusService.shortcuts,
       child: Scaffold(
         body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/images/background.jpg'),
               fit: BoxFit.cover,
@@ -66,30 +66,28 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Expanded(
                 flex: 1,
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.3,
-                        width: MediaQuery.of(context).size.width * 0.2,
-                        child: Image.asset('assets/images/logo.png'),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: Image.asset('assets/images/logo.png'),
+                    ),
+                    Text(
+                      'Türkçe film izlemek artık daha kolay',
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.0220,
                       ),
-                      Text(
-                        'Türkçe film izlemek artık daha kolay',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.0220,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               Expanded(
                 flex: 1,
                 child: Container(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -107,9 +105,10 @@ class _LoginPageState extends State<LoginPage> {
 
                                   _pageController.animateToPage(
                                     1,
-                                    duration: Duration(milliseconds: 300),
+                                    duration: const Duration(milliseconds: 300),
                                     curve: Curves.easeInOut,
                                   );
+                                  return null;
                                 },
                               ),
                               DownButtonIntent:
@@ -117,6 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onInvoke: (intent) async {
                                   FocusService.changeFocus(
                                       context, FocusService.loginEpostaNode);
+                                  return null;
                                 },
                               ),
                             },
@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                                         context, FocusService.loginButtonNode);
                                     _pageController.animateToPage(
                                       0,
-                                      duration: Duration(milliseconds: 300),
+                                      duration: const Duration(milliseconds: 300),
                                       curve: Curves.easeInOut,
                                     );
                                   },
@@ -155,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 8.0),
+                          const SizedBox(width: 8.0),
                           Actions(
                             actions: <Type, Action<Intent>>{
                               DownButtonIntent:
@@ -163,6 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onInvoke: (intent) async {
                                   FocusService.changeFocus(context,
                                       FocusService.registerKullaniciAdiNode);
+                                  return null;
                                 },
                               ),
                               LeftButtonIntent:
@@ -170,6 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onInvoke: (intent) async {
                                   FocusService.changeFocus(
                                       context, FocusService.loginButtonNode);
+                                  return null;
                                 },
                               ),
                             },
@@ -195,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                                         FocusService.registerButtonNode);
                                     _pageController.animateToPage(
                                       1,
-                                      duration: Duration(milliseconds: 300),
+                                      duration: const Duration(milliseconds: 300),
                                       curve: Curves.easeInOut,
                                     );
                                   },
@@ -214,262 +216,267 @@ class _LoginPageState extends State<LoginPage> {
                           controller: _pageController,
                           onPageChanged: (index) {
                             setState(() {
-                              _currentPageIndex = index;
                             });
                           },
                           children: [
                             // Giriş page
                             SingleChildScrollView(
-                              child: Container(
-                                  child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(height: 16.0),
-                                  TextField(
-                                    controller: _emailController,
-                                    focusNode: FocusService.loginEpostaNode,
-                                    onEditingComplete: () {
-                                      FocusService.changeFocus(
-                                          context, FocusService.loginSifreNode);
-                                    },
-                                    decoration: InputDecoration(
-                                      labelText: 'E-Posta',
-                                      labelStyle: whiteTextStyle,
-                                      prefixIcon: Icon(
-                                        Icons.mail,
-                                        color: Colors.white,
-                                      ),
-                                      enabledBorder: whiteInputBorder,
-                                      focusedBorder: whiteInputBorder,
-                                    ),
-                                    style: whiteTextStyle,
+                              child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                              const SizedBox(height: 16.0),
+                              TextField(
+                                controller: _emailController,
+                                focusNode: FocusService.loginEpostaNode,
+                                onEditingComplete: () {
+                                  FocusService.changeFocus(
+                                      context, FocusService.loginSifreNode);
+                                },
+                                decoration: InputDecoration(
+                                  labelText: 'E-Posta',
+                                  labelStyle: whiteTextStyle,
+                                  prefixIcon: const Icon(
+                                    Icons.mail,
+                                    color: Colors.white,
                                   ),
-                                  SizedBox(height: 16.0),
+                                  enabledBorder: whiteInputBorder,
+                                  focusedBorder: whiteInputBorder,
+                                ),
+                                style: whiteTextStyle,
+                              ),
+                              const SizedBox(height: 16.0),
+                              Actions(
+                                actions: <Type, Action<Intent>>{
+                                  UpButtonIntent:
+                                      CallbackAction<UpButtonIntent>(
+                                    onInvoke: (intent) async {
+                                      FocusService.changeFocus(context,
+                                          FocusService.loginEpostaNode);
+                                      return null;
+                                    },
+                                  ),
+                                  DownButtonIntent:
+                                      CallbackAction<DownButtonIntent>(
+                                    onInvoke: (intent) async {
+                                      FocusService.changeFocus(
+                                          context,
+                                          FocusService
+                                              .loginLoginButtonNode);
+                                      return null;
+                                    },
+                                  ),
+                                },
+                                child: TextField(
+                                  focusNode: FocusService.loginSifreNode,
+                                  controller: _passwordController,
+                                  textInputAction: TextInputAction.next,
+                                  onEditingComplete: () async {
+                                    try {
+                                      await _userService.loginUser(
+                                        _emailController.text,
+                                        _passwordController.text,
+                                      );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HomePage(),
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(e.toString())),
+                                      );
+                                    }
+                                  },
+                                  decoration: InputDecoration(
+                                    labelText: 'Şifre',
+                                    labelStyle: whiteTextStyle,
+                                    prefixIcon: const Icon(
+                                      Icons.lock,
+                                      color: Colors.white,
+                                    ),
+                                    enabledBorder: whiteInputBorder,
+                                    focusedBorder: whiteInputBorder,
+                                  ),
+                                  style: whiteTextStyle,
+                                ),
+                              ),
+                              const SizedBox(height: 16.0),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
                                   Actions(
                                     actions: <Type, Action<Intent>>{
+                                      RightButtonIntent:
+                                          CallbackAction<RightButtonIntent>(
+                                        onInvoke: (intent) async {
+                                          FocusService.changeFocus(
+                                              context,
+                                              FocusService
+                                                  .loginForgotPasswordButtonNode);
+                                          return null;
+                                        },
+                                      ),
                                       UpButtonIntent:
                                           CallbackAction<UpButtonIntent>(
                                         onInvoke: (intent) async {
                                           FocusService.changeFocus(context,
-                                              FocusService.loginEpostaNode);
+                                              FocusService.loginSifreNode);
+                                          return null;
                                         },
                                       ),
-                                      DownButtonIntent:
-                                          CallbackAction<DownButtonIntent>(
+                                      EnterButtonIntent:
+                                          CallbackAction<EnterButtonIntent>(
+                                        onInvoke: (intent) async {
+                                          try {
+                                            await _userService.loginUser(
+                                              _emailController.text,
+                                              _passwordController.text,
+                                            );
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const HomePage(),
+                                              ),
+                                            );
+                                          } catch (e) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                  content:
+                                                      Text(e.toString())),
+                                            );
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    },
+                                    child: Focus(
+                                      focusNode:
+                                          FocusService.loginLoginButtonNode,
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          try {
+                                            await _userService.loginUser(
+                                              _emailController.text,
+                                              _passwordController.text,
+                                            );
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const HomePage(),
+                                              ),
+                                            );
+                                          } catch (e) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                  content:
+                                                      Text(e.toString())),
+                                            );
+                                          }
+                                        },
+                                        style: ButtonStyle(
+                                          shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      8.0), // Adjust the radius as needed
+                                            ),
+                                          ),
+                                          padding: MaterialStateProperty
+                                              .all<EdgeInsetsGeometry>(
+                                            const EdgeInsets.symmetric(
+                                                vertical: 12.0,
+                                                horizontal:
+                                                    24.0), // Adjust the padding as needed
+                                          ),
+                                          backgroundColor:
+                                              MaterialStateProperty.all<
+                                                  Color>(Colors.green),
+                                          foregroundColor:
+                                              MaterialStateProperty.all<
+                                                  Color>(Colors.white),
+                                          overlayColor:
+                                              MaterialStateProperty
+                                                  .all<Color>(Colors.green
+                                                      .withOpacity(0.8)),
+                                          elevation: MaterialStateProperty.all<
+                                                  double>(
+                                              0.0), // Remove the button shadow
+                                        ),
+                                        child: const Text(
+                                          'Giriş yap',
+                                          style: TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Actions(
+                                    actions: <Type, Action<Intent>>{
+                                      LeftButtonIntent:
+                                          CallbackAction<LeftButtonIntent>(
                                         onInvoke: (intent) async {
                                           FocusService.changeFocus(
                                               context,
                                               FocusService
                                                   .loginLoginButtonNode);
+                                          return null;
                                         },
                                       ),
-                                    },
-                                    child: TextField(
-                                      focusNode: FocusService.loginSifreNode,
-                                      controller: _passwordController,
-                                      textInputAction: TextInputAction.next,
-                                      onEditingComplete: () async {
-                                        try {
-                                          await _userService.loginUser(
-                                            _emailController.text,
-                                            _passwordController.text,
-                                          );
+                                      EnterButtonIntent:
+                                          CallbackAction<EnterButtonIntent>(
+                                        onInvoke: (intent) async {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  const HomePage(),
+                                                  const ForgotPasswordScreen(),
                                             ),
                                           );
-                                        } catch (e) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                                content: Text(e.toString())),
-                                          );
-                                        }
-                                      },
-                                      decoration: InputDecoration(
-                                        labelText: 'Şifre',
-                                        labelStyle: whiteTextStyle,
-                                        prefixIcon: Icon(
-                                          Icons.lock,
-                                          color: Colors.white,
-                                        ),
-                                        enabledBorder: whiteInputBorder,
-                                        focusedBorder: whiteInputBorder,
+                                          return null;
+                                        },
                                       ),
-                                      style: whiteTextStyle,
+                                    },
+                                    child: Focus(
+                                      focusNode: FocusService
+                                          .loginForgotPasswordButtonNode,
+                                      child: TextButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const ForgotPasswordScreen(),
+                                            ),
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Şifreni mi unuttun?',
+                                          style:
+                                              TextStyle(color: Colors.grey),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  SizedBox(height: 16.0),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Actions(
-                                        actions: <Type, Action<Intent>>{
-                                          RightButtonIntent:
-                                              CallbackAction<RightButtonIntent>(
-                                            onInvoke: (intent) async {
-                                              FocusService.changeFocus(
-                                                  context,
-                                                  FocusService
-                                                      .loginForgotPasswordButtonNode);
-                                            },
-                                          ),
-                                          UpButtonIntent:
-                                              CallbackAction<UpButtonIntent>(
-                                            onInvoke: (intent) async {
-                                              FocusService.changeFocus(context,
-                                                  FocusService.loginSifreNode);
-                                            },
-                                          ),
-                                          EnterButtonIntent:
-                                              CallbackAction<EnterButtonIntent>(
-                                            onInvoke: (intent) async {
-                                              try {
-                                                await _userService.loginUser(
-                                                  _emailController.text,
-                                                  _passwordController.text,
-                                                );
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const HomePage(),
-                                                  ),
-                                                );
-                                              } catch (e) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                      content:
-                                                          Text(e.toString())),
-                                                );
-                                              }
-                                            },
-                                          ),
-                                        },
-                                        child: Focus(
-                                          focusNode:
-                                              FocusService.loginLoginButtonNode,
-                                          child: ElevatedButton(
-                                            onPressed: () async {
-                                              try {
-                                                await _userService.loginUser(
-                                                  _emailController.text,
-                                                  _passwordController.text,
-                                                );
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const HomePage(),
-                                                  ),
-                                                );
-                                              } catch (e) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                      content:
-                                                          Text(e.toString())),
-                                                );
-                                              }
-                                            },
-                                            style: ButtonStyle(
-                                              shape: MaterialStateProperty.all<
-                                                  RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0), // Adjust the radius as needed
-                                                ),
-                                              ),
-                                              padding: MaterialStateProperty
-                                                  .all<EdgeInsetsGeometry>(
-                                                EdgeInsets.symmetric(
-                                                    vertical: 12.0,
-                                                    horizontal:
-                                                        24.0), // Adjust the padding as needed
-                                              ),
-                                              backgroundColor:
-                                                  MaterialStateProperty.all<
-                                                      Color>(Colors.green),
-                                              foregroundColor:
-                                                  MaterialStateProperty.all<
-                                                      Color>(Colors.white),
-                                              overlayColor:
-                                                  MaterialStateProperty
-                                                      .all<Color>(Colors.green
-                                                          .withOpacity(0.8)),
-                                              elevation: MaterialStateProperty.all<
-                                                      double>(
-                                                  0.0), // Remove the button shadow
-                                            ),
-                                            child: Text(
-                                              'Giriş yap',
-                                              style: TextStyle(
-                                                fontSize: 18.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Actions(
-                                        actions: <Type, Action<Intent>>{
-                                          LeftButtonIntent:
-                                              CallbackAction<LeftButtonIntent>(
-                                            onInvoke: (intent) async {
-                                              FocusService.changeFocus(
-                                                  context,
-                                                  FocusService
-                                                      .loginLoginButtonNode);
-                                            },
-                                          ),
-                                          EnterButtonIntent:
-                                              CallbackAction<EnterButtonIntent>(
-                                            onInvoke: (intent) async {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ForgotPasswordScreen(),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        },
-                                        child: Focus(
-                                          focusNode: FocusService
-                                              .loginForgotPasswordButtonNode,
-                                          child: TextButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ForgotPasswordScreen(),
-                                                ),
-                                              );
-                                            },
-                                            child: Text(
-                                              'Şifreni mi unuttun?',
-                                              style:
-                                                  TextStyle(color: Colors.grey),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                                 ],
-                              )),
+                              ),
+                                                              ],
+                                                            ),
                             ),
                             // Kayıt page
-                            RegisterPage(),
+                            const RegisterPage(),
                           ],
                         ),
                       ),
