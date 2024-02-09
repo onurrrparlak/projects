@@ -11,10 +11,13 @@ import 'package:turkce_film_tv/screens/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:turkce_film_tv/screens/loginscreen.dart';
 import 'package:turkce_film_tv/screens/updatescreen.dart';
+import 'package:turkce_film_tv/services/focusnodeservice.dart';
+import 'package:turkce_film_tv/services/focusservice.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
+  
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -78,8 +81,15 @@ void main() async {
       await movieProvider.fetchMovies();
 
       runApp(
-        ChangeNotifierProvider.value(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<MovieProvider>.value(
           value: movieProvider,
+        ),
+        ChangeNotifierProvider<FocusServiceProvider>.value(
+          value: FocusService.focusServiceProvider,
+        ),
+          ],
           child: MaterialApp(
             theme: ThemeData(
               fontFamily: 'Carossoft',

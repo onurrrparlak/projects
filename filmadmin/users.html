@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>User List</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .edit-button {
+            background-color: red;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #sidebarFrame {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            border: none;
+        }
+
+        #container {
+            flex: 1;
+            height: 100vh;
+            margin-left: 250px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #dee2e6;
+            padding: .75rem;
+            vertical-align: top;
+        }
+
+        .table-bordered thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+        }
+    </style>
+</head>
+
+<body>
+    <iframe id="sidebarFrame" src="sidebar.html"></iframe>
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">User List</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">User ID</th>
+                        <th scope="col">Avatar</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <!-- User data will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        // Function to fetch and display user data
+        function displayUsers() {
+            var userTableBody = document.getElementById("userTableBody");
+            userTableBody.innerHTML = "";
+
+            firebase.firestore().collection("users").get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        var user = doc.data();
+                        var userId = doc.id;
+
+                        // Creating a row for each user
+                        var row = document.createElement("tr");
+
+                        var userIdCell = document.createElement("td");
+                        userIdCell.textContent = userId;
+                        row.appendChild(userIdCell);
+
+                        var avatarCell = document.createElement("td");
+                        avatarCell.textContent = user.avatar;
+                        row.appendChild(avatarCell);
+
+                        var emailCell = document.createElement("td");
+                        emailCell.textContent = user.email;
+                        row.appendChild(emailCell);
+
+                        var usernameCell = document.createElement("td");
+                        usernameCell.textContent = user.username;
+                        row.appendChild(usernameCell);
+
+                        var editCell = document.createElement("td");
+                        var editButton = document.createElement("button");
+                        editButton.textContent = "Edit";
+                        editButton.classList.add("edit-button");
+                        editButton.addEventListener("click", function () {
+                            // Implement edit functionality for the user
+                            // You can redirect to an edit page or perform an action here
+                            // For example: window.location.href = 'editUser.html?userId=' + userId;
+                            alert("Edit button clicked for user: " + userId);
+                        });
+                        editCell.appendChild(editButton);
+                        row.appendChild(editCell);
+
+                        var deleteCell = document.createElement("td");
+                        var deleteButton = document.createElement("button");
+                        deleteButton.textContent = "Delete";
+                        deleteButton.classList.add("btn", "btn-danger");
+                        deleteButton.addEventListener("click", function () {
+                            deleteUser(userId);
+                        });
+                        deleteCell.appendChild(deleteButton);
+                        row.appendChild(deleteCell);
+
+                        userTableBody.appendChild(row);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error fetching users: ", error);
+                });
+        }
+
+        function deleteUser(userId) {
+            var confirmation = confirm("Are you sure you want to delete this user?");
+            if (confirmation) {
+                firebase.firestore().collection("users").doc(userId).delete()
+                    .then(() => {
+                        console.log("User successfully deleted!");
+                        // Refresh user list after deletion
+                        displayUsers();
+                    })
+                    .catch((error) => {
+                        console.error("Error deleting user: ", error);
+                    });
+            }
+        }
+
+        // Call the function to display users when the page loads
+        displayUsers();
+    </script>
+</body>
+
+</html>

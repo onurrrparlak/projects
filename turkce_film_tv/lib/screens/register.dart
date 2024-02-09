@@ -28,6 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _passwordAgainController =
       TextEditingController();
 
+late FocusServiceProvider _provider;
   final whiteInputBorder = OutlineInputBorder(
     borderSide: const BorderSide(color: Colors.white),
     borderRadius: BorderRadius.circular(38.0),
@@ -38,7 +39,9 @@ class _RegisterPageState extends State<RegisterPage> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(FocusService.registerButtonNode);
+
+      _provider.changeFocus(
+          context, FocusServiceProvider.homepageMenuAnasayfaNode);
     });
   }
 
@@ -53,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     return Shortcuts(
-      shortcuts: FocusService.shortcuts,
+      shortcuts: FocusServiceProvider.shortcuts,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SingleChildScrollView(
@@ -62,11 +65,11 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               children: [
                 TextField(
-                  focusNode: FocusService.registerKullaniciAdiNode,
+                  focusNode: FocusServiceProvider.registerKullaniciAdiNode,
                   controller: _usernameController,
                   onEditingComplete: () {
-                    FocusService.changeFocus(
-                        context, FocusService.registerEPostaNode);
+                    _provider.changeFocus(
+                        context, FocusServiceProvider.registerEPostaNode);
                   },
                   decoration: InputDecoration(
                     labelText: 'Kullanıcı Adı',
@@ -84,10 +87,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: MediaQuery.of(context).size.width * 0.01,
                 ),
                 TextField(
-                  focusNode: FocusService.registerEPostaNode,
+                  focusNode: FocusServiceProvider.registerEPostaNode,
                   onEditingComplete: () {
-                    FocusService.changeFocus(
-                        context, FocusService.registerPasswordNode);
+                    _provider.changeFocus(
+                        context, FocusServiceProvider.registerPasswordNode);
                   },
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -106,10 +109,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: MediaQuery.of(context).size.width * 0.01,
                 ),
                 TextField(
-                  focusNode: FocusService.registerPasswordNode,
+                  focusNode: FocusServiceProvider.registerPasswordNode,
                   onEditingComplete: () {
-                    FocusService.changeFocus(
-                        context, FocusService.registerPasswordAgainNode);
+                    _provider.changeFocus(
+                        context, FocusServiceProvider.registerPasswordAgainNode);
                   },
                   controller: _passwordController,
                   decoration: InputDecoration(
@@ -129,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: MediaQuery.of(context).size.width * 0.01,
                 ),
                 TextField(
-                  focusNode: FocusService.registerPasswordAgainNode,
+                  focusNode: FocusServiceProvider.registerPasswordAgainNode,
                   onEditingComplete: () async {
                     if (_passwordController.text ==
                         _passwordAgainController.text) {
@@ -173,7 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: MediaQuery.of(context).size.width * 0.01,
                 ),
                 Focus(
-                  focusNode: FocusService.registerRegisterButtonNode,
+                  focusNode: FocusServiceProvider.registerRegisterButtonNode,
                   child: ElevatedButton(
                     onPressed: () async {
                       if (_passwordController.text ==

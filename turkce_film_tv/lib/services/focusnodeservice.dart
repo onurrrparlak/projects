@@ -11,42 +11,75 @@ class DownButtonIntent extends Intent {}
 
 class EnterButtonIntent extends Intent {}
 
-class FocusService {
-  static final FocusNode loginButtonNode = FocusNode();
-  static final FocusNode registerButtonNode = FocusNode();
-  static final FocusNode loginEpostaNode = FocusNode();
-  static final FocusNode loginSifreNode = FocusNode();
-  static final FocusNode loginLoginButtonNode = FocusNode();
-  static final FocusNode loginForgotPasswordButtonNode = FocusNode();
-  static final FocusNode registerKullaniciAdiNode = FocusNode();
-  static final FocusNode registerEPostaNode = FocusNode();
-  static final FocusNode registerPasswordNode = FocusNode();
-  static final FocusNode registerPasswordAgainNode = FocusNode();
-  static final FocusNode registerRegisterButtonNode = FocusNode();
-  static final FocusNode forgotPasswordMailNode = FocusNode();
-  static final FocusNode forgotPasswordSubmitNode = FocusNode();
-  static final FocusNode homepageMenuAnasayfaNode = FocusNode();
-  static final FocusNode homepageMenuWatchlistNode = FocusNode();
-  static final FocusNode homepageMenuCategoriesNode = FocusNode();
-  static final FocusNode homepageMenuSearchNode = FocusNode();
-  static final FocusNode homepageMenuAvatarNode = FocusNode();
-  static final FocusNode homepagePlayNode = FocusNode();
-  static final FocusNode homepageAddToListNode = FocusNode();
-  static final FocusNode homepageListNode = FocusNode();
-  static final FocusNode listemWillWatchNode = FocusNode();
-  static final FocusNode listemWillWatchDeleteNode = FocusNode();
-  static final FocusNode listenWillWatchMakeWatchedNode = FocusNode();
-  static final FocusNode listemWatchedNode = FocusNode();
-  static final FocusNode listemWatchedDeleteNode = FocusNode();
-  static final FocusNode listemWatchedRemoveNode = FocusNode();
-  static final FocusNode avatarCurrentPasswordNode = FocusNode();
-  static final FocusNode avatarNewPasswordNode = FocusNode();
-  static final FocusNode avatarUpdateSubmitNode = FocusNode();
-  static final FocusNode avatarLogOutNode = FocusNode();
-  static final FocusNode avatarGridViewBuilderNode = FocusNode();
-  static final FocusNode categoryMenuNode = FocusNode();
+class FocusServiceProvider extends ChangeNotifier  {
+  static final FocusNode loginButtonNode =
+      FocusNode(debugLabel: 'loginButtonNode');
+  static final FocusNode registerButtonNode =
+      FocusNode(debugLabel: 'registerButtonNode');
+  static final FocusNode loginEpostaNode =
+      FocusNode(debugLabel: 'loginEpostaNode');
+  static final FocusNode loginSifreNode =
+      FocusNode(debugLabel: 'loginSifreNode');
+  static final FocusNode loginLoginButtonNode =
+      FocusNode(debugLabel: 'loginLoginButtonNode');
+  static final FocusNode loginForgotPasswordButtonNode =
+      FocusNode(debugLabel: 'loginForgotPasswordButtonNode');
+  static final FocusNode registerKullaniciAdiNode =
+      FocusNode(debugLabel: 'registerKullaniciAdiNode');
+  static final FocusNode registerEPostaNode =
+      FocusNode(debugLabel: 'registerEPostaNode');
+  static final FocusNode registerPasswordNode =
+      FocusNode(debugLabel: 'registerPasswordNode');
+  static final FocusNode registerPasswordAgainNode =
+      FocusNode(debugLabel: 'registerPasswordAgainNode');
+  static final FocusNode registerRegisterButtonNode =
+      FocusNode(debugLabel: 'registerRegisterButtonNode');
+  static final FocusNode forgotPasswordMailNode =
+      FocusNode(debugLabel: 'forgotPasswordMailNode');
+  static final FocusNode forgotPasswordSubmitNode =
+      FocusNode(debugLabel: 'forgotPasswordSubmitNode');
+  static final FocusNode homepageMenuAnasayfaNode =
+      FocusNode(debugLabel: 'homepageMenuAnasayfaNode');
+  static final FocusNode homepageMenuWatchlistNode =
+      FocusNode(debugLabel: 'homepageMenuWatchlistNode');
+  static final FocusNode homepageMenuCategoriesNode =
+      FocusNode(debugLabel: 'homepageMenuCategoriesNode');
+  static final FocusNode homepageMenuSearchNode =
+      FocusNode(debugLabel: 'homepageMenuSearchNode');
+  static final FocusNode homepageMenuAvatarNode =
+      FocusNode(debugLabel: 'homepageMenuAvatarNode');
+  static final FocusNode homepagePlayNode =
+      FocusNode(debugLabel: 'homepagePlayNode');
+  static final FocusNode homepageAddToListNode =
+      FocusNode(debugLabel: 'homepageAddToListNode');
+  static final FocusNode homepageListNode =
+      FocusNode(debugLabel: 'homepageListNode');
+  static final FocusNode listemWillWatchNode =
+      FocusNode(debugLabel: 'listemWillWatchNode');
+  static final FocusNode listemWillWatchDeleteNode =
+      FocusNode(debugLabel: 'listemWillWatchDeleteNode');
+  static final FocusNode listenWillWatchMakeWatchedNode =
+      FocusNode(debugLabel: 'listenWillWatchMakeWatchedNode');
+  static final FocusNode listemWatchedNode =
+      FocusNode(debugLabel: 'listemWatchedNode');
+  static final FocusNode listemWatchedDeleteNode =
+      FocusNode(debugLabel: 'listemWatchedDeleteNode');
+  static final FocusNode listemWatchedRemoveNode =
+      FocusNode(debugLabel: 'listemWatchedRemoveNode');
+  static final FocusNode avatarCurrentPasswordNode =
+      FocusNode(debugLabel: 'avatarCurrentPasswordNode');
+  static final FocusNode avatarNewPasswordNode =
+      FocusNode(debugLabel: 'avatarNewPasswordNode');
+  static final FocusNode avatarUpdateSubmitNode =
+      FocusNode(debugLabel: 'avatarUpdateSubmitNode');
+  static final FocusNode avatarLogOutNode =
+      FocusNode(debugLabel: 'avatarLogOutNode');
+  static final FocusNode avatarGridViewBuilderNode =
+      FocusNode(debugLabel: 'avatarGridViewBuilderNode');
+  static final FocusNode categoryMenuNode =
+      FocusNode(debugLabel: 'categoryMenuNode');
 
-  static void disposeAll() {
+  void disposeAll() {
     loginButtonNode.dispose();
     registerButtonNode.dispose();
     loginEpostaNode.dispose();
@@ -101,12 +134,24 @@ class FocusService {
     selectKeySet: EnterButtonIntent(),
   };
 
-  static void changeFocus(BuildContext context, FocusNode focusNode) {
+
+  void changeFocus(BuildContext context, FocusNode focusNode) async {
+    print('Current Focus Node: ${FocusScope.of(context).focusedChild}');
+    print('Node to be Focused: $focusNode');
+
     FocusScope.of(context).requestFocus(focusNode);
+
+    // Delay a bit to allow focus change to process
+    await Future.delayed(Duration(milliseconds: 100));
+
     if (focusNode.hasFocus) {
-      print('Focused node: ${focusNode.debugLabel}');
+      print(focusNode.debugLabel);
     } else {
-      print('No node currently focused.');
+      print('Failed to focus on: $focusNode');
     }
+
+    notifyListeners(); // Notify listeners after the focus changes
   }
+
+
 }

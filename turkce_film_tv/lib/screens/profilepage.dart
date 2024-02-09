@@ -228,7 +228,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               BorderRadius.circular(10),
                                         ),
                                         child: TextFormField(
-                                          focusNode: FocusService
+                                          focusNode: FocusServiceProvider
                                               .avatarCurrentPasswordNode,
                                           style: const TextStyle(
                                             color: Colors.white,
@@ -258,7 +258,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               BorderRadius.circular(10),
                                         ),
                                         child: TextFormField(
-                                          focusNode: FocusService
+                                          focusNode: FocusServiceProvider
                                               .avatarNewPasswordNode,
                                           onChanged: (value) {
                                             _newPassword = value;
@@ -270,7 +270,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 Focus(
                                   focusNode:
-                                      FocusService.avatarUpdateSubmitNode,
+                                      FocusServiceProvider.avatarUpdateSubmitNode,
                                   child: ElevatedButton(
                                     onPressed: () {
                                       _password != null
@@ -310,7 +310,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 Focus(
                                   focusNode:
-                                      FocusService.avatarUpdateSubmitNode,
+                                      FocusServiceProvider.avatarUpdateSubmitNode,
                                   child: ElevatedButton(
                                     onPressed: () async {
                                       await _userService.logoutUser();
@@ -391,7 +391,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             });
                                           },
                                           child: Focus(
-                                            focusNode: FocusService
+                                            focusNode: FocusServiceProvider
                                                 .avatarGridViewBuilderNode,
                                             onFocusChange: (bool hasFocus) {
                                               if (hasFocus &&

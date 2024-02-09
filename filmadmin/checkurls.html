@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Video URL Bozuklar</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .edit-button {
+      background-color: red;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #sidebarFrame {
+      width: 250px;
+      /* Adjust the width of the sidebar */
+      height: 100vh;
+      /* Full height of the viewport */
+      position: fixed;
+      top: 0;
+      left: 0;
+      border: none;
+    }
+
+    #container {
+      flex: 1;
+      height: 100vh;
+      margin-left: 250px;
+      /* Same width as the sidebar */
+      overflow-y: auto;
+      /* Enable scrolling for content */
+      padding: 20px;
+      /* Adjust padding as needed */
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+
+<body>
+  <iframe id="sidebarFrame" src="sidebar.html"></iframe>
+  <div class="container mt-4">
+
+    <h2 class="text-center mb-4">Video URL Bozuklar</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Movie ID</th>
+          <th scope="col">Movie Name</th>
+          <th scope="col">Movie Image</th>
+          <th scope="col">Poster Image</th>
+          <th scope="col">Movie URL</th>
+          <th scope="col">Edit</th>
+        </tr>
+      </thead>
+      <tbody id="movieTableBody">
+
+      </tbody>
+
+    </table>
+    <div id="loadingGif" style="display: none; display: flex; justify-content: center; align-items: center;">
+      <!-- Your loading GIF or spinner image goes here -->
+      <img src="images/loading.gif" alt="Loading..." />
+    </div>
+    <!-- Your existing HTML structure -->
+    <p id="notPlayableMessage" style="display: none; text-align: center; font-size: 20px;">URL'si bozuk film bulunamadı
+    </p>
+    <!-- Rest of your HTML content -->
+
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase-config.js"></script>
+
+
+  <script>
+   async function checkM3U8(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      return false; // Not playable or error
+    }
+
+    const video = document.createElement('video');
+    video.muted = true; // Mute the video
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(url);
+      hls.attachMedia(video);
+
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        await playPromise;
+      }
+      video.pause();
+      removeVideoElement(video);
+      return true; // Playable
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = url;
+      video.addEventListener('loadedmetadata', async function () {
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+        }
+        video.pause();
+        removeVideoElement(video);
+        return true; // Playable
+      });
+    } else {
+      return false; // HLS not supported
+    }
+  } catch (error) {
+    console.error('Error checking M3U8 file:', error);
+    return false; // Error during checking
+  }
+}
+
+
+    function removeVideoElement(video) {
+      if (video && video.parentNode) {
+        video.parentNode.removeChild(video);
+      }
+    }
+
+
+    async function populateMovieTable() {
+      let notPlayableCount = 0;
+      let executionFinished = false;
+      var loadingGif = document.getElementById("loadingGif");
+      loadingGif.style.display = "block";
+      var tableBody = document.getElementById("movieTableBody");
+
+
+
+
+
+      firebase.firestore().collection("movies").orderBy("movieId", "desc").get()
+        .then((querySnapshot) => {
+
+
+          querySnapshot.forEach((doc) => {
+            var movie = doc.data();
+
+
+
+
+            const urlCheckPromise = checkM3U8(movie.url)
+              .then((isPlayable) => {
+                if (!isPlayable) {
+                  notPlayableCount++;
+
+                  var row = document.createElement("tr");
+
+                  var idCell = document.createElement("td");
+                  idCell.textContent = movie.movieId;
+                  row.appendChild(idCell);
+
+                  var nameCell = document.createElement("td");
+                  nameCell.textContent = movie.title;
+                  row.appendChild(nameCell);
+
+                  var imageCell = document.createElement("td");
+                  var imageElement = document.createElement("img");
+                  imageElement.src = movie.posterImageUrl;
+                  imageElement.alt = movie.title;
+                  imageElement.style.maxWidth = "100px"; // Adjust the image size as needed
+                  imageCell.appendChild(imageElement);
+                  row.appendChild(imageCell);
+
+                  var imagePosterCell = document.createElement("td");
+                  var imagePosterElement = document.createElement("img");
+                  imagePosterElement.src = movie.backgroundImageUrl;
+                  imagePosterElement.alt = movie.title;
+                  imagePosterElement.style.maxWidth = "100px"; // Adjust the image size as needed
+                  imagePosterCell.appendChild(imagePosterElement);
+                  row.appendChild(imagePosterCell);
+
+                  var urlCell = document.createElement("td");
+                  var urlLink = document.createElement("a");
+
+                  urlLink.href = movie.url;
+                  urlLink.textContent = "Checking...";
+                  urlLink.target = "_blank"; // Open link in a new tab/window
+                  urlCell.appendChild(urlLink);
+                  row.appendChild(urlCell);
+
+                  var editCell = document.createElement("td");
+
+                  var editButton = document.createElement("button");
+                  editButton.textContent = "Edit";
+                  editButton.classList.add("edit-button"); // Add a class for styling
+
+                  // Assuming 'movie' is an object containing movie data
+                  editButton.addEventListener("click", function (event) {
+                    const editUrl = "movieedit.html?movieId=" + encodeURIComponent(movie.movieId);
+
+                    if (event.ctrlKey || event.metaKey) {
+                      // Ctrl key or Command key (for Mac) is pressed, open in a new tab
+                      window.open(editUrl, '_blank');
+                    } else {
+                      // Open in the same tab
+                      window.location.href = editUrl;
+                    }
+                  });
+
+
+
+                  editCell.appendChild(editButton); // Append the button to the cell
+                  row.appendChild(editCell);
+
+                  tableBody.appendChild(row);
+                  urlLink.textContent = isPlayable ? "Playable" : "Not Playable";
+                  urlLink.style.color = isPlayable ? "green" : "red";
+                }
+                else if (isPlayable) {
+
+                }
+
+                executionFinished = true;
+
+
+
+              })
+              .catch((error) => {
+                console.error('Video check error:', error);
+                urlLink.textContent = "Check Error";
+                urlLink.style.color = "red";
+                executionFinished = true;
+              });
+
+
+
+
+
+
+            const timeoutPromise = new Promise((resolve) => {
+              setTimeout(() => resolve(false), 10000); // Timeout after 10 seconds
+            });
+
+            Promise.race([urlCheckPromise, timeoutPromise])
+              .then((result) => {
+                if (result === false) {
+                  // If the URL check takes longer than 10 seconds, mark it as 'Not Playable'
+                  urlLink.textContent = "Not Playable";
+                  urlLink.style.color = "red";
+                }
+              });
+
+
+
+
+
+            loadingGif.style.display = "none";
+
+
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching movies: ", error);
+          loadingGif.style.display = "none";
+        });
+
+
+   
+
+
+    }
+
+
+
+
+    async function onLoadHandler() {
+      setTimeout(() => {
+        populateMovieTable();
+      }, 1000);
+    }
+
+
+
+    window.addEventListener('load', onLoadHandler);
+
+
+
+
+  </script>
+
+
+
+</body>
+
+</html>

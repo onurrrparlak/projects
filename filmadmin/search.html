@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Movie Search</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+     
+
+        #sidebarFrame {
+            width: 250px;
+            /* Adjust the width of the sidebar */
+            height: 100vh;
+            /* Full height of the viewport */
+            position: fixed;
+            top: 0;
+            left: 0;
+            border: none;
+        }
+
+        #container {
+            flex: 1;
+            height: 100vh;
+            margin-left: 250px;
+            /* Same width as the sidebar */
+            overflow-y: auto;
+            /* Enable scrolling for content */
+            padding: 20px;
+            /* Adjust padding as needed */
+        }
+        .search-box {
+            width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <iframe id="sidebarFrame" src="sidebar.html"></iframe>
+    <div class="container">
+        <h2 class="text-center mb-4">Film Ara</h2>
+        <div class="input-group mb-3 search-box">
+            <input type="text" class="form-control" placeholder="Film adı giriniz.." onkeypress="handleKeyPress(event)" id="searchInput">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button" onclick="searchMovies()">Ara</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Film ID</th>
+                        <th scope="col">Film Adı</th>
+                        <th scope="col">Film Kapak</th>
+                        <th scope="col">Film Background Resmi</th>
+                        <th scope="col">Düzenle</th>
+                    </tr>
+                </thead>
+                <tbody id="movieTableBody">
+
+                    <!-- Movie data will be dynamically added here -->
+                </tbody>
+            </table>
+            <p class="no-results" id="noResultsMessage" style="display: none;">Film bulunamadı.</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        function searchMovies() {
+            var searchInput = document.getElementById("searchInput").value.trim().toLowerCase();
+            var noResultsMessage = document.getElementById("noResultsMessage");
+            var tableBody = document.getElementById("movieTableBody");
+            tableBody.innerHTML = ""; // Clear previous search results
+
+            firebase.firestore().collection("movies")
+                .orderBy("movieId", "desc")
+                .get()
+                .then((querySnapshot) => {
+                    var foundResults = false;
+                    querySnapshot.forEach((doc) => {
+                        var movie = doc.data();
+                        var title = movie.title.toLowerCase();
+
+                        if (title.includes(searchInput)) {
+                            foundResults = true;
+                            var row = tableBody.insertRow();
+
+                            var idCell = row.insertCell();
+                            idCell.textContent = movie.movieId;
+
+                            var nameCell = row.insertCell();
+                            nameCell.textContent = movie.title;
+
+                            var imageCell = row.insertCell();
+                            var imageElement = document.createElement("img");
+                            imageElement.src = movie.posterImageUrl;
+                            imageElement.alt = movie.title;
+                            imageElement.style.maxWidth = "100px";
+                            imageCell.appendChild(imageElement);
+
+                            // Add similar cells for other data...
+
+                            var urlCell = row.insertCell();
+                            var urlLink = document.createElement("a");
+                            urlLink.href = 'videoplayer.html?url=' + encodeURIComponent(movie.url);
+                            urlLink.textContent = "İzle";
+                            urlLink.target = "_blank";
+                            urlCell.appendChild(urlLink);
+
+                            var editCell = row.insertCell();
+                            var editButton = document.createElement("button");
+                            editButton.textContent = "Düzenle";
+                            editButton.classList.add("edit-button");
+                            editButton.addEventListener("click", function () {
+                                const editUrl = "movieedit.html?movieId=" + encodeURIComponent(movie.movieId);
+                                window.open(editUrl, '_blank');
+                            });
+                            editCell.appendChild(editButton);
+                        }
+                        if (!foundResults) {
+                        noResultsMessage.style.display = "block";
+                    } else {
+                        noResultsMessage.style.display = "none";
+                    }
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error searching movies: ", error);
+                });
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                searchMovies();
+            }
+        }
+    </script>
+</body>
+
+</html>

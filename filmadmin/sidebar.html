@@ -1,0 +1,133 @@
+<!-- sidebar.html -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="session.js"></script>
+
+    <meta charset="UTF-8">
+    <title>Sidebar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+
+    <style>
+      ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden; /* Prevent scrolling in the iframe */
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            overflow-y: auto; /* Enable vertical scrolling within the sidebar */
+            background-color: #000;
+            padding-top: 20px;
+            color: #fff;
+            transition: width 0.3s ease; /* Added transition for smoother resizing */
+        }
+
+        .sidebar-item {
+            padding: 12px 16px;
+        }
+
+        .sidebar-item a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 14px;
+            display: flex; /* Adjusted for better icon alignment */
+            align-items: center; /* Center align the icons with text */
+        }
+
+        .sidebar-item a:hover {
+            color: #17a2b8;
+        }
+
+        .sidebar-item hr {
+            margin: 5px 0;
+            border-color: #fff;
+        }
+
+        .sidebar-item i {
+            margin-right: 12px;
+            color: #fff;
+            font-size: 18px;
+            min-width: 20px; /* Set a minimum width for better spacing */
+        }
+
+        /* Media query for mobile devices */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 250px; /* Occupy full width */
+                height: auto; /* Allow height to adjust based on content */
+                position: relative; /* Remove fixed positioning */
+            }
+
+            .sidebar-item {
+                padding: 12px; /* Adjust padding for better spacing */
+            }
+        }
+    </style>
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <ul class="list-unstyled">
+            <li class="sidebar-item">
+                <i class="fas fa-home"></i><a target="_top" href="index.html">Anasayfa</a>
+                <hr>
+            </li>
+            <li class="sidebar-item">
+                <i class="fas fa-plus"></i><a target="_top" href="newmovie.html">Yeni Film Ekle</a>
+                <hr>
+            </li>
+            <li class="sidebar-item">
+                <i class="fas fa-edit"></i><a target="_top" href="checkurls.html">Film Url Bozuklar</a>
+                <hr>
+            </li>
+            <li class="sidebar-item">
+                <i class="fa fa-search"></i><a target="_top" href="search.html">Film Ara</a>
+                <hr>
+            </li>
+            <li class="sidebar-item">
+                <i class="fa fa-user"></i><a target="_top" href="users.html">Kullanıcılar</a>
+                <hr>
+            </li>
+            <li class="sidebar-item">
+                <i class="fas fa-sign-out-alt"></i><a href="#" onclick="logout()">Çıkış yap
+
+
+                </a>
+                <hr>
+            </li>
+        </ul>
+    </div>
+    <script src="logout.js"></script>
+
+
+    <script>
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>

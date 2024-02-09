@@ -71,7 +71,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           subtitleDecoder: SubtitleDecoder.utf8);
     }
 
-    _controller = VideoPlayerController.network(widget.videoUrl);
+      _controller = VideoPlayerController.network(widget.videoUrl);
+
 
     _initializeVideoPlayerFuture = _controller.initialize();
     _hideTimer = Timer(const Duration(seconds: 8), () {

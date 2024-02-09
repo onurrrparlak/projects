@@ -153,7 +153,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget categoryButton(String categoryName, bool isSelected) {
     Color buttonColor = isSelected ? Colors.black : Colors.grey[900]!;
     return Focus(
-      focusNode: FocusService.categoryMenuNode,
+      focusNode: FocusServiceProvider.categoryMenuNode,
       child: ElevatedButton(
         onPressed: () {
           _onCategorySelected(categoryName);

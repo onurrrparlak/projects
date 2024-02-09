@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Login Page</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f8f9fa;
+    }
+
+    .login-container {
+      width: 400px;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+    }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var loggedIn = localStorage.getItem("loggedIn");
+
+      if (loggedIn && loggedIn === "true") {
+        window.location.href = "index.html";
+      }
+
+      document.getElementById("loginForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        var encryptedUsername = btoa(username);
+        var encryptedPassword = btoa(password);
+
+        if (encryptedUsername === "YWRtaW4=" && encryptedPassword === "OTUxNzUz") {
+          localStorage.setItem("loggedIn", "true");
+          document.getElementById("loginStatus").innerText = "Giriş başarılı, yönlendiriliyorsunuz";
+          setTimeout(function () {
+            window.location.href = "index.html";
+          }, 1000); // Redirect after 1 second
+        } else {
+          document.getElementById("loginStatus").innerText = "Kullanıcı adı veya şifre yanlış";
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div class="login-container">
+    <h2 class="text-center mb-4">Login</h2>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" class="form-control" id="username" name="username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" class="form-control" id="password" name="password">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Login</button>
+      <p id="loginStatus" class="text-center mt-3"></p>
+    </form>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

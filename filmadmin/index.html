@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Anasayfa</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+          body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            /* Use flex to align elements side by side */
+        }
+
+        .edit-button {
+            background-color: red;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #sidebarFrame {
+            width: 250px;
+            height: 100vh;
+            border: none;
+        }
+
+        #container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            white-space: nowrap; /* Prevent table cell contents from wrapping */
+        }
+
+        table {
+            width: 100%;
+            max-width: 100%;
+            border-collapse: collapse;
+        }
+
+        table img {
+            width: 100%;
+            height: auto;
+            max-width: 100px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            margin-right: 5px;
+        }
+
+        #loadingGif {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            #sidebarFrame {
+                display: block; /* Show the sidebar on mobile */
+                width: 100%; /* Adjust the width */
+                height: 250px; /* Set an appropriate height for the sidebar on mobile */
+            }
+            .table-responsive {
+                width: 100%;
+                overflow-x: auto;
+                white-space: nowrap; /* Prevent table cell contents from wrapping */
+            }
+        }
+    
+}
+
+
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-placeholder"></div>
+    <div id="container" class="container mt-4">
+
+        <h2 class="text-center mb-4">Filmler</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Film ID</th>
+                        <th scope="col">Film Adı</th>
+                        <th scope="col">Film Kapak</th>
+                        <th scope="col">Film Background Resmi</th>
+                        <th scope="col">URL</th>
+                        <th scope="col">Düzenle</th>
+                    </tr>
+                </thead>
+                <tbody id="movieTableBody">
+                    <!-- Add this HTML within the body -->
+
+
+                    <!-- Movie data will be dynamically added here -->
+                </tbody>
+
+            </table>
+        </div>
+        <div class="pagination mt-4" id="paginationButtons">
+            <!-- Pagination buttons will be dynamically added here -->
+        </div>
+        <div id="loadingGif" style="display: none; display: flex; justify-content: center; align-items: center;">
+            <!-- Your loading GIF or spinner image goes here -->
+            <img src="images/loading.gif" alt="Loading..." />
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="firebase-config.js"></script>
+
+
+
+    <script>
+var currentPage = 1;
+var itemsPerPage = 20; // Adjust this as needed
+
+var lastVisibleMovie = null;
+var isLastPage = false;
+var paginationRendered = false;
+
+function populateMovieTable(pageNumber) {
+    console.log('populateMovieTable called for page:', pageNumber);
+
+    if (isLastPage) {
+        console.log("Reached last page");
+        return;
+    }
+
+    var loadingGif = document.getElementById("loadingGif");
+    loadingGif.style.display = "block";
+    var tableBody = document.getElementById("movieTableBody");
+    tableBody.innerHTML = "";
+
+    var query = firebase.firestore().collection("movies")
+        .orderBy("movieId", "desc")
+        .limit(itemsPerPage);
+
+    if (pageNumber > 1 && lastVisibleMovie) {
+        query = query.startAfter(lastVisibleMovie);
+    }
+
+    query.get()
+        .then((querySnapshot) => {
+            console.log('Query snapshot:', querySnapshot.docs.length);
+
+            if (!querySnapshot.empty) {
+                lastVisibleMovie = querySnapshot.docs[querySnapshot.docs.length - 1];
+                querySnapshot.forEach((doc) => {
+                    var movie = doc.data();
+
+                    var row = document.createElement("tr");
+                    var idCell = document.createElement("td");
+                    idCell.textContent = movie.movieId;
+                    row.appendChild(idCell);
+
+                    var nameCell = document.createElement("td");
+                    nameCell.textContent = movie.title;
+                    row.appendChild(nameCell);
+
+                    var imageCell = document.createElement("td");
+                    var imageElement = document.createElement("img");
+                    imageElement.src = movie.posterImageUrl;
+                    imageElement.alt = movie.title;
+                    imageElement.style.maxWidth = "100px";
+                    imageCell.appendChild(imageElement);
+                    row.appendChild(imageCell);
+
+                    var imagePosterCell = document.createElement("td");
+                    var imagePosterElement = document.createElement("img");
+                    imagePosterElement.src = movie.backgroundImageUrl;
+                    imagePosterElement.alt = movie.title;
+                    imagePosterElement.style.maxWidth = "100px";
+                    imagePosterCell.appendChild(imagePosterElement);
+                    row.appendChild(imagePosterCell);
+
+                    var urlCell = document.createElement("td");
+                    var urlLink = document.createElement("a");
+                    urlLink.href = 'videoplayer.html?url=' + encodeURIComponent(movie.url);
+                    urlLink.textContent = "İzle";
+                    urlLink.target = "_blank";
+                    urlCell.appendChild(urlLink);
+                    row.appendChild(urlCell);
+
+                    var editCell = document.createElement("td");
+                    var editButton = document.createElement("button");
+                    editButton.textContent = "Düzenle";
+                    editButton.classList.add("edit-button");
+
+                    editButton.addEventListener("click", function (event) {
+                        const editUrl = "movieedit.html?movieId=" + encodeURIComponent(movie.movieId);
+
+                        if (event.ctrlKey || event.metaKey) {
+                            window.open(editUrl, '_blank');
+                        } else {
+                            window.location.href = editUrl;
+                        }
+                    });
+
+                    editCell.appendChild(editButton);
+                    row.appendChild(editCell);
+
+                    tableBody.appendChild(row);
+                 
+                    loadingGif.style.display = "none";
+                });
+
+            
+
+                if (querySnapshot.docs.length < itemsPerPage) {
+                    isLastPage = true;
+                    console.log("Reached last page");
+                }
+                if (!paginationRendered) {
+                    console.log('Rendering pagination buttons');
+                    paginationRendered = true;
+                }
+
+            } else {
+                loadingGif.style.display = "none";
+                isLastPage = true;
+                console.log("Reached last page");
+            }
+            renderPaginationButtons(pageNumber);
+        })
+        .catch((error) => {
+            console.error("Error fetching movies: ", error);
+            loadingGif.style.display = "none";
+        });
+}
+
+function renderPaginationButtons(currentPage) {
+    var paginationDiv = document.getElementById("paginationButtons");
+    paginationDiv.innerHTML = "";
+
+    firebase.firestore().collection("movies").get()
+        .then((querySnapshot) => {
+            var totalItems = querySnapshot.size;
+            var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            // Adjust totalPages based on the current page's data count
+            if (currentPage * itemsPerPage > totalItems) {
+                totalPages = Math.ceil(totalItems / ((currentPage - 1) * itemsPerPage));
+            }
+
+            for (var i = 1; i <= totalPages; i++) {
+                var button = document.createElement("button");
+                button.textContent = i;
+                button.classList.add("btn", "btn-primary", "mr-2");
+
+                if (i === currentPage) {
+                    button.disabled = true;
+                } else {
+                    button.addEventListener("click", function (event) {
+                        currentPage = parseInt(event.target.textContent);
+                        populateMovieTable(currentPage);
+                    });
+                }
+
+                paginationDiv.appendChild(button);
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching total items: ", error);
+        });
+}
+
+
+console.log('paginationRendered:', paginationRendered);
+
+// Initial population of the table and pagination buttons
+populateMovieTable(currentPage);
+
+
+    $(function() {
+        // Load the sidebar content into a designated element
+        $('#sidebar-placeholder').load('sidebar.html');
+    });
+
+
+    </script>
+
+   
+   
+</body>
+
+</html>

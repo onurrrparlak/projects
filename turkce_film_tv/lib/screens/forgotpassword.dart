@@ -14,12 +14,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   bool _isLoading = false;
+   late FocusServiceProvider _provider;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusService.changeFocus(context, FocusService.forgotPasswordMailNode);
+     _provider.changeFocus(
+          context, FocusServiceProvider.forgotPasswordMailNode);
     });
   }
 
@@ -79,7 +81,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextFormField(
-                  focusNode: FocusService.forgotPasswordMailNode,
+                  focusNode: FocusServiceProvider.forgotPasswordMailNode,
                   onEditingComplete: () async {
                     await _resetPassword();
                   },
@@ -103,7 +105,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 Focus(
-                  focusNode: FocusService.forgotPasswordSubmitNode,
+                  focusNode: FocusServiceProvider.forgotPasswordSubmitNode,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _resetPassword,
                     style: ButtonStyle(

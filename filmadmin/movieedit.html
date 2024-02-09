@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+         body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        #sidebarFrame {
+            width: 250px;
+            /* Adjust the width of the sidebar */
+            height: 100vh;
+            /* Full height of the viewport */
+            position: fixed;
+            top: 0;
+            left: 0;
+            border: none;
+        }
+
+        #container {
+            flex: 1;
+            height: 100vh;
+            margin-left: 250px; /* Same width as the sidebar */
+            overflow-y: auto; /* Enable scrolling for content */
+            padding: 20px; /* Adjust padding as needed */
+        }
+    </style>
+
+    <title>Filmi Düzenle</title>
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+       
+</head>
+
+<body>
+    <iframe id="sidebarFrame" src="sidebar.html"></iframe>
+
+    <div class="container">
+        <h1>Filmi Düzenle</h1>
+        <form id="editMovieForm">
+            <div class="form-group">
+                <label for="movieId">Film ID:</label>
+                <input type="text" class="form-control" id="movieId" name="movieId">
+            </div>
+            <div class="form-group">
+                <label for="title">Film Adı:</label>
+                <input type="text" class="form-control" id="title" name="title">
+            </div>
+            <div class="form-group">
+                <label for="backgroundImageUrl">Background Resmi URL:</label>
+                <input type="text" class="form-control" id="backgroundImageUrl" name="backgroundImageUrl">
+                <img src="" id="backgroundImagePreview" alt="Background Image Preview"
+                    style="max-width: 100px; max-height: 100px;">
+            </div>
+            <div class="form-group">
+                <label for="posterImageUrl">Poster Resmi URL:</label>
+                <input type="text" class="form-control" id="posterImageUrl" name="posterImageUrl">
+                <img src="" id="posterImagePreview" alt="Poster Image Preview"
+                    style="max-width: 100px; max-height: 100px;">
+            </div>
+            <div class="form-group">
+                <label for="duration">Uzunluk:</label>
+                <input type="text" class="form-control" id="duration" name="duration">
+            </div>
+            <div class="form-group">
+                <label for="imdbRating">IMDb Puanı:</label>
+                <input type="text" class="form-control" id="imdbRating" name="imdbRating">
+            </div>
+            <div class="form-group">
+                <label>Kategoriler:</label><br>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryAile" name="categories" value="Aile">
+                    <label class="form-check-label" for="categoryAile">Aile</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryAksiyon" name="categories"
+                        value="Aksiyon">
+                    <label class="form-check-label" for="categoryAksiyon">Aksiyon</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryAnimasyon" name="categories"
+                        value="Animasyon">
+                    <label class="form-check-label" for="categoryAnimasyon">Animasyon</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryBilimKurgu" name="categories"
+                        value="Bilim Kurgu">
+                    <label class="form-check-label" for="categoryBilimKurgu">Bilim Kurgu</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryBiyografi" name="categories"
+                        value="Biyografi">
+                    <label class="form-check-label" for="categoryBiyografi">Biyografi</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryCocuk" name="categories" value="Çocuk">
+                    <label class="form-check-label" for="categoryCocuk">Çocuk</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryDram" name="categories" value="Dram">
+                    <label class="form-check-label" for="categoryDram">Dram</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryFantastik" name="categories"
+                        value="Fantastik">
+                    <label class="form-check-label" for="categoryFantastik">Fantastik</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryGerilim" name="categories"
+                        value="Gerilim">
+                    <label class="form-check-label" for="categoryGerilim">Gerilim</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryGizem" name="categories" value="Gizem">
+                    <label class="form-check-label" for="categoryGizem">Gizem</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryKomedi" name="categories"
+                        value="Komedi">
+                    <label class="form-check-label" for="categoryKomedi">Komedi</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryKorku" name="categories" value="Korku">
+                    <label class="form-check-label" for="categoryKorku">Korku</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryMacera" name="categories"
+                        value="Macera">
+                    <label class="form-check-label" for="categoryMacera">Macera</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryMuzikal" name="categories"
+                        value="Müzikal">
+                    <label class="form-check-label" for="categoryMuzikal">Müzikal</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryPolisiye" name="categories"
+                        value="Polisiye">
+                    <label class="form-check-label" for="categoryPolisiye">Polisiye</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryPsikoloji" name="categories"
+                        value="Psikoloji">
+                    <label class="form-check-label" for="categoryPsikoloji">Psikoloji</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categoryRomantik" name="categories"
+                        value="Romantik">
+                    <label class="form-check-label" for="categoryRomantik">Romantik</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categorySavas" name="categories" value="Savaş">
+                    <label class="form-check-label" for="categorySavas">Savaş</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categorySpor" name="categories" value="Spor">
+                    <label class="form-check-label" for="categorySpor">Spor</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="categorySuc" name="categories" value="Suç">
+                    <label class="form-check-label" for="categorySuc">Suç</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="releaseYear">Çıkış Yılı:</label>
+                <input type="text" class="form-control" id="releaseYear" name="releaseYear">
+            </div>
+            <div class="form-group">
+                <label for="url">Video URL:</label>
+                <input type="text" class="form-control" id="url" name="url">
+            </div>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+            <p id="successMessage" style="display: none; color: green; font-size: 1.2em;"></p>
+
+            <button id="deleteMovieBtn" class="btn btn-danger">Sil</button>
+<p id="deleteMessage" style="display: none; color: red; font-size: 1.2em;"></p>
+
+
+
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        
+        document.getElementById("deleteMovieBtn").addEventListener("click", function () {
+    const confirmation = confirm("Filmi silmek istediğinize emin misiniz?");
+    if (confirmation) {
+        const movieId = parseInt(document.getElementById("movieId").value);
+
+        firebase.firestore().collection("movies")
+            .where("movieId", "==", movieId)
+            .get()
+            .then((querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((doc) => {
+                        const docId = doc.id;
+                        firebase.firestore().collection("movies").doc(docId).delete()
+                            .then(() => {
+                                const deleteMessage = document.getElementById("deleteMessage");
+                                deleteMessage.textContent = "Film Başarıyla Silindi!";
+                                deleteMessage.style.display = "block";
+
+                                // Redirect to index.html after 2 seconds
+                                setTimeout(() => {
+                                    window.location.href = "index.html";
+                                }, 2000); // Redirect after 2 seconds (2000 milliseconds)
+                            })
+                            .catch((error) => {
+                                console.error("Error deleting document: ", error);
+                            });
+                    });
+                } else {
+                    console.log("No movie found with the given movieId.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error getting documents: ", error);
+            });
+    }
+});
+
+
+        
+        
+        window.addEventListener('message', function(event) {
+            const receivedData = event.data;
+            if (receivedData && receivedData.height) {
+                const iframe = document.getElementById('sidebarFrame');
+                iframe.style.height = receivedData.height + 'px';
+            }
+        });
+        // Inside the movieedit.html script tag
+        document.addEventListener("DOMContentLoaded", function () {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const movieId = parseInt(urlParams.get("movieId")); // Ensure movieId is parsed as an integer
+
+            firebase.firestore().collection("movies").where("movieId", "==", movieId).get()
+                .then((querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        querySnapshot.forEach((doc) => {
+                            const movieData = doc.data();
+                            console.log("Movie Data:", movieData);
+
+                            // Populate input fields with movie data
+                            document.getElementById("movieId").value = movieData.movieId;
+                            document.getElementById("title").value = movieData.title;
+                            document.getElementById("backgroundImageUrl").value = movieData.backgroundImageUrl;
+                            document.getElementById("posterImageUrl").value = movieData.posterImageUrl;
+                            document.getElementById("duration").value = movieData.duration;
+                            document.getElementById("imdbRating").value = movieData.imdbRating;
+                            document.getElementById("releaseYear").value = movieData.releaseYear;
+                            document.getElementById("url").value = movieData.url;
+
+                            // Display background image preview
+                            const backgroundImageUrl = movieData.backgroundImageUrl;
+                            document.getElementById("backgroundImagePreview").src = backgroundImageUrl;
+
+                            // Display poster image preview
+                            const posterImageUrl = movieData.posterImageUrl;
+                            document.getElementById("posterImagePreview").src = posterImageUrl;
+
+                            // Handle checkboxes if movieData contains category information
+                            const categories = movieData.categories || [];
+                            categories.forEach(category => {
+                                document.getElementById(`category${category}`).checked = true;
+                            });
+                        });
+                    } else {
+                        console.log("No movie found with the given ID.");
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error getting movies:", error);
+                });
+        });
+
+        document.getElementById("editMovieForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get updated values from the form fields
+            const updatedMovieData = {
+                title: document.getElementById("title").value,
+                backgroundImageUrl: document.getElementById("backgroundImageUrl").value,
+                posterImageUrl: document.getElementById("posterImageUrl").value,
+                duration: document.getElementById("duration").value,
+                imdbRating: document.getElementById("imdbRating").value,
+                releaseYear: document.getElementById("releaseYear").value,
+                url: document.getElementById("url").value,
+                // Add other fields as needed
+            };
+
+            const movieId = parseInt(document.getElementById("movieId").value); // Get the movieId from the form input
+
+            // Find the document using the movieId field
+            firebase.firestore().collection("movies")
+                .where("movieId", "==", movieId)
+                .get()
+                .then((querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        querySnapshot.forEach((doc) => {
+                            const docId = doc.id; // Get the document ID
+                            firebase.firestore().collection("movies").doc(docId).update(updatedMovieData)
+                                .then(() => {
+                                    const successParagraph = document.getElementById("successMessage");
+                                    successParagraph.textContent = "Film Başarıyla Güncellendi!";
+                                    successParagraph.style.display = "block"; // Show the success message
+
+                                    // Refresh the page after 2 seconds
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 1000); // Refresh after 2 seconds (2000 milliseconds)
+                                })
+                                .catch((error) => {
+                                    console.error("Error updating document: ", error);
+                                });
+                        });
+                    } else {
+                        console.log("No movie found with the given movieId.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error getting documents: ", error);
+                });
+        });
+
+
+
+
+    </script>
+  
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+
+</body>
+
+</html>
