@@ -80,7 +80,7 @@ class _SettingsState extends State<Settings> {
                 itemBuilder: (BuildContext context, int index) {
                   switch (index) {
                     case 0:
-                      return const gibiIzle();
+                      return const GibiIzle();
                     case 1:
                       return ListTile(
                         leading: const Icon(Icons.mail),

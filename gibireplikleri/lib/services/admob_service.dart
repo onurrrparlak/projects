@@ -67,7 +67,7 @@ class AdMobService {
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
-        onAdLoaded: (ad) => print('Ad loaded'),
+        onAdLoaded: (ad) => ('Ad loaded'),
         onAdFailedToLoad: (ad, error) {
           ad.dispose();
         },

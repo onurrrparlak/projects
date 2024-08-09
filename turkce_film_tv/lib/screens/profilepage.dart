@@ -279,30 +279,30 @@ class _ProfilePageState extends State<ProfilePage> {
                                           : null;
                                     },
                                     style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
+                                      shape: WidgetStateProperty.all<
                                           RoundedRectangleBorder>(
                                         RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
                                         ),
                                       ),
-                                      padding: MaterialStateProperty.all<
+                                      padding: WidgetStateProperty.all<
                                           EdgeInsetsGeometry>(
                                         const EdgeInsets.symmetric(
                                             vertical: 12.0, horizontal: 24.0),
                                       ),
                                       backgroundColor:
-                                          MaterialStateProperty.all<Color>(
+                                          WidgetStateProperty.all<Color>(
                                               Colors.green),
                                       foregroundColor:
-                                          MaterialStateProperty.all<Color>(
+                                          WidgetStateProperty.all<Color>(
                                               Colors.white),
                                       overlayColor:
-                                          MaterialStateProperty.all<Color>(
+                                          WidgetStateProperty.all<Color>(
                                         Colors.green.withOpacity(0.8),
                                       ),
                                       elevation:
-                                          MaterialStateProperty.all<double>(
+                                          WidgetStateProperty.all<double>(
                                               0.0),
                                     ),
                                     child: const Text('Güncelle'),
@@ -322,30 +322,30 @@ class _ProfilePageState extends State<ProfilePage> {
                                       );
                                     },
                                     style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
+                                      shape: WidgetStateProperty.all<
                                           RoundedRectangleBorder>(
                                         RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
                                         ),
                                       ),
-                                      padding: MaterialStateProperty.all<
+                                      padding: WidgetStateProperty.all<
                                           EdgeInsetsGeometry>(
                                         const EdgeInsets.symmetric(
                                             vertical: 12.0, horizontal: 24.0),
                                       ),
                                       backgroundColor:
-                                          MaterialStateProperty.all<Color>(
+                                          WidgetStateProperty.all<Color>(
                                               Colors.red),
                                       foregroundColor:
-                                          MaterialStateProperty.all<Color>(
+                                          WidgetStateProperty.all<Color>(
                                               Colors.white),
                                       overlayColor:
-                                          MaterialStateProperty.all<Color>(
+                                          WidgetStateProperty.all<Color>(
                                         Colors.red.withOpacity(0.8),
                                       ),
                                       elevation:
-                                          MaterialStateProperty.all<double>(
+                                          WidgetStateProperty.all<double>(
                                               0.0),
                                     ),
                                     child: const Text('Çıkış yap'),

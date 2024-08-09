@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-class gibiIzle extends StatelessWidget {
-  const gibiIzle({super.key});
+class GibiIzle extends StatelessWidget {
+  const GibiIzle({super.key});
 
   @override
   Widget build(BuildContext context) {

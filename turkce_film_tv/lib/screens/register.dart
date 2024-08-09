@@ -204,24 +204,24 @@ late FocusServiceProvider _provider;
                       }
                     },
                     style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                               8.0), // Adjust the radius as needed
                         ),
                       ),
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                         const EdgeInsets.symmetric(
                             vertical: 12.0,
                             horizontal: 24.0), // Adjust the padding as needed
                       ),
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.green),
+                          WidgetStateProperty.all<Color>(Colors.green),
                       foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      overlayColor: MaterialStateProperty.all<Color>(
+                          WidgetStateProperty.all<Color>(Colors.white),
+                      overlayColor: WidgetStateProperty.all<Color>(
                           Colors.green.withOpacity(0.8)),
-                      elevation: MaterialStateProperty.all<double>(
+                      elevation: WidgetStateProperty.all<double>(
                           0.0), // Remove the button shadow
                     ),
                     child: const Text('Kayıt ol'),

@@ -120,7 +120,7 @@ class _UserWatchlistPageState extends State<UserWatchlistPage> {
                                     final movieId =
                                         (notWatchedMovies[index].data()
                                             as Map<String, dynamic>)['movieId'];
-                                    List _focusNodes = List.generate(
+                                    List focusNodes = List.generate(
                                         notWatchedMovies.length, (int index) => FocusNode());
 
                                     return Row(
@@ -180,11 +180,12 @@ class _UserWatchlistPageState extends State<UserWatchlistPage> {
                                                       print(
                                                           'Error deleting movie from watchlist: $e');
                                                     }
+                                                    return null;
                                                   },
                                                 ),
                                               },
                                               child: Focus(
-                                                focusNode:  _focusNodes[index],
+                                                focusNode:  focusNodes[index],
                                                 child: Container(
                                                   height: MediaQuery.of(context)
                                                           .size

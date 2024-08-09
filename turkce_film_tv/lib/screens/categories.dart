@@ -159,16 +159,16 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           _onCategorySelected(categoryName);
         },
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(buttonColor),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          backgroundColor: WidgetStateProperty.all<Color>(buttonColor),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
           ),
-          side: MaterialStateProperty.all<BorderSide>(
+          side: WidgetStateProperty.all<BorderSide>(
             const BorderSide(color: Colors.white, width: 1.0),
           ),
-          minimumSize: MaterialStateProperty.all<Size>(const Size(45, 25)),
+          minimumSize: WidgetStateProperty.all<Size>(const Size(45, 25)),
         ),
         child: FittedBox(
           child: Text(

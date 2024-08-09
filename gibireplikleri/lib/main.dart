@@ -10,7 +10,6 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
@@ -18,9 +17,6 @@ Future<void> main() async {
   await Hive.openBox('favoriler');
   await Hive.openBox('settings');
   await Hive.openBox('replikBox');
-
- 
-
 
   runApp(MultiProvider(
     providers: [
@@ -46,15 +42,20 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: const ColorScheme.dark(),
         inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: const Color(0xFF1d1c21),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0),
-              borderSide: const BorderSide(width: 0, color: Color(0xFF1d1c21)),
+          filled: true,
+          fillColor: const Color(0xFF1d1c21),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            borderSide: const BorderSide(width: 0, color: Color(0xFF1d1c21)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            borderSide: const BorderSide(
+              width: 0,
+              color: Color(0xFF1d1c21),
             ),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-                borderSide: const BorderSide(width: 0, color: Color(0xFF1d1c21)))),
+          ),
+        ),
         fontFamily: 'Euclid',
         scaffoldBackgroundColor: const Color(0xFF09090F),
       ),

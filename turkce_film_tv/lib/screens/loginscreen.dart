@@ -390,7 +390,7 @@ class _LoginPageState extends State<LoginPage> {
                                               }
                                             },
                                             style: ButtonStyle(
-                                              shape: MaterialStateProperty.all<
+                                              shape: WidgetStateProperty.all<
                                                   RoundedRectangleBorder>(
                                                 RoundedRectangleBorder(
                                                   borderRadius:
@@ -398,7 +398,7 @@ class _LoginPageState extends State<LoginPage> {
                                                           8.0), // Adjust the radius as needed
                                                 ),
                                               ),
-                                              padding: MaterialStateProperty
+                                              padding: WidgetStateProperty
                                                   .all<EdgeInsetsGeometry>(
                                                 const EdgeInsets.symmetric(
                                                     vertical: 12.0,
@@ -406,16 +406,16 @@ class _LoginPageState extends State<LoginPage> {
                                                         24.0), // Adjust the padding as needed
                                               ),
                                               backgroundColor:
-                                                  MaterialStateProperty.all<
+                                                  WidgetStateProperty.all<
                                                       Color>(Colors.green),
                                               foregroundColor:
-                                                  MaterialStateProperty.all<
+                                                  WidgetStateProperty.all<
                                                       Color>(Colors.white),
                                               overlayColor:
-                                                  MaterialStateProperty
+                                                  WidgetStateProperty
                                                       .all<Color>(Colors.green
                                                           .withOpacity(0.8)),
-                                              elevation: MaterialStateProperty.all<
+                                              elevation: WidgetStateProperty.all<
                                                       double>(
                                                   0.0), // Remove the button shadow
                                             ),

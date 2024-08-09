@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final itemWidth = screenWidth * 0.20;
     if (_provider == null) {
-      return Scaffold();
+      return const Scaffold();
     }
     else {
 

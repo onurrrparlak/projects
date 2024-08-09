@@ -142,7 +142,7 @@ class FocusServiceProvider extends ChangeNotifier  {
     FocusScope.of(context).requestFocus(focusNode);
 
     // Delay a bit to allow focus change to process
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
 
     if (focusNode.hasFocus) {
       print(focusNode.debugLabel);
