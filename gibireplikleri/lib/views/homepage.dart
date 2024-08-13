@@ -40,6 +40,7 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
 
   String getStoredReplik() {
     final box = Hive.box('replikBox');
+
     String? storedReplik = box.get('replik');
     if (storedReplik == null) {
       storedReplik = getRandomReplik();
@@ -59,8 +60,6 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
       box.put('timestamp', now);
     }
   }
-
-
 
   @override
   void initState() {
@@ -113,7 +112,6 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
     });
   }
 
-
   void _runFilter(String enteredKeyword) {
     setState(() {
       _filteredReplikler = FilterService.filterBySearch(
@@ -138,6 +136,7 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
+             
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -155,17 +154,21 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
                               Text(
                                 'Günün repliği:',
                                 style: TextStyle(
-                                    fontSize: 2.7 * unitHeightValue,
+                                    fontSize: 2.6 * unitHeightValue,
                                     color: const Color(0xFF8c8d96)),
                               ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                replik,
-                                style: TextStyle(
+                             
+                              Expanded(
+                                child: Text(
+                                  replik,
+                                  style: TextStyle(
                                     fontSize: 2.5 * unitHeightValue,
-                                    fontWeight: FontWeight.w700),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  maxLines: 4, // Limits the number of lines
+                                  overflow: TextOverflow
+                                      .ellipsis, // Adds "..." if text is too long
+                                ),
                               ),
                             ],
                           ),
@@ -175,6 +178,7 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
                   ],
                 ),
               ),
+             
               Expanded(
                 flex: 0,
                 child: Padding(
@@ -420,26 +424,22 @@ class _HomepageState extends State<Homepage> with WidgetsBindingObserver {
                                                       buffer.asUint8List(
                                                           data.offsetInBytes,
                                                           data.lengthInBytes),
-                                                      mimeType:
-                                                          'audio/x-aiff',
+                                                      mimeType: 'audio/x-aiff',
                                                     ),
                                                   ]);
                                                 };
                                                 _adMobService
                                                         .rewardedAdNotReadyCallback =
                                                     (String message) {
-                                                  ScaffoldMessenger.of(
-                                                          context)
+                                                  ScaffoldMessenger.of(context)
                                                       .showSnackBar(
                                                     SnackBar(
-                                                      content: Text(
-                                                          message), 
+                                                      content: Text(message),
                                                     ),
                                                   );
                                                 };
-                                                _adMobService
-                                                    .showRewardedAd();
-                                                                                            },
+                                                _adMobService.showRewardedAd();
+                                              },
                                             ),
                                           ),
                                         ],

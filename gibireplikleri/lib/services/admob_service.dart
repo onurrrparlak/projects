@@ -54,7 +54,7 @@ class AdMobService {
       );
     } else {
      if (rewardedAdNotReadyCallback != null) {
-        rewardedAdNotReadyCallback!("Reklam henüz hazır değil. Lütfen bekleyiniz ve internet bağlantınızı kontrol ediniz"); // Pass the message to the callback
+        rewardedAdNotReadyCallback!("Reklam henüz hazır değil. Lütfen bekleyiniz ve internet bağlantınızı kontrol ediniz. Reklam engelleyici kullanmadığınızdan emin olunuz"); // Pass the message to the callback
       }
     }
   }

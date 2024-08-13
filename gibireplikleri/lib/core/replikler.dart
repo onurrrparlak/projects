@@ -1344,7 +1344,7 @@ class Replikler extends StatelessWidget {
     },
      {
       'id': 189,
-      'replik': 'Aman çok sabırlı ol, millet gerizekalı dediler. Ben ona da hazırlı geldim',
+      'replik': 'Aman çok sabırlı ol, millet gerizekalı dediler. Ben ona da hazırlıklı geldim',
       'soyleyen': 0,
       'kufur': false,
     },
@@ -1356,7 +1356,7 @@ class Replikler extends StatelessWidget {
     },
      {
       'id': 191,
-      'replik': 'Ona küpeler öyle? Tozun toprağın içinde kime süsleniyonuz oğlum siz?',
+      'replik': 'One küpeler öyle? Tozun toprağın içinde kime süsleniyonuz oğlum siz?',
       'soyleyen': 0,
       'kufur': false,
     },
